@@ -1,0 +1,100 @@
+{% extends 'base.html' %} {% load static %} {% block title %}Корзина{% endblock title %} {% block content %} {{cart_session}} {% if cart_session != None %}
+<h3 class="main__title">Ваша корзина</h3>
+<section class="cart">
+	<div class="table__container">
+		<table>
+			<thead>
+				<tr>
+					<th scope="col">Наименование</th>
+					<th scope="col">Изображение</th>
+					<th scope="col">Цена</th>
+					<th scope="col">Кол-во</th>
+					<th scope="col">Сумма</th>
+					<th scope="col">Действие</th>
+				</tr>
+			</thead>
+			<tbody>
+				{% for i in cart_session %} {% for product in products %} {% if i.id == product.id %}
+				<tr>
+					<th scope="row">
+						<a href="{{product.get_absolute_url}}" class="borderLeftRight"
+							>{{ product.title }}</a
+						>
+					</th>
+					<td class="main__image">
+						<a href="{{product.get_absolute_url}}">
+							<img src="{{ product.image.url }}" />
+						</a>
+					</td>
+					<td>
+                    {% if not product.sale %}
+					    {{product.price|floatformat:2}} ₽
+                    {% else %}
+					    {{product.get_total_sale|floatformat:2}} ₽
+                    {% endif %} 
+                    </td>
+					<td>
+						<button class="fillButtonBorder add">-</button>
+                        <span>{{i.qty}}</span>
+                        <button class="fillButtonBorder">+</button>
+					</td>
+					<td>{{i.total_price_cart|floatformat:2}} ₽</td>
+					<td>
+						<form
+							action="{% url 'cart:cart-remove' id=product.id %}"
+							method="POST"
+						>
+							{% csrf_token %}
+							<input
+								type="hidden"
+								name="url_from"
+								value="{{request.path}}"
+							/>
+							<button class="overlayLeftBtn delete wishlist-del">
+								<span>
+									Удалить
+									<i class="fas fa-trash-alt"></i>
+								</span>
+							</button>
+						</form>
+					</td>
+				</tr>
+				{% endif %} {% endfor %} {% endfor %}
+				<tr>
+					<td></td>
+					<td><strong>Итого:</strong></td>
+					<td class="cart__total">{{total_price|floatformat:2}} ₽</td>
+					<td>{{total_qty}}</td>
+					<td></td> 
+					<td>
+						<a href="{% url 'checkout' %}"
+							><button class="snapLeftBtn margin">
+								<span>
+									<i class="fas fa-shopping-cart"></i> Оформить заказ
+								</span>
+							</button></a
+						>
+						<form action="{% url 'cart:cart-delete-all'%}" method="POST">
+							{% csrf_token %}
+							<input
+								type="hidden"
+								name="url_from"
+								value="{{request.path}}"
+							/>
+							<button class="overlayLeftBtn delete wishlist-del">
+								<span>
+									Удалить все
+									<i class="fas fa-trash-alt"></i>
+								</span>
+							</button>
+						</form>
+					</td>
+				</tr>
+			</tbody>
+		</table>
+	</div>
+</section>
+{% else %}
+<h3 class="main__title">Ваша корзина пуста</h3>
+{% endif %} {% endblock content %}
+<script src="{% static 'js/cart.js' %}"></script>

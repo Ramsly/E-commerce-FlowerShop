@@ -1,0 +1,127 @@
+{% extends 'base.html' %} {% block content %} {{wishes_session}} {% if wishes_session != None %}
+<h3 class="main__title">Ваши желания</h3>
+<section class="cart">
+	<div class="table__container">
+		<table>
+			<thead>
+				<tr>
+					<th scope="col">Наименование</th>
+					<th scope="col">Изображение</th>
+					<th scope="col">Цена</th>
+					<th scope="col">Действие</th>
+				</tr>
+			</thead>
+			<tbody>
+				{% for i in wishes_session %} {% for product in products %} {% if i.id == product.id %}
+				<tr>
+					<th scope="row">
+						<a href="{{product.get_absolute_url}}" class="borderLeftRight"
+							>{{ product.title }}</a
+						>
+					</th>
+					<td class="main__image">
+						<a href="{{product.get_absolute_url}}">
+							<img src="{{ product.image.url }}" />
+						</a>
+					</td>
+					<td>
+                    {% if not product.sale %}
+					    {{product.price|floatformat:2}} ₽
+                    {% else %}
+					    {{product.get_total_sale|floatformat:2}} ₽
+                    {% endif %} 
+                    </td>
+					<td>
+						{% if product.available %}
+						<form
+							action="{% url 'cart:cart-add' id=product.id %}"
+							method="POST"
+						>
+							{% csrf_token %}
+							<input
+								type="hidden"
+								name="url_from"
+								value="{{request.path}}"
+							/>
+							<input
+								type="hidden"
+								name="price"
+								value="{{product.price}}"
+							/>
+							<button class="overlayLeftBtn wishlist_page-add-to-cart">
+								<span>
+									В корзину
+									<i class="fas fa-shopping-cart"></i>
+								</span>
+							</button>
+						</form>
+						{% else %}
+                        <a href="{{product.get_absolute_url}}">
+                            <button
+                                class="
+                                    main__product_button
+                                    button
+                                    not__available_btn
+                                    pointer
+                                    wishlist_page-view
+                                "
+                            >
+                                <span>
+                                    Просмотр
+                                    <i class="far fa-eye"></i>
+                                </span>
+                            </button>
+                        </a>
+						{% endif %}
+
+						<form
+							action="{% url 'wishlist:wishlist-remove' id=product.id %}"
+							method="POST"
+						>
+							{% csrf_token %}
+							<input
+								type="hidden"
+								name="url_from"
+								value="{{request.path}}"
+							/>
+							<button class="overlayLeftBtn delete wishlist-del">
+								<span>
+									Удалить
+									<i class="fas fa-trash-alt"></i>
+								</span>
+							</button>
+						</form>
+					</td>
+				</tr>
+				{% endif %} {% endfor %} {% endfor %}
+				<tr>
+					<td></td>
+					<td></td>
+					<td></td>
+					<td>
+						<form
+							action="{% url 'wishlist:wishlist-delete-all'%}"
+							method="POST"
+						>
+							{% csrf_token %}
+							<input
+								type="hidden"
+								name="url_from"
+								value="{{request.path}}"
+							/>
+							<button class="overlayLeftBtn delete wishlist-del">
+								<span>
+									Удалить все
+									<i class="fas fa-trash-alt"></i>
+								</span>
+							</button>
+						</form>
+					</td>
+				</tr>
+			</tbody>
+		</table>
+	</div>
+</section>
+{% else %}
+<h3 class="main__title">Пока нет желаний</h3>
+{% endif %} {% endblock content %}

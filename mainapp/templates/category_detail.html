@@ -1,0 +1,132 @@
+{% extends 'base.html' %} {% load search_filter %} {% block title %}Каталог |
+{{category.name}}{% endblock title %} {% block content %}
+
+<nav class="breadcrumb">
+	<ol class="breadcrumb__ol">
+		<li class="breadcrumb__li">
+			<a href="{% url 'base' %}">Главная </a>
+		</li>
+		<li class="breadcrumb__li">
+			<a href="{% url 'categories' %}">Каталог</a>
+		</li>
+		<li class="breadcrumb__li">{{category.name}}</li>
+	</ol>
+</nav>
+<section class="main category">
+	<h1 class="main__title">Каталог | {{category.name}}</h1>
+	<div class="sidesearch">
+		<aside class="sidesearch__container">
+			<form
+				class="fields"
+				action="{% url 'category_detail' slug=category.slug %}"
+				method="GET"
+			>
+				<input name="q" type="search" placeholder="Поиск товара" />
+				<button class="snapLeftBtn" type="submit">
+					<span> <i class="fas fa-search"></i></span>
+				</button>
+			</form>
+
+			<form
+				action="{% url 'category_detail' slug=category.slug %}"
+				method="GET"
+				class="fields"
+			>
+				{{ category|product_spec }}
+				<div class="sidesearch__buttons">
+					<button class="overlayLeftBtn" type="submit">
+						<span>Поиск</span>
+					</button>
+
+					<button class="overlayLeftBtn" type="submit">
+						<span>Сбросить</span>
+					</button>
+				</div>
+			</form>
+		</aside>
+	</div>
+	<div class="category__detail_container">
+		{% for product in category_products %}
+		<article class="main__product">
+			<div class="main__image">
+				<a href="{{product.get_absolute_url}}">
+					<img src="{{product.image.url}}" alt="" />
+				</a>
+				{% if not product.available %}
+				<span class="signature notAvailable">Нет в наличии</span>
+				{% elif product.freeship%}
+				<span class="signature ship">Бесплатная доставка</span>
+				{% else %}
+				<span class="signature ship"
+					>Доставка <span>{{product.shipping_price}} ₽</span></span
+				>
+				{% endif %} {% if product.sale %}
+				<span class="signature sale"
+					>Скидка <span>{{product.sale_value|floatformat}} %</span></span
+				>
+				{% endif %}
+			</div>
+			<div class="main__product_content">
+				<div class="main__block_first">
+					<div class="main__rating margin">
+						<i class="fas fa-star"></i>
+						<i class="fas fa-star"></i>
+						<i class="fas fa-star"></i>
+						<i class="fas fa-star"></i>
+						<i class="fas fa-star"></i>
+					</div>
+					<div class="main__price margin">
+						{% if product.sale %}
+						<span class="main__del_price"
+							><del>{{product.price|floatformat}} ₽</del></span
+						>
+						<span class="main__sale"
+							>{{product.get_total_sale|floatformat:0}} ₽</span
+						>
+						{% else %}
+						<span>{{product.price|floatformat}} ₽</span>
+						{% endif %}
+					</div>
+				</div>
+				<div class="main__block_second">
+					<div class="main__product_title margin">
+						<a
+							href="{{ product.get_absolute_url }}"
+							class="borderLeftRight magnifyText"
+							>{{product.title}}</a
+						>
+					</div>
+					<div class="main__product_description">
+						{{product.description|truncatewords:10}}
+					</div>
+				</div>
+				<div class="main__block_third">
+					<a href="">
+						<i class="fas fa-heart"></i>
+					</a>
+					<div class="main__product_button margin">
+						<a href="{{product.get_absolute_url}}">
+						{% if product.available %}
+							<button class="overlayLeftBtn">
+								<span>
+									Заказать <i class="fas fa-shopping-cart"></i>
+								</span>
+							</button>
+
+							{% else %}
+							<button
+								class="main__product_button button not__available_btn pointer"
+							>
+								<span> Просмотр <i class="far fa-eye"></i> </span>
+							</button>
+						{% endif %}
+						</a>
+					</div>
+				</div>
+			</div>
+		</article>
+		{% endfor %}
+	</div>
+</section>
+
+{% endblock content %}

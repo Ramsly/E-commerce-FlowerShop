@@ -1,0 +1,1 @@
+var sad = document.getElementById("sad").hasAttribute(qualifiedName)

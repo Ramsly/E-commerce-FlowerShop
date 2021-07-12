@@ -1,0 +1,137 @@
+{% extends 'base.html' %} {% load static %} {% block content %} {{cart_session}}
+<h3 class="main__title">Оформление заказа</h3>
+<section class="checkout">
+	<div class="table__container">
+		<table>
+			<thead>
+				<tr>
+					<th scope="col">Наименование</th>
+					<th scope="col">Изображение</th>
+					<th scope="col">Цена</th>
+					<th scope="col">Кол-во</th>
+					<th scope="col">Общая цена</th>
+				</tr>
+			</thead>
+			<tbody>
+				{% for i in cart_session %} {% for product in products %} {% if i.id == product.id %}
+				<tr>
+					<th>{{ product.title }}</th>
+					<td class="main__image">
+						<a href="{{product.get_absolute_url}}">
+							<img src="{{ product.image.url }}" />
+						</a>
+					</td>
+					<td>
+                    {% if not product.sale %}
+					    {{product.price|floatformat:2}} ₽
+                    {% else %}
+					    {{product.get_total_sale|floatformat:2}} ₽
+                    {% endif %}</td>
+					<td>{{ i.qty }}</td>
+					<td>{{ i.total_price_cart|floatformat:2 }} ₽</td>
+				</tr>
+				{% endif %} {% endfor %} {% endfor %}
+				<tr>
+					<td></td>
+					<td><strong>Итого:</strong></td>
+					<td><strong>{{ total_price|floatformat:2 }} ₽</strong></td>
+					<td><strong>{{total_qty_cart}}</strong></td>
+					<td></td>
+				</tr>
+			</tbody>
+		</table>
+	</div>
+</section>
+<section class="fields">
+	<h3 class="main__title">Форма заказа</h3>
+	<div class="field__container">
+		<form action="" method="POST">
+			{% csrf_token %}
+			<p>
+				<label for="id_first_name">Имя:</label>
+				<input
+					type="text"
+					name="first_name"
+					maxlength="255"
+					required
+					id="id_first_name"
+				/>
+			</p>
+			<p>
+				<label for="id_last_name">Фамилия:</label>
+				<input
+					type="text"
+					name="last_name"
+					maxlength="255"
+					required
+					id="id_last_name"
+				/>
+			</p>
+			<p>
+				<label for="id_phone">Телефон:</label>
+				<input
+					type="text"
+					name="phone"
+					maxlength="20"
+					required
+					id="id_phone"
+				/>
+			</p>
+			<p>
+				<label for="id_buying_type">Тип заказа:</label>
+				<select
+					name="buying_type"
+					id="id_buying_type"
+					onchange="changeForm()"
+				>
+					<option id="self" value="self" selected>Самовывоз</option>
+
+					<option id="delivery" value="delivery" >Доставка</option>
+				</select>
+			</p>
+			<p id="p_address">
+				<label for="id_address">Адрес:</label>
+				<input
+					type="text"
+					name="address"
+					maxlength="1024"
+					id="id_address"
+				/>
+			</p>
+			<p>
+				<label for="id_comment">Комментарий к заказу:</label>
+				<textarea
+					name="comment"
+					cols="40"
+					rows="10"
+					id="id_comment"
+				></textarea>
+			</p>
+
+			<div class="field__button">
+				<input
+					type="submit"
+					class="main__product_button margin button"
+					value="Оформить заказ"
+				/>
+				<input type="hidden" name="url_from" value="{{request.path}}" />
+			</div>
+		</form>
+	</div>
+</section>
+<script>
+	function changeForm() {
+		document.querySelectorAll("#self, #delivery").forEach(function (el) {
+			el.addEventListener("change", function () {
+				if (document.getElementById("delivery").hasAttribute("selected")) {
+					document.getElementById("p_address").style.display =
+						"block";
+				} else if (document.getElementById("self").hasAttribute("selected")) {
+					document.getElementById("p_address").style.display =
+						"none";
+				}
+			});
+		});
+	}
+</script>
+{% endblock content %}
