@@ -34,9 +34,11 @@
                     {% endif %} 
                     </td>
 					<td>
-						<button class="fillButtonBorder add">-</button>
-                        <span>{{i.qty}}</span>
-                        <button class="fillButtonBorder">+</button>
+                        <div class="center">
+                            <button class="overlayLeftBtn delete-qty qty-properties-btns"><span>-</span></button>
+                            <span>{{i.qty}}</span>
+                            <button class="overlayLeftBtn add-qty qty-properties-btns"><span>+</span></button>
+                        </div>
 					</td>
 					<td>{{i.total_price_cart|floatformat:2}} ₽</td>
 					<td>

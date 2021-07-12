@@ -719,8 +719,41 @@ th {
 	margin: 25px 0;
 }
 
+.center{
+	display: flex;
+	align-items: center;
+	justify-content: center;
+}
+
+.center span:nth-child(2){
+	margin: 0px 10px;
+}
+
 .wishlist-del {
 	width: 190px;
+}
+
+.add-qty{
+	background-color: #77ff77;
+}
+
+.add-qty::before{
+	background-color: #00fc00;
+}
+
+.delete-qty{
+	background-color: rgb(255, 118, 118);
+}
+
+.delete-qty::before{
+	background-color: #ff0000;
+}
+
+.qty-properties-btns{
+	text-align: center;
+	height: 20px;
+	width: 20px;
+	padding: 0;
 }
 
 /* CATEGORY DETAIL */

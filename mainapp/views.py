@@ -1,11 +1,13 @@
 from django.contrib.auth import get_user_model
+from django.db import transaction
 from django.db.models import Q
 from django.http import HttpResponseRedirect
 from django.http.response import HttpResponse
 from django.views.generic import DetailView, View, ListView, TemplateView
+from django.contrib import messages
 
 from specs.models import ProductFeatures
-from .forms import ReviewForm, RatingForm
+from .forms import ReviewForm, RatingForm, OrderForm
 from .models import Category, Product, Rating
 
 User = get_user_model()
@@ -247,3 +249,24 @@ class AddStarRating(View):
             return HttpResponse(status=201)
         else:
             return HttpResponse(status=400)
+
+
+class MakeOrderView(View):
+
+    @transaction.atomic
+    def post(self, request, *args, **kwargs):
+        form = OrderForm(request.POST or None)
+
+        if form.is_valid():
+            new_order = form.save(commit=False)
+            new_order.first_name = form.cleaned_data['first_name']
+            new_order.last_name = form.cleaned_data['last_name']
+            new_order.phone = form.cleaned_data['phone']
+            new_order.address = form.cleaned_data['address']
+            new_order.buying_type = form.cleaned_data['buying_type']
+            new_order.order_date = form.cleaned_data['order_date']
+            new_order.comment = form.cleaned_data['comment']
+            new_order.save()
+            messages.add_message(request, messages.INFO, 'Спасибо за заказ! Менеджер с Вами свяжется')
+            return HttpResponseRedirect('/')
+        return HttpResponseRedirect('/checkout/')
