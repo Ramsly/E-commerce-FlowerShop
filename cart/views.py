@@ -25,7 +25,8 @@ def cart_add(request, id):
         price = float(replace_to_dot(request.POST.get("price")))
         add_data = {
             "id": int(id),
-            "qty": 1, # request.POST.get("получить из input в форме")
+            "title": request.POST.get("title"),
+            "qty": 1,  # request.POST.get("получить из input в форме")
             "price": price,
             "total_price_cart": price * 1
         }

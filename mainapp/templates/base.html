@@ -238,6 +238,7 @@
                                                 {% csrf_token %}
                                                 <input type="hidden" name="url_from" value="{{request.path}}" />
                                                 <input type="hidden" name="price" value="{{product.price}}" />
+                                                <input type="hidden" name="title" value="{{ product.title }}">
                                                 <button class="overlayLeftBtn">
                                                     <span>
                                                         Заказать
@@ -268,7 +269,6 @@
 						</div>
 					</article>
 					{% endfor %}
-                    {% comment %} Pagination {% endcomment %}
                     <div class="main__pagination">
                         {% if page_obj.has_previous %}
                             <a class="main__pagination_arrow" href="?page={{ page_obj.previous_page_number }}"><i class="fas fa-chevron-left"></i></a>

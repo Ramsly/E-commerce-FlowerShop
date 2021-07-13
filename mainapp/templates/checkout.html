@@ -82,7 +82,6 @@
 				<select
 					name="buying_type"
 					id="id_buying_type"
-					onchange="changeForm()"
 				>
 					<option id="self" value="self" selected>Самовывоз</option>
 
@@ -107,31 +106,14 @@
 					id="id_comment"
 				></textarea>
 			</p>
-
 			<div class="field__button">
 				<input
 					type="submit"
 					class="main__product_button margin button"
 					value="Оформить заказ"
 				/>
-				<input type="hidden" name="url_from" value="{{request.path}}" />
 			</div>
 		</form>
 	</div>
 </section>
-<script>
-	function changeForm() {
-		document.querySelectorAll("#self, #delivery").forEach(function (el) {
-			el.addEventListener("change", function () {
-				if (document.getElementById("delivery").hasAttribute("selected")) {
-					document.getElementById("p_address").style.display =
-						"block";
-				} else if (document.getElementById("self").hasAttribute("selected")) {
-					document.getElementById("p_address").style.display =
-						"none";
-				}
-			});
-		});
-	}
-</script>
 {% endblock content %}
