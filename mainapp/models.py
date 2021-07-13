@@ -79,6 +79,7 @@ class Product(models.Model):
         }
 
     class Meta:
+        verbose_name = "Товары"
         verbose_name_plural = "Товары"
 
 # class Customer(models.Model):
@@ -103,7 +104,7 @@ class Product(models.Model):
 #         return reverse("customer", kwargs={"slug": self.slug})
 
 #     class Meta:
-        verbose_name_plural = "Покупатели"
+        # verbose_name_plural = "Покупатели"
 
 
 class Reviews(models.Model):

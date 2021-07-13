@@ -106,6 +106,27 @@
 					id="id_comment"
 				></textarea>
 			</p>
+            <p>
+            {% for i in cart_session %} {% for product in products %} {% if i.id == product.id %}
+                {% if not product.sale %}
+				<input
+					type="text"
+					name="address"
+					maxlength="1024"
+                    value="{{product.title}} * {{i.qty}} - {{i.price}}₽"
+					id="id_address"
+				/>
+                {% else %}
+                <input
+					type="text"
+					name="address"
+					maxlength="1024"
+                    value="{{product.title}} * {{i.qty}} - {{product.get_total_sale}}₽"
+					id="id_address"
+				/>
+                {% endif %}
+            {% endif %} {% endfor %} {% endfor %}
+			</p>
 			<div class="field__button">
 				<input
 					type="submit"
