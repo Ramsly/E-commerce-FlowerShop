@@ -85,6 +85,29 @@ User = get_user_model()
 #             "phone",
 #         ]
 
+class OrderForm(forms.Form):
+    """Форма заказа (отправка Email)"""
+
+    BUYING_TYPE_SELF = 'self'
+    BUYING_TYPE_DELIVERY = 'delivery'
+
+    BUYING_TYPE_CHOICES = (
+        (BUYING_TYPE_SELF, 'Самовывоз'),
+        (BUYING_TYPE_DELIVERY, 'Доставка')
+    )
+
+    first_name = forms.CharField(label="Имя")
+    last_name = forms.CharField(label="Фамилия")
+    telephone = forms.IntegerField(label="Номер телефона")
+    email = forms.EmailField(label="Email")
+    buying_type = forms.CharField(
+        label='Тип заказа',
+        choices=BUYING_TYPE_CHOICES,
+        default=BUYING_TYPE_SELF
+    )
+    address = forms.CharField(label='Адрес')
+    comment = forms.TextField(label='Комментарий к заказу')
+
 
 class ReviewForm(forms.ModelForm):
     """Форма отзывов"""

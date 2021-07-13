@@ -1,8 +1,5 @@
 from django.shortcuts import redirect, render
-from mainapp.models import Product
-from django.http import JsonResponse
 from .utils import *
-# from django.views.decorators.csrf import csrf_exempt
 
 
 def cart(request):

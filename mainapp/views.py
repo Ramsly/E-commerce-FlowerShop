@@ -3,12 +3,13 @@ from django.db import transaction
 from django.db.models import Q
 from django.http import HttpResponseRedirect
 from django.http.response import HttpResponse
-from django.shortcuts import render
+from shop.settings import EMAIL_HOST_USER
+from django.core.mail import send_mail
 from django.views.generic import DetailView, View, ListView, TemplateView
-from django.contrib import messages
 
 from specs.models import ProductFeatures
-from .forms import ReviewForm, RatingForm
+from cart.views import cart_add
+from .forms import ReviewForm, RatingForm, OrderForm
 from .models import Category, Product, Rating
 
 User = get_user_model()
@@ -123,35 +124,12 @@ class ReviewPageView(TemplateView):
     template_name = "reviews.html"
 
 
-# class MakeOrderView(View):
-#     @transaction.atomic
-#     def post(self, request, *args, **kwargs):
-#         form = OrderForm(request.POST or None)
-#         customer = Customer.objects.get(user=request.user)
-#         if form.is_valid():
-#             new_order = form.save(commit=False)
-#             new_order.customer = customer
-#             new_order.first_name = form.cleaned_data["first_name"]
-#             new_order.last_name = form.cleaned_data["last_name"]
-#             new_order.phone = form.cleaned_data["phone"]
-#             new_order.address = form.cleaned_data["address"]
-#             new_order.buying_type = form.cleaned_data["buying_type"]
-#             new_order.order_date = form.cleaned_data["order_date"]
-#             new_order.comment = form.cleaned_data["comment"]
-#             new_order.save()
-#             # self.cart.in_order = True
-#             request.session("cart").save()
-#             new_order.cart = request.session("cart")
-#             new_order.save()
-#             customer.orders.add(new_order)
-#             if request.session.get("cart"):
-#                 del request.session["cart"]
-#             messages.add_message(
-#                 request, messages.INFO, "Спасибо за заказ! Менеджер с Вами свяжется"
-#             )
-#             return HttpResponseRedirect("/")
-#         return HttpResponseRedirect("/checkout/")
+class MakeOrderView(View):
 
+    def post(self, request, *args, **kwargs):
+        order = OrderForm(request.POST or None)
+        subject = "Order"
+        message = ""
 
 # class LoginView(View):
 
