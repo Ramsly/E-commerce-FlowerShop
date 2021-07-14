@@ -100,13 +100,12 @@ class OrderForm(forms.Form):
     last_name = forms.CharField(label="Фамилия")
     telephone = forms.IntegerField(label="Номер телефона")
     email = forms.EmailField(label="Email")
-    buying_type = forms.CharField(
+    buying_type = forms.ChoiceField(
         label='Тип заказа',
         choices=BUYING_TYPE_CHOICES,
-        default=BUYING_TYPE_SELF
     )
     address = forms.CharField(label='Адрес')
-    comment = forms.TextField(label='Комментарий к заказу')
+    comment = forms.CharField(label='Комментарий к заказу')
 
 
 class ReviewForm(forms.ModelForm):

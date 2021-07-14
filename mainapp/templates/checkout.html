@@ -45,84 +45,36 @@
 <section class="fields">
 	<h3 class="main__title">Форма заказа</h3>
 	<div class="field__container">
-		<form action="" method="POST">
+		<form action="{% url "make_order" %}" method="POST">
 			{% csrf_token %}
-			<p>
-				<label for="id_first_name">Имя:</label>
-				<input
-					type="text"
-					name="first_name"
-					maxlength="255"
-					required
-					id="id_first_name"
-				/>
-			</p>
-			<p>
-				<label for="id_last_name">Фамилия:</label>
-				<input
-					type="text"
-					name="last_name"
-					maxlength="255"
-					required
-					id="id_last_name"
-				/>
-			</p>
-			<p>
-				<label for="id_phone">Телефон:</label>
-				<input
-					type="text"
-					name="phone"
-					maxlength="20"
-					required
-					id="id_phone"
-				/>
-			</p>
-			<p>
-				<label for="id_buying_type">Тип заказа:</label>
-				<select
-					name="buying_type"
-					id="id_buying_type"
-				>
-					<option id="self" value="self" selected>Самовывоз</option>
-
-					<option id="delivery" value="delivery" >Доставка</option>
-				</select>
-			</p>
-			<p id="p_address">
-				<label for="id_address">Адрес:</label>
-				<input
-					type="text"
-					name="address"
-					maxlength="1024"
-					id="id_address"
-				/>
-			</p>
-			<p>
-				<label for="id_comment">Комментарий к заказу:</label>
-				<textarea
-					name="comment"
-					cols="40"
-					rows="10"
-					id="id_comment"
-				></textarea>
-			</p>
-            <p>
+			<p><label for="id_first_name">Имя:</label> <input type="text" name="first_name" required id="id_first_name"></p>
+            <p><label for="id_last_name">Фамилия:</label> <input type="text" name="last_name" required id="id_last_name"></p>
+            <p><label for="id_telephone">Номер телефона:</label> <input type="number" name="telephone" required id="id_telephone"></p>
+            <p><label for="id_email">Email:</label> <input type="email" name="email" required id="id_email"></p>
+            <p><label for="id_buying_type">Тип заказа:</label>
+                <select name="buying_type" id="id_buying_type">
+                  <option value="Самовывоз">Самовывоз</option>
+                  <option value="Доставка">Доставка</option>
+                </select>
+            </p>
+            <p><label for="id_address">Адрес:</label> <input type="text" name="address" required id="id_address"></p>
+            <p><label for="id_comment">Комментарий к заказу:</label> <input type="text" name="comment" id="id_comment"></p>
             {% for i in cart_session %} {% for product in products %} {% if i.id == product.id %}
                 {% if not product.sale %}
 				<input
 					type="text"
-					name="address"
+					name="product"
 					maxlength="1024"
                     value="{{product.title}} * {{i.qty}} - {{i.price}}₽"
-					id="id_address"
+					id="id_product"
 				/>
                 {% else %}
                 <input
 					type="text"
-					name="address"
+					name="product"
 					maxlength="1024"
                     value="{{product.title}} * {{i.qty}} - {{product.get_total_sale}}₽"
-					id="id_address"
+					id="id_product"
 				/>
                 {% endif %}
             {% endif %} {% endfor %} {% endfor %}

@@ -1,5 +1,5 @@
 from django.contrib.auth import get_user_model
-from django.db import transaction
+from django.shortcuts import render
 from django.db.models import Q
 from django.http import HttpResponseRedirect
 from django.http.response import HttpResponse
@@ -8,7 +8,6 @@ from django.core.mail import send_mail
 from django.views.generic import DetailView, View, ListView, TemplateView
 
 from specs.models import ProductFeatures
-from cart.views import cart_add
 from .forms import ReviewForm, RatingForm, OrderForm
 from .models import Category, Product, Rating
 
@@ -118,6 +117,11 @@ class CheckoutView(TemplateView):
     
     template_name = "checkout.html"
 
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['form'] = OrderForm()
+        return context
+
 
 class ReviewPageView(TemplateView):
 
@@ -128,8 +132,32 @@ class MakeOrderView(View):
 
     def post(self, request, *args, **kwargs):
         order = OrderForm(request.POST or None)
-        subject = "Order"
-        message = ""
+        subject = "Venesia Flower Shop | Ваш заказ №"
+        message = f"""\t\tВаши данные:
+                {request.POST.get('first_name')}
+                {request.POST.get('last_name')}
+                {request.POST.get('telephone')}
+                {request.POST.get('email')}
+                {request.POST.get('buying_type')}
+                {request.POST.get('address')}
+                {request.POST.get('comment')}
+                \tДанные заказа:
+                {request.POST.get('product')}
+                """
+        recipient = f"{request.POST.get('email')}"
+        send_mail(subject, message, EMAIL_HOST_USER, [recipient], fail_silently=False)
+        if request.session.get('cart'):
+            for item in request.session["cart"]:
+                if item["id"] == id:
+                    item.clear()
+
+                while {} in request.session["cart"]:
+                    request.session["cart"].remove({})
+
+                if not request.session["cart"]:
+                    del request.session["cart"]
+        request.session.modified = True
+        return HttpResponseRedirect("/")
 
 # class LoginView(View):
 
