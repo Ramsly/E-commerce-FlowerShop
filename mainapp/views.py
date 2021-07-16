@@ -146,17 +146,17 @@ class MakeOrderView(View):
                 """
         recipient = f"{request.POST.get('email')}"
         send_mail(subject, message, EMAIL_HOST_USER, [recipient], fail_silently=False)
-        if request.session.get('cart'):
-            for item in request.session["cart"]:
-                if item["id"] == id:
-                    item.clear()
-
-                while {} in request.session["cart"]:
-                    request.session["cart"].remove({})
-
-                if not request.session["cart"]:
-                    del request.session["cart"]
-        request.session.modified = True
+        # if request.session.get('cart'):
+        #     for item in request.session["cart"]:
+        #         if item["id"] == id:
+        #             item.clear()
+        #
+        #         while {} in request.session["cart"]:
+        #             request.session["cart"].remove({})
+        #
+        #         if not request.session["cart"]:
+        #             del request.session["cart"]
+        # request.session.modified = True
         return HttpResponseRedirect("/")
 
 # class LoginView(View):
