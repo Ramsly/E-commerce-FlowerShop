@@ -1,11 +1,14 @@
+from cart.context_processors import total_price
 from django.contrib.auth import get_user_model
 from django.shortcuts import render
+from django.template.loader import render_to_string
 from django.db.models import Q
 from django.http import HttpResponseRedirect
 from django.http.response import HttpResponse
 from shop.settings import EMAIL_HOST_USER
 from django.core.mail import send_mail
 from django.views.generic import DetailView, View, ListView, TemplateView
+from django.core.mail import EmailMultiAlternatives
 
 from specs.models import ProductFeatures
 from .forms import ReviewForm, RatingForm, OrderForm
@@ -20,7 +23,7 @@ class MyQ(Q):
 
 
 class BaseView(ListView):
-    
+
     paginate_by = 12
     model = Product
     context_object_name = "products"
@@ -45,17 +48,17 @@ class ProductDetailView(DetailView):
 
         ip = AddStarRating.get_client_ip(self, self.request)
 
-        product_id = Product.objects.get(slug=kwargs['slug']).id
+        product_id = Product.objects.get(slug=kwargs["slug"]).id
         stars = self.get_user_stars(ip, product_id)
         self.object = self.get_object()
         context = self.get_context_data(object=self.object)
         if stars:
-            context['stars'] = str(stars)
+            context["stars"] = str(stars)
         return self.render_to_response(context)
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['star_form'] = RatingForm()
+        context["star_form"] = RatingForm()
         return context
 
 
@@ -114,12 +117,12 @@ class AboutUsView(TemplateView):
 
 
 class CheckoutView(TemplateView):
-    
+
     template_name = "checkout.html"
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['form'] = OrderForm()
+        context["form"] = OrderForm()
         return context
 
 
@@ -129,35 +132,44 @@ class ReviewPageView(TemplateView):
 
 
 class MakeOrderView(View):
-
     def post(self, request, *args, **kwargs):
-        order = OrderForm(request.POST or None)
-        subject = "Venesia Flower Shop | Ваш заказ №"
-        message = f"""\t\tВаши данные:
-                {request.POST.get('first_name')}
-                {request.POST.get('last_name')}
-                {request.POST.get('telephone')}
-                {request.POST.get('email')}
-                {request.POST.get('buying_type')}
-                {request.POST.get('address')}
-                {request.POST.get('comment')}
-                \tДанные заказа:
-                {request.POST.get('product')}
-                """
-        recipient = f"{request.POST.get('email')}"
-        send_mail(subject, message, EMAIL_HOST_USER, [recipient], fail_silently=False)
-        if request.session.get('cart'):
-            for item in request.session["cart"]:
-                if item["id"] == id:
-                    item.clear()
-
-                while {} in request.session["cart"]:
-                    request.session["cart"].remove({})
-
-                if not request.session["cart"]:
-                    del request.session["cart"]
-        request.session.modified = True
+        form = OrderForm(request.POST)
+        if form.is_valid():
+            data = {
+                "first_name": form.cleaned_data["first_name"],
+                "last_name": form.cleaned_data["last_name"],
+                "telephone": form.cleaned_data["telephone"],
+                "email": form.cleaned_data["email"],
+                "buying_type": form.cleaned_data["buying_type"],
+                "address": form.cleaned_data["address"],
+                "comment": form.cleaned_data["comment"],
+            }
+            html_body = render_to_string("templates/html_email.html", data)
+            msg = EmailMultiAlternatives(
+                subject="Venesia Flower Shop | Ваш заказ №",
+                to=str([form.cleaned_data["email"]]),
+            ).attach_alternative(html_body, "text/html")
+            msg.send()
         return HttpResponseRedirect("/")
+        # subject = "Venesia Flower Shop | Ваш заказ №"
+        # html_msg = render_to_string("templates/html_msg.html", {'context': 'values'})
+        # message = f"""\t\tВаши данные:
+        #         {request.POST.get('first_name')}
+        #         {request.POST.get('last_name')}
+        #         {request.POST.get('telephone')}
+        #         {request.POST.get('email')}
+        #         {request.POST.get('buying_type')}
+        #         {request.POST.get('address')}
+        #         {request.POST.get('comment')}
+        #         \tДанные заказа:
+
+        #         Всего:
+        #         """
+        #         {"₽ ".join([item['price'] for item in request.session.get('cart')])}
+        # recipient = f"{request.POST.get('email')}"
+        # send_mail(subject, message, EMAIL_HOST_USER, [recipient], fail_silently=False, html_message=html_msg)
+        # return HttpResponseRedirect("/")
+
 
 # class LoginView(View):
 
@@ -220,6 +232,7 @@ class MakeOrderView(View):
 #         }
 #         return render(request, 'registration.html', context)
 
+
 class AddReviewToProduct(View):
     """Отзывы"""
 
@@ -237,12 +250,13 @@ class AddReviewToProduct(View):
 
 class AddStarRating(View):
     """Добавление рейтинга фильму"""
+
     def get_client_ip(self, request):
-        x_forwarded_for = request.META.get('HTTP_X_FORWARDED_FOR')
+        x_forwarded_for = request.META.get("HTTP_X_FORWARDED_FOR")
         if x_forwarded_for:
-            ip = x_forwarded_for.split(',')[0]
+            ip = x_forwarded_for.split(",")[0]
         else:
-            ip = request.META.get('REMOTE_ADDR')
+            ip = request.META.get("REMOTE_ADDR")
         return ip
 
     def post(self, request):
@@ -251,10 +265,8 @@ class AddStarRating(View):
             Rating.objects.update_or_create(
                 ip=self.get_client_ip(request),
                 product_id=int(request.POST.get("product")),
-                defaults={'star_id': int(request.POST.get("star"))}
+                defaults={"star_id": int(request.POST.get("star"))},
             )
             return HttpResponse(status=201)
         else:
             return HttpResponse(status=400)
-
-
