@@ -129,23 +129,22 @@ class ReviewPageView(TemplateView):
 
 class MakeOrderView(View):
     def post(self, request, *args, **kwargs):
-        form = OrderForm(request.POST)
-        if form.is_valid():
-            data = {
-                "first_name": form.cleaned_data["first_name"],
-                "last_name": form.cleaned_data["last_name"],
-                "telephone": form.cleaned_data["telephone"],
-                "email": form.cleaned_data["email"],
-                "buying_type": form.cleaned_data["buying_type"],
-                "address": form.cleaned_data["address"],
-                "comment": form.cleaned_data["comment"],
-            }
-            html_body = render_to_string("templates/html_email.html", data)
-            msg = EmailMultiAlternatives(
-                subject="Venesia Flower Shop | Ваш заказ №",
-                to=str([form.cleaned_data["email"]]),
-            ).attach_alternative(html_body, "text/html")
-            msg.send()
+        subject, from_email, to = 'Venesia Flower Shop | Заказ №', 'theluckyfeed1@gmail.com', f'{request.POST.get("email")}'
+        text_content = ''
+        data = {
+            "first_name": request.POST.get('first_name'),
+            "last_name": request.POST.get('last_name'),
+            "telephone": request.POST.get('telephone'),
+            "email": request.POST.get('email'),
+            "buying_type": request.POST.get('buying_type'),
+            "address": request.POST.get('address'),
+            "comment": request.POST.get('comment'),
+            "order": request.POST.get("product")
+        }
+        html_content = render_to_string("html_email.html", data)
+        msg = EmailMultiAlternatives(subject, text_content, from_email, [to])
+        msg.attach_alternative(html_content, "text/html")
+        msg.send()
         return HttpResponseRedirect("/")
         # subject = "Venesia Flower Shop | Ваш заказ №"
         # html_msg = render_to_string("templates/html_msg.html", {'context': 'values'})

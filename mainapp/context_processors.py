@@ -1,4 +1,5 @@
 from .models import Category, Product
+from .forms import OrderForm
 
 
 def products(request):
@@ -7,3 +8,5 @@ def products(request):
 
 def categories(request):
     return {"categories": Category.objects.all()}
+
+
