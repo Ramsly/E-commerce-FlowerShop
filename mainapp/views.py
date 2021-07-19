@@ -127,7 +127,7 @@ class ReviewPageView(TemplateView):
     template_name = "reviews.html"
 
 
-class MakeOrderView(View):
+class SendToEmailOrderView(View):
     def post(self, request, *args, **kwargs):
         subject, from_email, to = 'Venesia Flower Shop | Заказ №', 'theluckyfeed1@gmail.com', f'{request.POST.get("email")}'
         text_content = ''
@@ -146,24 +146,6 @@ class MakeOrderView(View):
         msg.attach_alternative(html_content, "text/html")
         msg.send()
         return HttpResponseRedirect("/")
-        # subject = "Venesia Flower Shop | Ваш заказ №"
-        # html_msg = render_to_string("templates/html_msg.html", {'context': 'values'})
-        # message = f"""\t\tВаши данные:
-        #         {request.POST.get('first_name')}
-        #         {request.POST.get('last_name')}
-        #         {request.POST.get('telephone')}
-        #         {request.POST.get('email')}
-        #         {request.POST.get('buying_type')}
-        #         {request.POST.get('address')}
-        #         {request.POST.get('comment')}
-        #         \tДанные заказа:
-
-        #         Всего:
-        #         """
-        #         {"₽ ".join([item['price'] for item in request.session.get('cart')])}
-        # recipient = f"{request.POST.get('email')}"
-        # send_mail(subject, message, EMAIL_HOST_USER, [recipient], fail_silently=False, html_message=html_msg)
-        # return HttpResponseRedirect("/")
 
 
 # class LoginView(View):
