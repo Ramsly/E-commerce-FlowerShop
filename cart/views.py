@@ -1,3 +1,4 @@
+from django.http import JsonResponse
 from django.shortcuts import redirect, render
 from .utils import *
 
@@ -23,7 +24,7 @@ def cart_add(request, id):
         add_data = {
             "id": int(id),
             "title": request.POST.get("title"),
-            "qty": 1,  # request.POST.get("получить из input в форме")
+            "qty": 1,
             "price": price,
             "total_price_cart": price * 1
         }
@@ -41,6 +42,13 @@ def cart_add(request, id):
                         del request.session["wishlist"]
             request.session.modified = True
     return redirect(request.POST.get("url_from"))
+
+
+# def cart_add_qty(request):
+#     if request.method == "POST" and request.is_ajax():
+#         for item in request.session["cart"]:
+#             if item["id"] == int(id):
+
 
 
 def cart_delete_item(request, id):
