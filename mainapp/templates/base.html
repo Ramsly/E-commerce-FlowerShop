@@ -232,13 +232,15 @@
 								<div class="main__product_button margin">
 										{% if product.available %}
                                             <form
-                                                action="{% url 'cart:cart-add' id=product.id %}"
+                                                action="{% url 'cart:cart-add' %}"
                                                 method="POST"
+                                                id="cartAdd"
                                             >
                                                 {% csrf_token %}
                                                 <input type="hidden" name="url_from" value="{{request.path}}" />
-                                                <input type="hidden" name="price" value="{{product.price}}" />
-                                                <input type="hidden" name="title" value="{{ product.title }}">
+                                                <input type="hidden" id="id" value="{{ product.id }}"/>
+                                                <input type="hidden" id="price" name="price" value="{{product.price}}" />
+                                                <input type="hidden" id="title" name="title" value="{{ product.title }}">
                                                 <button class="overlayLeftBtn">
                                                     <span>
                                                         Заказать
