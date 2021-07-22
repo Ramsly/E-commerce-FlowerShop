@@ -20,7 +20,10 @@ $(document).ready(function (){
         event.preventDefault();
         $.ajax({
             type: "POST",
-            url: "add/",
+            url: "/cart/add/",
+            headers: {
+            'X-CSRFToken': csrftoken
+            },
             data:{
                 id: $("#id").val(),
                 title: $("#price").val(),
@@ -30,7 +33,7 @@ $(document).ready(function (){
                 alert("Продукт добавлен!")
             },
             error: function (){
-                alert("Ошибка!")
+                console.log(JSON)
             },
         })
         return false;

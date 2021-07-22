@@ -23,7 +23,7 @@
 					</th>
 					<td class="main__image">
 						<a href="{{product.get_absolute_url}}">
-							<img src="{{ product.image.url }}" />
+							<img alt="{{ product.title }}" src="{{ product.image.url }}" />
 						</a>
 					</td>
 					<td>
@@ -43,7 +43,7 @@
 					<td>{{i.total_price_cart|floatformat:2}} ₽</td>
 					<td>
 						<form
-							action="{% url 'cart:cart-remove' id=product.id %}"
+							action="{% url 'cart:cart-remove' %}"
 							method="POST"
 						>
 							{% csrf_token %}
@@ -99,4 +99,3 @@
 {% else %}
 <h3 class="main__title">Ваша корзина пуста</h3>
 {% endif %} {% endblock content %}
-<script src="{% static 'js/cart.js' %}"></script>
