@@ -10,8 +10,8 @@ def cart(request):
     return render(request, "cart.html", context)
 
 
-def cart_add(request, id):
-    if request.method == "POST":
+def cart_add(request):
+    if request.method == "POST" :
         if not request.session.get("cart"):
             request.session["cart"] = list()
         else:
@@ -21,7 +21,7 @@ def cart_add(request, id):
             False,
         )
         price = float(replace_to_dot(request.POST.get("price")))
-        add_data = {
+        app_data = {
             "id": int(id),
             "title": request.POST.get("title"),
             "qty": 1,
@@ -29,7 +29,7 @@ def cart_add(request, id):
             "total_price_cart": price * 1
         }
         if not item_exist:
-            request.session["cart"].append(add_data)
+            request.session["cart"].append(app_data)
             if request.session.get('wishlist'):
                 for item in request.session["wishlist"]:
                     if item["id"] == int(id):
@@ -41,6 +41,16 @@ def cart_add(request, id):
                     if not request.session["wishlist"]:
                         del request.session["wishlist"]
             request.session.modified = True
+    if request.is_ajax():
+        json_data = {
+            "id": int(id),
+            "title": request.POST.get("title"),
+            "qty": 1,
+            "price": price,
+            "total_price_cart": price * 1
+        }
+        request.session.modified = True
+        return JsonResponse(json_data)
     return redirect(request.POST.get("url_from"))
 
 
@@ -51,7 +61,7 @@ def cart_add(request, id):
 
 
 
-def cart_delete_item(request, id):
+def cart_delete_item(request):
     if request.method == "POST":
         for item in request.session["cart"]:
             if item["id"] == int(id):
@@ -64,7 +74,17 @@ def cart_delete_item(request, id):
             del request.session["cart"]
 
         request.session.modified = True
-
+    if request.is_ajax():
+        price = float(replace_to_dot(request.POST.get("price")))
+        json_data = {
+            "id": int(id),
+            "title": request.POST.get("title"),
+            "qty": 1,
+            "price": price,
+            "total_price_cart": price * 1
+        }
+        request.session.modified = True
+        return JsonResponse(json_data)
     return redirect(request.POST.get("url_from"))
 
 
