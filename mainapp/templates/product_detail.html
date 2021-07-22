@@ -22,12 +22,12 @@
 <section class="product">
 	<div class="product__container">
 		<div class="product__first_block">
-			<img src="{{ product.image.url }}" />
+			<img alt="{{ product.title }}" src="{{ product.image.url }}" />
 			<div class="main__block_third">
 				<div class="main__product_button margin">
 					{% if product.available %}
 					<form
-						action="{% url 'cart:cart-add' id=product.id %}"
+						action="{% url 'cart:cart-add' %}"
 						method="POST"
                         class="product__detail "
 					>

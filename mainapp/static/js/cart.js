@@ -15,5 +15,32 @@ function getCookie(name) {
 }
 const csrftoken = getCookie('csrftoken');
 
+$(document).ready(function (){
+    $("#cartAdd").submit(function (event){
+        event.preventDefault();
+        $.ajax({
+            type: "POST",
+            url: "/cart/add/",
+            headers: {
+            'X-CSRFToken': csrftoken
+            },
+            data:{
+                id: $("#id").val(),
+                title: $("#price").val(),
+                price: $("#title").val(),
+            },
+            success: function () {
+                alert("Продукт добавлен!")
+            },
+            error: function (){
+                console.log(JSON)
+            },
+        })
+        return false;
+    })
+})
+
+
+
 
 

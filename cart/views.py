@@ -1,4 +1,5 @@
-from django.http import JsonResponse
+from django.http import JsonResponse, HttpResponseRedirect
+from django.urls import reverse_lazy
 from django.shortcuts import redirect, render
 from .utils import *
 
@@ -11,7 +12,11 @@ def cart(request):
 
 
 def cart_add(request):
+<<<<<<< HEAD
     if request.method == "POST" :
+=======
+    if request.method == "POST":
+>>>>>>> 712e24a611dd456bd343730962eb195074440ca7
         if not request.session.get("cart"):
             request.session["cart"] = list()
         else:
@@ -34,13 +39,12 @@ def cart_add(request):
                 for item in request.session["wishlist"]:
                     if item["id"] == int(id):
                         item.clear()
-
                     while {} in request.session["wishlist"]:
                         request.session["wishlist"].remove({})
-
                     if not request.session["wishlist"]:
                         del request.session["wishlist"]
             request.session.modified = True
+<<<<<<< HEAD
     if request.is_ajax():
         json_data = {
             "id": int(id),
@@ -51,6 +55,9 @@ def cart_add(request):
         }
         request.session.modified = True
         return JsonResponse(json_data)
+=======
+        return JsonResponse(add_data)
+>>>>>>> 712e24a611dd456bd343730962eb195074440ca7
     return redirect(request.POST.get("url_from"))
 
 
