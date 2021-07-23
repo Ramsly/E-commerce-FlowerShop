@@ -33,7 +33,7 @@ $(document).ready(function (){
                 alert("Продукт добавлен!")
             },
             error: function (){
-                console.log(JSON)
+                console.log(csrftoken)
             },
         })
         return false;
