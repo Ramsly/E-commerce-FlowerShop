@@ -20,7 +20,7 @@ $(document).ready(function (){
         event.preventDefault();
         $.ajax({
             type: "POST",
-            url: "/cart/add/",
+            url: "/cart/add",
             headers: {
             'X-CSRFToken': csrftoken
             },
