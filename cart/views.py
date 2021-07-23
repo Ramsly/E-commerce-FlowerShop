@@ -12,11 +12,7 @@ def cart(request):
 
 
 def cart_add(request):
-<<<<<<< HEAD
     if request.method == "POST" :
-=======
-    if request.method == "POST":
->>>>>>> 712e24a611dd456bd343730962eb195074440ca7
         if not request.session.get("cart"):
             request.session["cart"] = list()
         else:
@@ -44,20 +40,7 @@ def cart_add(request):
                     if not request.session["wishlist"]:
                         del request.session["wishlist"]
             request.session.modified = True
-<<<<<<< HEAD
-    if request.is_ajax():
-        json_data = {
-            "id": int(id),
-            "title": request.POST.get("title"),
-            "qty": 1,
-            "price": price,
-            "total_price_cart": price * 1
-        }
-        request.session.modified = True
-        return JsonResponse(json_data)
-=======
-        return JsonResponse(add_data)
->>>>>>> 712e24a611dd456bd343730962eb195074440ca7
+        return JsonResponse(app_data)
     return redirect(request.POST.get("url_from"))
 
 

@@ -249,53 +249,6 @@
 									</button>
 								</form>
 								<div class="main__product_button margin">
-<<<<<<< HEAD
-									{% if product.available %} 
-									<form
-										action="{% url 'cart:cart-add' id=product.id %}"
-										method="POST"
-									>
-										{% csrf_token %}
-										<input
-											type="hidden"
-											name="url_from"
-											value="{{request.path}}"
-										/>
-										<input
-											type="hidden"
-											name="price"
-											value="{{product.price}}"
-										/>
-										<input
-											type="hidden"
-											name="title"
-											value="{{ product.title }}"
-										/>
-										<button class="overlayLeftBtn">
-											<span>
-												Заказать
-												<i class="fas fa-shopping-cart"></i>
-											</span>
-										</button>
-									</form>
-									{% else %}
-									<a href="{{product.get_absolute_url}}">
-										<button
-											class="
-												main__product_button
-												button
-												not__available_btn
-												pointer
-											"
-										>
-											<span>
-												Просмотр
-												<i class="far fa-eye"></i>
-											</span>
-										</button>
-									</a>
-									{% endif %}
-=======
 										{% if product.available %}
                                             <form
                                                 action="{% url 'cart:cart-add' %}"
@@ -332,7 +285,6 @@
                                             </button>
                                             </a>
 										{% endif %}
->>>>>>> 712e24a611dd456bd343730962eb195074440ca7
 								</div>
 							</div>
 						</div>
