@@ -56,7 +56,7 @@
 										>О нас</span
 									></a
 								>
-								<a href="{% url "reviews" %}"
+								<a href="{% url 'reviews' %}"
 									><span class="nav__link borderLeftRight magnifyText"
 										>Отзывы</span
 									></a
@@ -104,20 +104,25 @@
 				</ul>
 				<ul class="nav__list">
 					<li class="nav__item">
-						<a class="nav__link purple-color" href="{% url 'cart:cart' %}">
+						<a
+							class="nav__link purple-color"
+							href="{% url 'cart:cart' %}"
+						>
 							<span class="badge">{{total_qty_cart}}</span>
 							<i class="fas fa-shopping-cart"></i>
 						</a>
 					</li>
-                    <li class="nav__item">
-                        <a class="nav__link purple-color" href="{% url 'wishlist:wishlist' %}">
-                            <span class="badge">
-                                {{total_qty_wishlist}}
-                            </span>
-                            <i class="fas fa-heart"></i>
-                        </a>
-                    </li>
-					{% comment %} <li class="nav__item">
+					<li class="nav__item">
+						<a
+							class="nav__link purple-color"
+							href="{% url 'wishlist:wishlist' %}"
+						>
+							<span class="badge"> {{total_qty_wishlist}} </span>
+							<i class="fas fa-heart"></i>
+						</a>
+					</li>
+					{% comment %}
+					<li class="nav__item">
 						<div class="nav__dropdown_container">
 							<a class="nav__link" href="">
 								<i class="fas fa-user"></i>
@@ -134,7 +139,7 @@
 									><span class="nav__link borderLeftRight magnifyText"
 										>Регистрация</span
 									></a
-								> 
+								>
 								{% else %}
 								<a href=""
 									><span class="nav__link borderLeftRight magnifyText"
@@ -149,7 +154,8 @@
 								{% endif %}
 							</div>
 						</div>
-					</li> {% endcomment %}
+					</li>
+					{% endcomment %}
 				</ul>
 			</nav>
 		</header>
@@ -195,7 +201,9 @@
 								<div class="main__price margin">
 									{% if product.sale %}
 									<span class="main__del_price"
-										><del>{{product.price|floatformat:2}} ₽</del></span
+										><del
+											>{{product.price|floatformat:2}} ₽</del
+										></span
 									>
 									<span class="main__sale"
 										>{{product.get_total_sale|floatformat:1}} ₽</span
@@ -218,21 +226,31 @@
 								</div>
 							</div>
 							<div class="main__block_third">
-                            <form
-                                action="{% url 'wishlist:wishlist-add' id=product.id %}"
-                                method="POST"
-                            >
-                                {% csrf_token %}
-                                <input type="hidden" name="url_from" value="{{request.path}}" />
-                                <input type="hidden" name="price" value="{{product.price}}" />
-                                <button type="submit" class="main__third_heart_button">
-                                    <i class="fas fa-heart"></i>
-                                </button>
-                            </form>	
+								<form
+									action="{% url 'wishlist:wishlist-add' id=product.id %}"
+									method="POST"
+								>
+									{% csrf_token %}
+									<input
+										type="hidden"
+										name="url_from"
+										value="{{request.path}}"
+									/>
+									<input
+										type="hidden"
+										name="price"
+										value="{{product.price}}"
+									/>
+									<button
+										type="submit"
+										class="main__third_heart_button"
+									>
+										<i class="fas fa-heart"></i>
+									</button>
+								</form>
 								<div class="main__product_button margin">
 										{% if product.available %}
                                             <form
-                                                action="{% url 'cart:cart-add' %}"
                                                 method="POST"
                                                 id="cartAdd"
                                             >
@@ -271,25 +289,32 @@
 						</div>
 					</article>
 					{% endfor %}
-                    <div class="main__pagination">
-                        {% if page_obj.has_previous %}
-                            <a class="main__pagination_arrow" href="?page={{ page_obj.previous_page_number }}"><i class="fas fa-chevron-left"></i></a>
-                            {% if page_obj.number|add:"-1" != 1 %}
-                                <a class="main__pagination_start" href="?page=1">1 ... </a>
-                            {% endif %}
-                        {% endif %}
-                        {% if page_obj.has_next %}
-                            <span class="main__pagination_current">
-                                {{ page_obj.number }} из 
-                                {% if page_obj.number == page_obj.paginator.num_pages %}  
-                                    <span>{{ page_obj.paginator.num_pages }}</span>
-                                {% else %}
-                                    <a href="?page={{page_obj.paginator.num_pages}}">{{page_obj.paginator.num_pages}}</a>
-                                {% endif %}
-                            </span>
-                            <a class="main__pagination_arrow" href="?page={{ page_obj.next_page_number }}"><i class="fas fa-chevron-right"></i></a>                  
-                        {% endif %}
-                    </div>
+					<div class="main__pagination">
+						{% if page_obj.has_previous %}
+						<a
+							class="main__pagination_arrow"
+							href="?page={{ page_obj.previous_page_number }}"
+							><i class="fas fa-chevron-left"></i
+						></a>
+						{% if page_obj.number|add:"-1" != 1 %}
+						<a class="main__pagination_start" href="?page=1">1 ... </a>
+						{% endif %} {% endif %} {% if page_obj.has_next %}
+						<span class="main__pagination_current">
+							{{ page_obj.number }} из {% if page_obj.number == page_obj.paginator.num_pages %}
+							<span>{{ page_obj.paginator.num_pages }}</span>
+							{% else %}
+							<a href="?page={{page_obj.paginator.num_pages}}"
+								>{{page_obj.paginator.num_pages}}</a
+							>
+							{% endif %}
+						</span>
+						<a
+							class="main__pagination_arrow"
+							href="?page={{ page_obj.next_page_number }}"
+							><i class="fas fa-chevron-right"></i
+						></a>
+						{% endif %}
+					</div>
 				</div>
 				{% endblock content %}
 			</section>
