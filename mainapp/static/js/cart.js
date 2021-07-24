@@ -21,15 +21,14 @@ $(document).ready(function () {
 		$.ajax({
 			type: "POST",
 			url: "cart/add/",
+			dataType: "json",
 			headers: {
 				"X-CSRFToken": csrftoken,
 			},
 			data: $(this).serialize(),
-			success: function () {
-				console.log($(this).serialize())
-			},
+			success: function () {},
 			error: function (response) {
-				console.log(response.responseJSON.errors)
+				console.log(response.responseJSON);
 			},
 		});
 		return false;
