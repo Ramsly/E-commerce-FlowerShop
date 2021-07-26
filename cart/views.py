@@ -12,7 +12,7 @@ def cart(request):
 
 
 def cart_add(request):
-    if request.is_ajax() and request.method == "POST":
+    if request.is_ajax():
         if not request.session.get("cart"):
             request.session["cart"] = list()
         else:
