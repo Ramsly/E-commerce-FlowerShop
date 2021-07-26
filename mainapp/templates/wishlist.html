@@ -34,7 +34,7 @@
 					<td>
 						{% if product.available %}
 						<form
-							action="{% url 'cart:cart-add' id=product.id %}"
+							action="{% url 'cart:cart-add' %}"
 							method="POST"
 						>
 							{% csrf_token %}

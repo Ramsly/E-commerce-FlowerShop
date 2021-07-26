@@ -25,10 +25,17 @@ $(document).ready(function () {
 			headers: {
 				"X-CSRFToken": csrftoken,
 			},
-			data: $(this).serialize(),
-			success: function () {},
+			data: {
+				"id": $("#id").val(),
+            	"title": $("#title").val(),
+           	 	"qty": 1,
+            	"price": $("#price").val(),
+			},
+			success: function () {
+
+			},
 			error: function (response) {
-				console.log(response.responseJSON);
+				alert("Ошибка!")
 			},
 		});
 		return false;

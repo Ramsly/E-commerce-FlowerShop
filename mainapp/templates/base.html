@@ -108,7 +108,7 @@
 							class="nav__link purple-color"
 							href="{% url 'cart:cart' %}"
 						>
-							<span class="badge">{{total_qty_cart}}</span>
+							<span class="badge" id="badge">{{total_qty_cart}}</span>
 							<i class="fas fa-shopping-cart"></i>
 						</a>
 					</li>
@@ -241,6 +241,8 @@
 										name="price"
 										value="{{product.price}}"
 									/>
+                                    <input type="hidden" name="id"
+                                    value="{{ product.id }}">
 									<button
 										type="submit"
 										class="main__third_heart_button"
