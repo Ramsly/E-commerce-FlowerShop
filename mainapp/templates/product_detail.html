@@ -22,7 +22,7 @@
 <section class="product">
 	<div class="product__container">
 		<div class="product__first_block">
-			<img alt="{{ product.title }}" src="{{ product.image.url }}" />
+			<img alt="{{ product.title   }}" src="{{ product.image.url }}" />
 			<div class="main__block_third">
 				<div class="main__product_button margin">
 					{% if product.available %}
@@ -111,18 +111,17 @@
 			{% endif %} {% for f_name, f_value in product.get_features.items %}
 			<p class="padding">Ед. измерения: {{f_value}}</p>
 			{% endfor %}
-			<p class="padding">Кол-во:</p>
-			<form action="{% url 'add_rating' %}" method="post" name="rating">
-				{% csrf_token %}
-				<input type="hidden" value="{{ product.id }}" name="product" />
-				<span class="rating padding">
-					{% for k, v in star_form.fields.star.choices %} <input
-					id="rating{{ v }}" type="radio" name="star" value="{{ k }}" {% if stars == v %} checked {% endif %} />
-					<label for="rating{{ v }}"></label>
-					{% endfor %}
-				</span>
-				<span>{{averageStars}}</span>
-			</form>
+{#			<form action="{% url 'add_rating' %}" method="post" name="rating">#}
+{#				{% csrf_token %}#}
+{#				<input type="hidden" value="{{ product.id }}" name="product" />#}
+{#				<span class="rating padding">#}
+{#					{% for k, v in star_form.fields.star.choices %} <input#}
+{#					id="rating{{ v }}" type="radio" name="star" value="{{ k }}" {% if stars == v %} checked {% endif %} />#}
+{#					<label for="rating{{ v }}"></label>#}
+{#					{% endfor %}#}
+{#				</span>#}
+{#				<span>{{averageStars}}</span>#}
+{#			</form>#}
 			<p class="padding">
 				<strong>Описание: </strong>
 				<br />

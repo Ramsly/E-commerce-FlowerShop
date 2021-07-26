@@ -1,7 +1,6 @@
 from django.http import JsonResponse
-from django.http.response import HttpResponse
 from django.shortcuts import redirect, render
-from django.views.generic import View, ListView, TemplateView
+
 from .utils import *
 
 
@@ -41,12 +40,6 @@ def cart_add(request):
                         del request.session["wishlist"]
             request.session.modified = True
         return JsonResponse(app_data)
-
-
-# def cart_add_qty(request):
-#     if request.method == "POST" and request.is_ajax():
-#         for item in request.session["cart"]:
-#             if item["id"] == int(id):
 
 
 def cart_delete_item(request):
