@@ -59,7 +59,7 @@ class Product(models.Model):
     available = models.BooleanField(verbose_name="Наличие товара", default=True)
 
     def __str__(self):
-        return self.title
+        return f"{self.title} | {self.id}"
 
     @property
     def get_total_sale(self):

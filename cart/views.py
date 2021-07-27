@@ -1,5 +1,6 @@
-from django.http import JsonResponse
+from django.http import JsonResponse, HttpResponse
 from django.shortcuts import redirect, render
+
 
 from .utils import *
 
@@ -12,17 +13,18 @@ def cart(request):
 
 
 def cart_add(request):
-    if request.is_ajax():
+    json_data = {}
+    if request.method == "POST":
         if not request.session.get("cart"):
             request.session["cart"] = list()
         else:
             request.session["cart"] = list(request.session["cart"])
         item_exist = next(
-            (item for item in request.session["cart"] if item["id"] == int(request.POST.get("id"))),
+            (item for item in request.session["cart"] if item["id"] == request.POST.get("id")),
             False,
         )
         json_data = {
-            "id": int(request.POST.get("id")),
+            "id": request.POST.get("id"),
             "title": request.POST.get("title"),
             "qty": 1,
             "price": float(replace_to_dot(request.POST.get("price"))),
@@ -32,14 +34,14 @@ def cart_add(request):
             request.session["cart"].append(json_data)
             if request.session.get("wishlist"):
                 for item in request.session["wishlist"]:
-                    if item["id"] == int(request.POST.get("id")):
+                    if item["id"] == request.POST.get("id"):
                         item.clear()
                     while {} in request.session["wishlist"]:
                         request.session["wishlist"].remove({})
                     if not request.session["wishlist"]:
                         del request.session["wishlist"]
             request.session.modified = True
-        return JsonResponse(json_data, status=200)
+    return JsonResponse(json_data, status=200)
 
 
 def cart_delete_item(request):

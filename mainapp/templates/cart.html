@@ -14,7 +14,7 @@
 				</tr>
 			</thead>
 			<tbody>
-				{% for i in cart_session %} {% for product in products %} {% if i.id == product.id %}
+				{% for i in cart_session %} {% for product in products %} {% if i.id == product.id|stringformat:"i" %}
 				<tr>
 					<th scope="row">
 						<a href="{{product.get_absolute_url}}" class="borderLeftRight"
