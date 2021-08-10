@@ -35,9 +35,11 @@
                     </td>
 					<td>
                         <div class="center">
-                            <button class="overlayLeftBtn delete-qty qty-properties-btns"><span>-</span></button>
-                            <span>{{i.qty}}</span>
-                            <button class="overlayLeftBtn add-qty qty-properties-btns"><span>+</span></button>
+                            <form action="" method="get">
+                                <button class="overlayLeftBtn delete-qty qty-properties-btns"><span>-</span></button>
+                                <span name="product_qty">{{i.qty}}</span>
+                                <button class="overlayLeftBtn add-qty qty-properties-btns"><span>+</span></button>
+                            </form>
                         </div>
 					</td>
 					<td>{{i.total_price_cart|floatformat:2}} ₽</td>
