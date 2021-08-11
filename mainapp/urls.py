@@ -12,7 +12,6 @@ from .views import (
     # RegistrationView,
     AddReviewToProduct,
     AboutUsView,
-    AddStarRating,
     ReviewPageView
 )
 
@@ -28,7 +27,6 @@ urlpatterns = [
     # path("registration/", RegistrationView.as_view(), name="registration"),
     path("logout/", LogoutView.as_view(next_page="/"), name="logout"),
     path("about/", AboutUsView.as_view(), name="about"),
-    path("add-rating/", AddStarRating.as_view(), name='add_rating'),
     path("review/<str:slug>/", AddReviewToProduct.as_view(), name="add_review"),
     path("reviews/", ReviewPageView.as_view(), name="reviews"),
 ]

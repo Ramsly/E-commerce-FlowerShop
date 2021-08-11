@@ -32,7 +32,7 @@ $(document).ready(function (event) {
 					"price": $("#price").val(),
 				},
 				success: function (json_data) {
-					// $("#overlayLeftBtn").removeClass("delete wishlist-del")
+					$("#overlayLeftBtn").addClass("added")
 					console.log(json_data)
 				},
 				error: function (json_data) {

@@ -317,9 +317,6 @@ del {
 	margin: 10px 0px;
 }
 
-.main__rating {
-}
-
 .main__rating i {
 	color: #ffd700;
 }
@@ -483,6 +480,10 @@ del {
 	border-radius: 6px;
 	position: relative;
 	overflow: hidden;
+}
+
+.added{
+	background-color: #00fc00;
 }
 
 .overlayLeftBtn span {
@@ -1042,6 +1043,10 @@ ol {
 	border-top: 1px solid #b8b8b8;
 	justify-content: space-between;
 	align-items: center;
+}
+
+.search-btn{
+	width: 100px;
 }
 
 .filter__container .padding {

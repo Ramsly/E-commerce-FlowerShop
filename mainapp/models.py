@@ -39,17 +39,9 @@ class Product(models.Model):
     features = models.ManyToManyField(
         "specs.ProductFeatures", blank=True, related_name="features_for_product"
     )
-    freeship = models.BooleanField(
-        verbose_name="Бесплатная доставка",
-        default=False,
-    )
     shipping_price = models.IntegerField(
         verbose_name="Стоимость доставки",
         default=0
-    )
-    sale = models.BooleanField(
-        verbose_name="Акция",
-        default=False,
     )
     sale_value = models.FloatField(
         verbose_name="Величина скидки",

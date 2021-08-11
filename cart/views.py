@@ -2,7 +2,7 @@ from django.http import JsonResponse, HttpResponse
 from django.shortcuts import redirect, render
 
 
-from .utils import *
+from .utils import replace_to_dot
 
 
 def cart(request):
@@ -12,8 +12,7 @@ def cart(request):
     return render(request, "cart.html", context)
 
 
-def cart_add(request):
-    global json_data
+def cart_add(request, id):
     if request.method == "POST":
         if not request.session.get("cart"):
             request.session["cart"] = list()
@@ -23,7 +22,7 @@ def cart_add(request):
             (item for item in request.session["cart"] if item["id"] == request.POST.get("id")),
             False,
         )
-        json_data = {
+        data = {
             "id": request.POST.get("id"),
             "title": request.POST.get("title"),
             "qty": 1,
@@ -31,7 +30,7 @@ def cart_add(request):
             "total_price_cart": float(replace_to_dot(request.POST.get("price"))) * 1,
         }
         if not item_exist:
-            request.session["cart"].append(json_data)
+            request.session["cart"].append(data)
             if request.session.get("wishlist"):
                 for item in request.session["wishlist"]:
                     if item["id"] == request.POST.get("id"):
@@ -41,13 +40,13 @@ def cart_add(request):
                     if not request.session["wishlist"]:
                         del request.session["wishlist"]
             request.session.modified = True
-    return JsonResponse(json_data, status=200)
+    return redirect(request.POST.get("url_from"))
 
 
-def cart_delete_item(request):
-    if request.method == "POST" and request.is_ajax():
+def cart_delete_item(request, id):
+    if request.method == "POST":
         for item in request.session["cart"]:
-            if item["id"] == int(request.POST.get("id")):
+            if item["id"] == request.POST.get("id"):
                 item.clear()
 
         while {} in request.session["cart"]:
@@ -56,16 +55,9 @@ def cart_delete_item(request):
         if not request.session["cart"]:
             del request.session["cart"]
 
+
         request.session.modified = True
-        json_data = {
-            "id": int(request.POST.get("id")),
-            "title": request.POST.get("title"),
-            "qty": 1,
-            "price": float(replace_to_dot(request.POST.get("price"))),
-            "total_price_cart": float(replace_to_dot(request.POST.get("price"))) * 1,
-        }
-        request.session.modified = True
-        return JsonResponse(json_data)
+    return redirect(request.POST.get("url_from"))
 
 
 def cart_delete_all(request):
@@ -74,13 +66,13 @@ def cart_delete_all(request):
     return redirect(request.POST.get("url_from"))
 
 
-def cart_add_qty(request):
-    if request.method == "GET":
-        if not request.session.get("cart"):
-            request.session["cart"] = list()
-        else:
-            request.session["cart"] = list(request.session["cart"])
-        json_data = {
-            "price": float(replace_to_dot(request.POST.get("price"))),
-            "total_price_cart": float(replace_to_dot(request.GET.get("price"))) ,
-        }
+# def cart_add_qty(request):
+#     if request.method == "GET":
+#         if not request.session.get("cart"):
+#             request.session["cart"] = list()
+#         else:
+#             request.session["cart"] = list(request.session["cart"])
+#         json_data = {
+#             "price": float(replace_to_dot(request.POST.get("price"))),
+#             "total_price_cart": float(replace_to_dot(request.GET.get("price"))) ,
+#         }

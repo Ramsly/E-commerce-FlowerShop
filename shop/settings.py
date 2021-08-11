@@ -146,4 +146,4 @@ EMAIL_USE_TLS = True
 EMAIL_PORT = 587
 EMAIL_HOST_USER = 'theluckyfeed1@gmail.com'
 DEFAULT_FROM_EMAIL = 'Venesia Flower Shop'
-EMAIL_HOST_PASSWORD = 'nr@m1lbdl9ml2y2oo3cmkm'
+EMAIL_HOST_PASSWORD = 'mkpzlbuwiwkxlipr'

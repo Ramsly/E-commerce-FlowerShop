@@ -45,7 +45,7 @@
 					<td>{{i.total_price_cart|floatformat:2}} ₽</td>
 					<td>
 						<form
-							action="{% url 'cart:cart-remove' %}"
+							action="{% url 'cart:cart-remove' id=product.id %}"
 							method="POST"
 						>
 							{% csrf_token %}

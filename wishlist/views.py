@@ -19,11 +19,11 @@ def wishes_add(request, id):
         else:
             request.session["wishlist"] = list(request.session["wishlist"])
         item_exist = next(
-            (item for item in request.session["wishlist"] if item["id"] == int(request.POST.get("id"))),
+            (item for item in request.session["wishlist"] if item["id"] == request.POST.get("id")),
             False,
         )       
         add_data = {
-            "id": int(request.POST.get("id")),
+            "id": request.POST.get("id"),
             "qty": 1,
             "price": request.POST.get("price"),
         }
@@ -36,7 +36,7 @@ def wishes_add(request, id):
 def wishes_delete_item(request, id):
     if request.method == "POST":
         for item in request.session["wishlist"]:
-            if item["id"] == int(request.POST.get("id")):
+            if str(item["id"]) == str(request.POST.get("id")):
                 item.clear()
 
         while {} in request.session["wishlist"]:
