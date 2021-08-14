@@ -87,8 +87,8 @@ WSGI_APPLICATION = "shop.wsgi.application"
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': 'venesia_flower_shop',
-        'USER': 'adminshopuser',
+        'NAME': 'venesia_shop',
+        'USER': 'admin',
         'PASSWORD': '0F8I@9jm7#G#',
         'HOST': '127.0.0.1',
         'PORT': '5432',
