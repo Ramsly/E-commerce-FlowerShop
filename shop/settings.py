@@ -37,10 +37,10 @@ INSTALLED_APPS = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
-    "mainapp",
-    "specs",
-    "wishlist",
-    "cart",
+    "mainapp.apps.MainappConfig",
+    "specs.apps.SpecsConfig",
+    "wishlist.apps.WishlistConfig",
+    "cart.apps.CartConfig",
 ]
 
 MIDDLEWARE = [
@@ -87,8 +87,8 @@ WSGI_APPLICATION = "shop.wsgi.application"
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': 'venesia_flower_shop',
-        'USER': 'adminshopuser',
+        'NAME': 'venesia_shop',
+        'USER': 'admin',
         'PASSWORD': '0F8I@9jm7#G#',
         'HOST': '127.0.0.1',
         'PORT': '5432',
@@ -146,4 +146,4 @@ EMAIL_USE_TLS = True
 EMAIL_PORT = 587
 EMAIL_HOST_USER = 'theluckyfeed1@gmail.com'
 DEFAULT_FROM_EMAIL = 'Venesia Flower Shop'
-EMAIL_HOST_PASSWORD = 'nr@m1lbdl9ml2y2oo3cmkm'
+EMAIL_HOST_PASSWORD = 'mkpzlbuwiwkxlipr'

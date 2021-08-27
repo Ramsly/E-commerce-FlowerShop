@@ -33,25 +33,6 @@ class ProductDetailView(DetailView):
     template_name = "product_detail.html"
     slug_url_kwarg = "slug"
 
-    def get_user_stars(self, ip, product_id):
-        if Rating.objects.filter(ip=ip, product_id=product_id).exists():
-            stars = Rating.objects.get(ip=ip, product_id=product_id).star
-        else:
-            stars = None
-        return stars
-
-    def get(self, request, *args, **kwargs):
-
-        ip = AddStarRating.get_client_ip(self, self.request)
-
-        product_id = Product.objects.get(slug=kwargs["slug"]).id
-        stars = self.get_user_stars(ip, product_id)
-        self.object = self.get_object()
-        context = self.get_context_data(object=self.object)
-        if stars:
-            context["stars"] = str(stars)
-        return self.render_to_response(context)
-
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context["star_form"] = RatingForm()
@@ -225,25 +206,5 @@ class AddReviewToProduct(View):
         return HttpResponseRedirect(product.get_absolute_url())
 
 
-class AddStarRating(View):
-    """Добавление рейтинга фильму"""
-
-    def get_client_ip(self, request):
-        x_forwarded_for = request.META.get("HTTP_X_FORWARDED_FOR")
-        if x_forwarded_for:
-            ip = x_forwarded_for.split(",")[0]
-        else:
-            ip = request.META.get("REMOTE_ADDR")
-        return ip
-
-    def post(self, request):
-        form = RatingForm(request.POST)
-        if form.is_valid():
-            Rating.objects.update_or_create(
-                ip=self.get_client_ip(request),
-                product_id=int(request.POST.get("product")),
-                defaults={"star_id": int(request.POST.get("star"))},
-            )
-            return HttpResponse(status=201)
-        else:
-            return HttpResponse(status=400)
+# class AddStarRating(View):
+#     """Добавление рейтинга фильму"""

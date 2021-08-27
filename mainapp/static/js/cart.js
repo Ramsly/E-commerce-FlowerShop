@@ -15,29 +15,29 @@ function getCookie(name) {
 }
 const csrftoken = getCookie("csrftoken");
 
-$(document).ready(function () {
-	$("#cartAdd").submit(function (event) {
+$(document).ready(function (event) {
+	$("#cartAdd").on("submit", function (event) {
 		event.preventDefault();
-		$.ajax({
-			type: "POST",
-			url: "cart/add/",
-			dataType: "json",
-			headers: {
-				"X-CSRFToken": csrftoken,
-			},
-			data: {
-				"id": $("#id").val(),
-            	"title": $("#title").val(),
-           	 	"qty": 1,
-            	"price": $("#price").val(),
-			},
-			success: function () {
-
-			},
-			error: function (response) {
-				alert("Ошибка!")
-			},
-		});
-		return false;
+			$.ajax({
+				type: "POST",
+				url: "cart/add/",
+				dataType: "json",
+				headers: {
+					"X-CSRFToken": getCookie("csrftoken"),
+				},
+				data: {
+					"id": $("#id").val(),
+					"title": $("#title").val(),
+					"qty": 1,
+					"price": $("#price").val(),
+				},
+				success: function (json_data) {
+					$("#overlayLeftBtn").addClass("added")
+					console.log(json_data)
+				},
+				error: function (json_data) {
+					console.log(json_data)
+				},
+			});
 	});
 });

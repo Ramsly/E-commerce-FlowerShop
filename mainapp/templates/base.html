@@ -175,14 +175,14 @@
 							</a>
 							{% if not product.available %}
 							<span class="signature notAvailable">Нет в наличии</span>
-							{% elif product.freeship%}
+							{% elif product.shipping_price == 0%}
 							<span class="signature ship">Бесплатная доставка</span>
 							{% else %}
 							<span class="signature ship"
 								>Доставка
 								<span>{{product.shipping_price}} ₽</span></span
 							>
-							{% endif %} {% if product.sale %}
+							{% endif %} {% if product.sale_value > 0 %}
 							<span class="signature sale"
 								>Скидка
 								<span>{{product.sale_value|floatformat}} %</span></span
@@ -192,11 +192,7 @@
 						<div class="main__product_content">
 							<div class="main__block_first">
 								<div class="main__rating margin">
-									<i class="fas fa-star"></i>
-									<i class="fas fa-star"></i>
-									<i class="fas fa-star"></i>
-									<i class="fas fa-star"></i>
-									<i class="fas fa-star"></i>
+									
 								</div>
 								<div class="main__price margin">
 									{% if product.sale %}
@@ -254,14 +250,14 @@
 										{% if product.available %}
                                             <form
                                                 method="POST"
-                                                id="cartAdd"
+                                                action="{% url 'cart:cart-add' id=product.id %}"
                                             >
                                                 {% csrf_token %}
                                                 <input type="hidden" name="url_from" value="{{request.path}}" />
-                                                <input type="hidden" id="id" value="{{ product.id }}"/>
+                                                <input type="hidden" id="id" name="id" value="{{ product.id }}"/>
                                                 <input type="hidden" id="price" name="price" value="{{product.price}}" />
                                                 <input type="hidden" id="title" name="title" value="{{ product.title }}">
-                                                <button class="overlayLeftBtn">
+                                                <button class="overlayLeftBtn" id="overlayLeftBtn">
                                                     <span>
                                                         Заказать
                                                         <i class="fas fa-shopping-cart"></i>
@@ -278,7 +274,7 @@
                                                     pointer
                                                 "
                                             >
-                                            
+
                                                 <span>
                                                     Просмотр
                                                     <i class="far fa-eye"></i>
