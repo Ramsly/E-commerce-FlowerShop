@@ -1,21 +1,21 @@
 from django.contrib.auth import get_user_model
 from django.core.mail import EmailMultiAlternatives
-from django.db.models import Q
 from django.http import HttpResponseRedirect
-from django.http.response import HttpResponse
+from django.shortcuts import get_object_or_404, render
 from django.template.loader import render_to_string
 from django.views.generic import DetailView, View, ListView, TemplateView
+from django.contrib.postgres.search import (
+    SearchQuery,
+    SearchVector,
+    SearchRank,
+    SearchHeadline,
+)
 
 from specs.models import ProductFeatures
 from .forms import ReviewForm, RatingForm, OrderForm
 from .models import Category, Product, Rating
 
 User = get_user_model()
-
-
-class MyQ(Q):
-
-    default = "OR"
 
 
 class BaseView(ListView):
@@ -33,52 +33,33 @@ class ProductDetailView(DetailView):
     template_name = "product_detail.html"
     slug_url_kwarg = "slug"
 
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        context["star_form"] = RatingForm()
-        return context
 
+class CategoryDetailView(View):
+    def get(self, request, slug, *args, **kwargs):
+        products_of_category = Product.objects.all()
+        category = None
+        categories = Category.objects.all()
+        q = request.GET.get("q")
 
-class CategoryDetailView(DetailView):
+        if slug:
+            category = get_object_or_404(Category, slug=slug)
+            products_of_category = products_of_category.filter(category=category)
+        if q:
+            vector = SearchVector("title")
+            query = SearchQuery(q)
 
-    model = Category
-    queryset = Category.objects.all()
-    context_object_name = "category"
-    template_name = "category_detail.html"
-    slug_url_kwarg = "slug"
+            search_products = (
+                products_of_category.annotate(search=vector).filter(search=query, category=category)
+            )
+        else:
+            search_products = products_of_category.filter(category=category)
 
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        query = self.request.GET.get("search")
-        category = self.get_object()
-        context["categories"] = self.model.objects.all()
-        if not query and not self.request.GET:
-            context["category_products"] = category.product_set.all()
-            return context
-        if query:
-            products = category.product_set.filter(Q(title__icontains=query))
-            context["category_products"] = products
-            return context
-        url_kwargs = {}
-        for item in self.request.GET:
-            if len(self.request.GET.getlist(item)) > 1:
-                url_kwargs[item] = self.request.GET.getlist(item)
-            else:
-                url_kwargs[item] = self.request.GET.get(item)
-        q_condition_queries = Q()
-        for key, value in url_kwargs.items():
-            if isinstance(value, list):
-                q_condition_queries.add(Q(**{"value__in": value}), Q.OR)
-            else:
-                q_condition_queries.add(Q(**{"value": value}), Q.OR)
-        pf = (
-            ProductFeatures.objects.filter(q_condition_queries)
-            .prefetch_related("product", "feature")
-            .values("product_id")
-        )
-        products = Product.objects.filter(id__in=[pf_["product_id"] for pf_ in pf])
-        context["category_products"] = products
-        return context
+        context = {
+            "products_of_category": products_of_category,
+            "categories": categories,
+            "search_products": search_products,
+        }
+        return render(request, "category_detail.html", context)
 
 
 class CategoriesListView(ListView):
@@ -110,17 +91,21 @@ class ReviewPageView(TemplateView):
 
 class SendToEmailOrderView(View):
     def post(self, request, *args, **kwargs):
-        subject, from_email, to = 'Venesia Flower Shop | Заказ №', 'theluckyfeed1@gmail.com', f'{request.POST.get("email")}'
-        text_content = ''
+        subject, from_email, to = (
+            "Venesia Flower Shop | Заказ №",
+            "theluckyfeed1@gmail.com",
+            f'{request.POST.get("email")}',
+        )
+        text_content = ""
         data = {
-            "first_name": request.POST.get('first_name'),
-            "last_name": request.POST.get('last_name'),
-            "telephone": request.POST.get('telephone'),
-            "email": request.POST.get('email'),
-            "buying_type": request.POST.get('buying_type'),
-            "address": request.POST.get('address'),
-            "comment": request.POST.get('comment'),
-            "order": request.POST.get("product")
+            "first_name": request.POST.get("first_name"),
+            "last_name": request.POST.get("last_name"),
+            "telephone": request.POST.get("telephone"),
+            "email": request.POST.get("email"),
+            "buying_type": request.POST.get("buying_type"),
+            "address": request.POST.get("address"),
+            "comment": request.POST.get("comment"),
+            "order": request.POST.get("product"),
         }
         html_content = render_to_string("html_email.html", data)
         msg = EmailMultiAlternatives(subject, text_content, from_email, [to])

@@ -174,9 +174,9 @@
 								<img src="{{product.image.url}}" alt="" />
 							</a>
 							{% if not product.available %}
-							<span class="signature notAvailable">Нет в наличии</span>
-							{% elif product.shipping_price == 0%}
-							<span class="signature ship">Бесплатная доставка</span>
+							    <span class="signature notAvailable">Нет в наличии</span>
+							{% elif product.shipping_price == 0 %}
+							    <span class="signature ship">Бесплатная доставка</span>
 							{% else %}
 							<span class="signature ship"
 								>Доставка
@@ -192,15 +192,13 @@
 						<div class="main__product_content">
 							<div class="main__block_first">
 								<div class="main__rating margin">
-									
+									<i class="far fa-thumbs-up"></i>
+                                    <span>0</span>
+                                    <i class="far fa-thumbs-down"></i>
+                                    <span>0</span>
 								</div>
 								<div class="main__price margin">
-									{% if product.sale %}
-									<span class="main__del_price"
-										><del
-											>{{product.price|floatformat:2}} ₽</del
-										></span
-									>
+									{% if product.sale_value > 0 %}
 									<span class="main__sale"
 										>{{product.get_total_sale|floatformat:1}} ₽</span
 									>
@@ -216,7 +214,15 @@
 										class="borderLeftRight magnifyText"
 										>{{product.title}}</a
 									>
+                                {% if product.sale_value > 0 %}
+									<span class="main__del_price"
+										><del
+											>{{product.price|floatformat:2}} ₽</del
+										></span
+									>
+								{% endif %}
 								</div>
+                                
 								<div class="main__product_description">
 									{{product.description|truncatewords:10}}
 								</div>

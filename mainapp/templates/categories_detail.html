@@ -15,7 +15,7 @@
 	<h1 class="main__title">Каталог</h1>
 	<div class="main__container">
 		{% for category in categories %}
-		<div class="main__product category">
+		<div class="category">
 			<div class="main__image">
 				<a href="{{category.get_absolute_url}}">
 					<img src="{{category.image.url}}" alt="" />
