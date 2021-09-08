@@ -51,7 +51,7 @@ class Product(models.Model):
     available = models.BooleanField(verbose_name="Наличие товара", default=True)
 
     def __str__(self):
-        return f"{self.title} | {self.id}"
+        return f"{self.title}"
 
     @property
     def get_total_sale(self):
@@ -63,12 +63,6 @@ class Product(models.Model):
 
     def get_review(self):
         return self.reviews_set.filter(parent__isnull=True)
-
-    def get_features(self):
-        return {
-            f.feature.feature_name: " ".join([f.value, f.feature.unit or ""])
-            for f in self.features.all()
-        }
 
     class Meta:
         verbose_name = "Товары"

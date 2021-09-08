@@ -106,6 +106,7 @@ class OrderForm(forms.Form):
     )
     address = forms.CharField(label='Адрес')
     comment = forms.CharField(label='Комментарий к заказу')
+    products = forms.CharField()
 
 
 class ReviewForm(forms.ModelForm):

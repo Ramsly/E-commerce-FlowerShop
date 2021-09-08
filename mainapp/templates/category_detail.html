@@ -1,5 +1,5 @@
-{% extends 'base.html' %} {% block title %}Каталог | 
-{{category.name}} {% endblock title %} {% block content %}
+{% extends 'base.html' %} {% load static %} {% block title %}Каталог | {{category.name}} {% endblock title %} 
+{% block content %}
 
 <nav class="breadcrumb">
 	<ol class="breadcrumb__ol">
@@ -12,33 +12,35 @@
 		<li class="breadcrumb__li">{{category.name}}</li>
 	</ol>
 </nav>
-<section class="main category">
+
+<section class="category">
 	<h1 class="main__title">Каталог | {{category.name}}</h1>
 	<div class="sidesearch">
 		<aside class="sidesearch__container">
-			<form
-				class="fields"
-                method="GET"
-			>
+			<form class="fields" method="GET">
 				<input name="q" type="search" placeholder="Поиск товара" />
 				<button class="snapLeftBtn search-btn" type="submit">
 					<span> <i class="fas fa-search"></i></span>
 				</button>
 			</form>
 
-			<form
-				method="GET"
-				class="fields"
-			>
-            {% for product in products_of_category %}
-				<label class='checkbox path'>
-                    <input type='checkbox' class='checkbox' name='q' value={{product.title}}>
-                   {{product.title}}
-                    <svg viewBox='0 0 21 21'>
-                    <path d='M5,10.75 L8.5,14.25 L19.4,2.3 C18.8333333,1.43333333 18.0333333,1 17,1 L4,1 C2.35,1 1,2.35 1,4 L1,17 C1,18.65 2.35,20 4,20 L17,20 C18.65,20 20,18.65 20,17 L20,7.99769186'></path>
-                    </svg>
-                </label>
-            {% endfor %}
+			<form method="GET" class="fields">
+				{% for product in products_of_category %}
+				<label class="checkbox margin path">
+					<input
+						type="checkbox"
+						class="checkbox"
+						name="q"
+						value="{{product.slug}}"
+					/>
+					{{product.title}}
+					<svg viewBox="0 0 21 21">
+						<path
+							d="M5,10.75 L8.5,14.25 L19.4,2.3 C18.8333333,1.43333333 18.0333333,1 17,1 L4,1 C2.35,1 1,2.35 1,4 L1,17 C1,18.65 2.35,20 4,20 L17,20 C18.65,20 20,18.65 20,17 L20,7.99769186"
+						></path>
+					</svg>
+				</label>
+				{% endfor %}
 				<div class="sidesearch__buttons">
 					<button class="overlayLeftBtn" type="submit">
 						<span>Поиск</span>
@@ -51,90 +53,13 @@
 			</form>
 		</aside>
 	</div>
+
 	<div class="category__detail_container">
-
-    {% if search_products %}
-		{% for product in products_of_category %}
-		<article class="main__product">
-			<div class="main__image">
-				<a href="{{product.get_absolute_url}}">
-					<img src="{{product.image.url}}" alt="" />
-				</a>
-				{% if not product.available %}
-                    <span class="signature notAvailable">Нет в наличии</span>
-                {% elif product.shipping_price == 0 %}
-                    <span class="signature ship">Бесплатная доставка</span>
-                {% else %}
-                <span class="signature ship"
-                    >Доставка
-                    <span>{{product.shipping_price}} ₽</span></span
-                >
-                {% endif %} {% if product.sale_value > 0 %}
-                <span class="signature sale"
-                    >Скидка
-                    <span>{{product.sale_value|floatformat}} %</span></span
-                >
-                {% endif %}
-			</div>
-			<div class="main__product_content">
-				<div class="main__block_first">
-					<div class="main__rating margin">
-					</div>
-					<div class="main__price margin">
-						{% if product.sale_value > 0 %}
-                        <span class="main__del_price"
-                            ><del
-                                >{{product.price|floatformat:2}} ₽</del
-                            ></span
-                        >
-                        <span class="main__sale"
-                            >{{product.get_total_sale|floatformat:1}} ₽</span
-                        >
-                        {% else %}
-                        <span>{{product.price|floatformat}} ₽</span>
-                        {% endif %}
-					</div>
-				</div>
-				<div class="main__block_second">
-					<div class="main__product_title margin">
-						<a
-							href="{{ product.get_absolute_url }}"
-							class="borderLeftRight magnifyText"
-							>{{product.title}}</a
-						>
-					</div>
-					<div class="main__product_description">
-						{{product.description|truncatewords:10}}
-					</div>
-				</div>
-				<div class="main__block_third">
-					<a href="">
-						<i class="fas fa-heart"></i>
-					</a>
-					<div class="main__product_button margin">
-						<a href="{{product.get_absolute_url}}">
-						{% if product.available %}
-							<button class="overlayLeftBtn">
-								<span>
-									Заказать <i class="fas fa-shopping-cart"></i>
-								</span>
-							</button>
-
-							{% else %}
-							<button
-								class="main__product_button button not__available_btn pointer"
-							>
-								<span> Просмотр <i class="far fa-eye"></i> </span>
-							</button>
-						{% endif %}
-						</a>
-					</div>
-				</div>
-			</div>
-		</article>
-		{% endfor %}
-        {% endif %}
+		{% if search_products %} {% for product in products_of_category %}
+            {% include "include_parts/product.html" %}
+		{% endfor %} {% endif %}
 	</div>
+{% comment %} <script src="{% static 'js/category_detail.js' %}"></script> {% endcomment %}
 </section>
+{% endblock content %} 
 
-{% endblock content %}

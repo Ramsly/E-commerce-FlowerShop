@@ -1,9 +1,12 @@
 from django.contrib.auth import get_user_model
+from django.contrib import messages
 from django.core.mail import EmailMultiAlternatives
 from django.http import HttpResponseRedirect
-from django.shortcuts import get_object_or_404, render
+from django.http.response import BadHeaderError, HttpResponse
+from django.shortcuts import get_object_or_404, redirect, render
 from django.template.loader import render_to_string
 from django.views.generic import DetailView, View, ListView, TemplateView
+from .forms import OrderForm 
 from django.contrib.postgres.search import (
     SearchQuery,
     SearchVector,
@@ -38,25 +41,24 @@ class CategoryDetailView(View):
     def get(self, request, slug, *args, **kwargs):
         products_of_category = Product.objects.all()
         category = None
-        categories = Category.objects.all()
         q = request.GET.get("q")
 
         if slug:
             category = get_object_or_404(Category, slug=slug)
             products_of_category = products_of_category.filter(category=category)
         if q:
-            vector = SearchVector("title")
+            vector = SearchVector("slug")
             query = SearchQuery(q)
 
-            search_products = (
-                products_of_category.annotate(search=vector).filter(search=query, category=category)
+            search_products = products_of_category.annotate(search=vector).filter(
+                search=query, category=category
             )
         else:
             search_products = products_of_category.filter(category=category)
 
         context = {
             "products_of_category": products_of_category,
-            "categories": categories,
+            "category": category,
             "search_products": search_products,
         }
         return render(request, "category_detail.html", context)
@@ -91,27 +93,36 @@ class ReviewPageView(TemplateView):
 
 class SendToEmailOrderView(View):
     def post(self, request, *args, **kwargs):
-        subject, from_email, to = (
-            "Venesia Flower Shop | Заказ №",
-            "theluckyfeed1@gmail.com",
-            f'{request.POST.get("email")}',
-        )
-        text_content = ""
-        data = {
-            "first_name": request.POST.get("first_name"),
-            "last_name": request.POST.get("last_name"),
-            "telephone": request.POST.get("telephone"),
-            "email": request.POST.get("email"),
-            "buying_type": request.POST.get("buying_type"),
-            "address": request.POST.get("address"),
-            "comment": request.POST.get("comment"),
-            "order": request.POST.get("product"),
-        }
-        html_content = render_to_string("html_email.html", data)
-        msg = EmailMultiAlternatives(subject, text_content, from_email, [to])
-        msg.attach_alternative(html_content, "text/html")
-        msg.send()
-        return HttpResponseRedirect("/")
+        form = OrderForm(request.POST)
+        if form.is_valid():
+            subject, from_email, to = (
+                "Venesia Flower Shop | Заказ №",
+                "theluckyfeed1@gmail.com",
+                f'{request.POST.get("email")}',
+            )
+            text_content = ""
+            data = {
+                "first_name": form.cleaned_data['first_name'],
+                "last_name": form.cleaned_data["last_name"],
+                "telephone": form.cleaned_data["telephone"],
+                "email": form.cleaned_data["email"],
+                "buying_type": form.cleaned_data["buying_type"],
+                "address": form.cleaned_data["address"],
+                "comment": form.cleaned_data["comment"],
+                "order": request.POST.get("product"),
+            }
+            html_content = render_to_string("html_email.html", data)
+            msg = EmailMultiAlternatives(subject, text_content, from_email, [to])
+            msg.attach_alternative(html_content, "text/html")
+            try:
+                msg.send()
+            except BadHeaderError:
+                return HttpResponse("Плохое соединение")
+            messages.success(request, "Спасибо за заказ!")
+            return redirect("/")
+        messages.error(request, "Заполните все поля!")
+        form = OrderForm()
+        return render(request, "checkout.html", {"form": form})
 
 
 # class LoginView(View):

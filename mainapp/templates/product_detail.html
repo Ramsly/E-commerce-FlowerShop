@@ -59,7 +59,6 @@
 							margin
 							button
 							not__available_btn
-							btn-width
 						"
 					>
 						<span>
@@ -111,16 +110,6 @@
 			{% endif %} {% for f_name, f_value in product.get_features.items %}
 			<p class="padding">Ед. измерения: {{f_value}}</p>
 			{% endfor %} 
-			{% comment %} <form action="{% url 'add_rating' %}" method="post" name="rating">
-				#} {# {% csrf_token %}#} {#
-				<input type="hidden" value="{{ product.id }}" name="product" />#} {#
-				<span class="rating padding"
-					>#} {# {% for k, v in star_form.fields.star.choices %} <input#}
-					{# id="rating{{ v }}" type="radio" name="star" value="{{ k }}" {%
-					if stars == v %} checked {% endif %} />#} {#
-					<label for="rating{{ v }}"></label>#} {# {% endfor %}#} {# </span
-				>#} {# <span>{{averageStars}}</span>#} {#
-			</form> {% endcomment %}
 			<p class="padding">
 				<strong>Описание: </strong>
 				<br />

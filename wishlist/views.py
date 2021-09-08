@@ -1,5 +1,5 @@
 from django.shortcuts import redirect, render
-
+from cart.utils import replace_to_dot
 from mainapp.models import Product
 
 
@@ -24,8 +24,10 @@ def wishes_add(request, id):
         )       
         add_data = {
             "id": request.POST.get("id"),
+            "title": request.POST.get("title"),
             "qty": 1,
-            "price": request.POST.get("price"),
+            "price": float(replace_to_dot(request.POST.get("price"))),
+            "total_price_cart": float(replace_to_dot(request.POST.get("price"))) * 1,
         }
         if not item_exist:
             request.session["wishlist"].append(add_data)
