@@ -252,11 +252,11 @@ body .home {
 }
 
 .main__image img {
-	border-top-left-radius: 5px;
-	border-top-right-radius: 5px;
-	width: 15vw;
-	height: 15vw;
-	object-fit: cover;
+    border-top-left-radius: 5px;
+    border-top-right-radius: 5px;
+    width: 14.9vw;
+    height: 15vw;
+    object-fit: cover;
 }
 
 .signature {
@@ -560,11 +560,10 @@ del {
 }
 
 .not__available_btn {
-    padding: 10px 0px;
+    padding: 10px;
     cursor: default;
     color: white;
     background-color: rgb(97, 97, 97);
-    width: 10vw;
 }
 
 .not__available_btn:hover {

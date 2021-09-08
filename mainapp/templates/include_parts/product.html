@@ -4,7 +4,7 @@
 			<img src="{{product.image.url}}" alt="" />
 		</a>
 		{% if not product.available %}
-		<span class="signature notAvailable">Нет в наличии</span>
+		<span class="signature notAvailable">Распродано</span>
 		{% elif product.shipping_price == 0 %}
 		<span class="signature ship">Бесплатная доставка</span>
 		{% else %}
@@ -61,12 +61,21 @@
 				{% csrf_token %}
 				<input type="hidden" name="url_from" value="{{request.path}}" />
 				<input type="hidden" id="id" name="id" value="{{ product.id }}" />
-				<input
-					type="hidden"
-					id="price"
-					name="price"
-					value="{{product.price}}"
-				/>
+				{% if product.sale_value > 0 %}
+                        <input
+                            type="hidden"
+                            id="price"
+                            name="price"
+                            value="{{product.get_total_sale|floatformat:1}}"
+                        />
+                    {% else %}
+                        <input
+                            type="hidden"
+                            id="price"
+                            name="price"
+                            value="{{product.price}}"
+                        />
+                {% endif %}
 				<input
 					type="hidden"
 					id="title"
@@ -79,6 +88,7 @@
 			</form>
 			<div class="main__product_button margin">
 				{% if product.available %}
+                
 				<form
 					method="POST"
 					action="{% url 'cart:cart-add' id=product.id %}"
@@ -91,12 +101,21 @@
 						name="id"
 						value="{{ product.id }}"
 					/>
-					<input
-						type="hidden"
-						id="price"
-						name="price"
-						value="{{product.price}}"
-					/>
+                    {% if product.sale_value > 0 %}
+                        <input
+                            type="hidden"
+                            id="price"
+                            name="price"
+                            value="{{product.get_total_sale|floatformat:1}}"
+                        />
+                    {% else %}
+                        <input
+                            type="hidden"
+                            id="price"
+                            name="price"
+                            value="{{product.price}}"
+                        />
+                    {% endif %}
 					<input
 						type="hidden"
 						id="title"

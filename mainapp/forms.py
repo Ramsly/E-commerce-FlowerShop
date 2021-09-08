@@ -85,28 +85,27 @@ User = get_user_model()
 #             "phone",
 #         ]
 
-class OrderForm(forms.Form):
-    """Форма заказа (отправка Email)"""
+# class OrderForm(forms.Form):
+#     """Форма заказа (отправка Email)"""
 
-    BUYING_TYPE_SELF = 'self'
-    BUYING_TYPE_DELIVERY = 'delivery'
+#     BUYING_TYPE_SELF = 'self'
+#     BUYING_TYPE_DELIVERY = 'delivery'
+#     BUYING_TYPE_CHOICES = (
+#         (BUYING_TYPE_SELF, 'Самовывоз'),
+#         (BUYING_TYPE_DELIVERY, 'Доставка')
+#     )
 
-    BUYING_TYPE_CHOICES = (
-        (BUYING_TYPE_SELF, 'Самовывоз'),
-        (BUYING_TYPE_DELIVERY, 'Доставка')
-    )
-
-    first_name = forms.CharField(label="Имя")
-    last_name = forms.CharField(label="Фамилия")
-    telephone = forms.IntegerField(label="Номер телефона")
-    email = forms.EmailField(label="Email")
-    buying_type = forms.ChoiceField(
-        label='Тип заказа',
-        choices=BUYING_TYPE_CHOICES,
-    )
-    address = forms.CharField(label='Адрес')
-    comment = forms.CharField(label='Комментарий к заказу')
-    products = forms.CharField()
+#     first_name = forms.CharField(label="Имя")
+#     last_name = forms.CharField(label="Фамилия")
+#     telephone = forms.IntegerField(label="Номер телефона")
+#     email = forms.EmailField(label="Email")
+#     buying_type = forms.ChoiceField(
+#         label='Тип заказа',
+#         choices=BUYING_TYPE_CHOICES,
+#     )
+#     address = forms.CharField(label='Адрес')
+#     comment = forms.CharField(label='Комментарий к заказу')
+#     product = forms.CharField()
 
 
 class ReviewForm(forms.ModelForm):

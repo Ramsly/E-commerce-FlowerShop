@@ -1,5 +1,6 @@
 from django.http import JsonResponse, HttpResponse
 from django.shortcuts import redirect, render
+from mainapp.models import Product
 
 
 from .utils import replace_to_dot
