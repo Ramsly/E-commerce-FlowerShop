@@ -18,7 +18,8 @@
 	<div class="sidesearch">
 		<aside class="sidesearch__container">
 			<form class="fields" method="GET">
-				<input name="q" type="search" placeholder="Поиск товара" />
+				{% comment %} <input name="q" type="search" placeholder="Поиск товара" /> {% endcomment %}
+                {{form.as_p}}
 				<button class="snapLeftBtn search-btn" type="submit">
 					<span> <i class="fas fa-search"></i></span>
 				</button>
@@ -31,7 +32,7 @@
 						type="checkbox"
 						class="checkbox"
 						name="q"
-						value="{{product.slug}}"
+						value="{{product.title}}"
 					/>
 					{{product.title}}
 					<svg viewBox="0 0 21 21">
@@ -55,9 +56,9 @@
 	</div>
 
 	<div class="category__detail_container">
-		{% if search_products %} {% for product in products_of_category %}
+        {% for product in result %}
             {% include "include_parts/product.html" %}
-		{% endfor %} {% endif %}
+		{% endfor %} 
 	</div>
 {% comment %} <script src="{% static 'js/category_detail.js' %}"></script> {% endcomment %}
 </section>

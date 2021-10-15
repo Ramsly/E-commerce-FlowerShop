@@ -54,16 +54,9 @@
 					</form>
 					{% else %}
 					<button
-						class="
-							main__product_button
-							margin
-							button
-							not__available_btn
-						"
+						class="main__product_button margin button not__available_btn"
 					>
-						<span>
-							Распродано <i class="fas fa-shopping-cart"></i>
-						</span>
+						<span> Распродано <i class="fas fa-shopping-cart"></i> </span>
 					</button>
 					{% endif %}
 				</div>
@@ -109,7 +102,7 @@
 			</p>
 			{% endif %} {% for f_name, f_value in product.get_features.items %}
 			<p class="padding">Ед. измерения: {{f_value}}</p>
-			{% endfor %} 
+			{% endfor %}
 			<p class="padding">
 				<strong>Описание: </strong>
 				<br />
@@ -117,6 +110,12 @@
 				<span class="main__product_description"
 					>{{ product.description }}</span
 				>
+			</p>
+			<p class="main__rating padding">
+				<i class="far fa-thumbs-up"></i>
+				<span>0</span>
+				<i class="far fa-thumbs-down"></i>
+				<span>0</span>
 			</p>
 		</div>
 	</div>

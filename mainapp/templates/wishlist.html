@@ -29,11 +29,6 @@
 						class="borderLeftRight magnifyText"
 						>{{product.title}}</a
 					>
-					{% if product.sale_value > 0 %}
-					<span class="main__del_price"
-						><del>{{product.price|floatformat:2}} ₽</del></span
-					>
-					{% endif %}
 				</div>
 
 				<div class="main__product_description">{{product.description}}</div>
@@ -79,6 +74,9 @@
 					{% if product.sale_value > 0 %}
 					<span class="main__sale background"
 						>{{product.get_total_sale|floatformat:1}} ₽</span
+					>
+					<span class="main__del_price"
+						><del>{{product.price|floatformat:2}} ₽</del></span
 					>
 					{% else %}
 					<span class="background">{{product.price|floatformat}} ₽</span>

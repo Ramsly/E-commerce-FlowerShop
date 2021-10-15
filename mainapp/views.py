@@ -12,10 +12,11 @@ from django.contrib.postgres.search import (
     SearchVector,
     SearchRank,
     SearchHeadline,
+    TrigramSimilarity
 )
 
 from specs.models import ProductFeatures
-from .forms import ReviewForm, RatingForm
+from .forms import PostSearchForm, ReviewForm, RatingForm
 from .models import Category, Product, Rating
 
 User = get_user_model()
@@ -23,7 +24,7 @@ User = get_user_model()
 
 class BaseView(ListView):
 
-    paginate_by = 12
+    paginate_by = 10
     model = Product
     context_object_name = "products"
     template_name = "base.html"
@@ -37,32 +38,36 @@ class ProductDetailView(DetailView):
     slug_url_kwarg = "slug"
 
 
-class CategoryDetailView(View):
+class CategoryListView(View):
     def get(self, request, slug, *args, **kwargs):
         products_of_category = Product.objects.all()
         category = None
         q = request.GET.get("q")
+        form = PostSearchForm
 
+        results = []
+    
         if slug:
             category = get_object_or_404(Category, slug=slug)
             products_of_category = products_of_category.filter(category=category)
-        if q:
-            vector = SearchVector("slug")
-            query = SearchQuery(q)
 
-            search_products = products_of_category.annotate(search=vector).filter(
-                search=query, category=category
-            )
-        else:
-            search_products = products_of_category.filter(category=category)
+        if 'q' in request.GET:
+            form = PostSearchForm(request.GET)
+
+            if form.is_valid():
+                q = form.cleaned_data['q']
+                results = Product.objects.annotate(search=SearchVector('title'),).filter(search=q)  
+
 
         context = {
             "products_of_category": products_of_category,
             "category": category,
-            "search_products": search_products,
+            "form": form,
+            'results':results, 
+            'q':q,
         }
         return render(request, "category_detail.html", context)
-
+        
 
 class CategoriesListView(ListView):
 
@@ -108,9 +113,13 @@ class SendToEmailOrderView(View):
         html_content = render_to_string("html_email.html", data)
         msg = EmailMultiAlternatives(subject, text_content, from_email, [to])
         msg.attach_alternative(html_content, "text/html")
-        msg.send()
-        del request.session["cart"]
-        request.session.modified = True
+        try:
+            msg.send()
+            del request.session["cart"]
+            request.session.modified = True
+        except BadHeaderError:
+            return HttpResponse("Плохое соединение")
+        messages.success(request, "Спасибо за заказ!")
         return HttpResponseRedirect("/")
 
 

@@ -4,7 +4,7 @@ from django.contrib.auth.views import LogoutView
 from .views import (
     BaseView,
     ProductDetailView,
-    CategoryDetailView,
+    CategoryListView,
     CategoriesListView,
     CheckoutView,
     SendToEmailOrderView,
@@ -19,7 +19,7 @@ from .views import (
 urlpatterns = [
     path("", BaseView.as_view(), name="base"),
     path("products/<str:slug>/", ProductDetailView.as_view(), name="product_detail"),
-    path("category/<str:slug>/", CategoryDetailView.as_view(), name="category_detail"),
+    path("category/<str:slug>/", CategoryListView.as_view(), name="category_detail"),
     path("categories/", CategoriesListView.as_view(), name="categories"),
     path("checkout/", CheckoutView.as_view(), name="checkout"),
     path("make-order/", SendToEmailOrderView.as_view(), name="make_order"),

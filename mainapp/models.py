@@ -1,10 +1,9 @@
 from datetime import datetime
 from django.db import models
 from django.contrib.auth import get_user_model
-from django.contrib.contenttypes.models import ContentType
-from django.db.models.deletion import CASCADE
 from django.urls import reverse
-from django.utils import timezone
+from django.contrib.postgres.indexes import GinIndex
+from django.utils.translation import gettext as _
 
 User = get_user_model()
 
@@ -31,7 +30,7 @@ class Product(models.Model):
     category = models.ForeignKey(
         Category, verbose_name="Категория", on_delete=models.CASCADE
     )
-    title = models.CharField(max_length=255, verbose_name="Наименование")
+    title = models.CharField(_("title"), max_length=255,  db_index=True)
     slug = models.SlugField(unique=True)
     image = models.ImageField(verbose_name="Изображение", upload_to="flowers/")
     description = models.TextField(verbose_name="Описание", null=True)
@@ -67,6 +66,9 @@ class Product(models.Model):
     class Meta:
         verbose_name = "Товары"
         verbose_name_plural = "Товары"
+        indexes = [  
+          GinIndex(name='NewGinIndex', fields=['title'], opclasses=['gin_trgm_ops']),
+        ]
 
 
 class Reviews(models.Model):

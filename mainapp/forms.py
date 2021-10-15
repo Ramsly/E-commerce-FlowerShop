@@ -107,6 +107,13 @@ User = get_user_model()
 #     comment = forms.CharField(label='Комментарий к заказу')
 #     product = forms.CharField()
 
+class PostSearchForm(forms.Form):
+    q = forms.CharField()
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields['q'].label = "Поиск товара"
+
 
 class ReviewForm(forms.ModelForm):
     """Форма отзывов"""
