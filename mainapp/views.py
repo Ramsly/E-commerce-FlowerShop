@@ -6,6 +6,9 @@ from django.http.response import BadHeaderError, HttpResponse
 from django.shortcuts import get_object_or_404, redirect, render
 from django.template.loader import render_to_string
 from django.views.generic import DetailView, View, ListView, TemplateView
+from specs.models import ProductFeatures
+from .forms import PostSearchForm, ReviewForm, LoginForm, RegistrationForm
+from .models import Category, Product, Customer
 
 from django.contrib.postgres.search import (
     SearchQuery,
@@ -15,11 +18,22 @@ from django.contrib.postgres.search import (
     TrigramSimilarity
 )
 
-from specs.models import ProductFeatures
-from .forms import PostSearchForm, ReviewForm, LoginForm, RegistrationForm
-from .models import Category, Product, Customer
-
 User = get_user_model()
+
+
+class AboutUsView(TemplateView):
+
+    template_name = "about.html"
+
+
+class CheckoutView(TemplateView):
+
+    template_name = "checkout.html"
+
+
+class ReviewPageView(TemplateView):
+
+    template_name = "reviews.html"
 
 
 class BaseView(ListView):
@@ -76,19 +90,11 @@ class CategoriesListView(ListView):
     template_name = "categories_detail.html"
 
 
-class AboutUsView(TemplateView):
+class CustomerDetailView(DetailView):
 
-    template_name = "about.html"
-
-
-class CheckoutView(TemplateView):
-
-    template_name = "checkout.html"
-
-
-class ReviewPageView(TemplateView):
-
-    template_name = "reviews.html"
+    model = Customer
+    context_object_name = "customer"
+    template_name = "profile_detail.html"
 
 
 class SendToEmailOrderView(View):

@@ -2,20 +2,19 @@ from datetime import datetime
 from django.db import models
 from django.contrib.auth import get_user_model
 from django.urls import reverse
+from django.core.validators import RegexValidator
 
 User = get_user_model()
 
 
 class Customer(models.Model):
 
-    user = models.ForeignKey(
-        User, verbose_name="Пользователь", on_delete=models.CASCADE
-    )
+    f_name = models.CharField(verbose_name="Имя", blank=True, null=True)
+    l_name = models.CharField(verbose_name="Фамилия", blank=True, null=True)
     image = models.ImageField(verbose_name="Изображение", blank=True, null=True)
     email = models.EmailField(verbose_name="Почта", blank=True, null=True)
-    phone = models.CharField(
-        max_length=20, verbose_name="Номер телефона", null=True, blank=True
-    )
+    phone_regex = RegexValidator(regex=r'^\+?1?\d{9,15}$', message="Phone number must be entered in the format: '+999999999'. Up to 15 digits allowed.")
+    phone_number = models.CharField(validators=[phone_regex], max_length=17, blank=True) # validators should be a list
     address = models.CharField(
         max_length=255, verbose_name="Адрес", null=True, blank=True
     )
