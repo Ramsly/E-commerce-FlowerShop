@@ -18,8 +18,8 @@ class CategoryFeature(models.Model):
 
 class FeatureValidator(models.Model):
 
-    category = models.ForeignKey("mainapp.Category", verbose_name='Категория', on_delete=models.CASCADE)
-    feature_key = models.ForeignKey(CategoryFeature, verbose_name='Ключ характеристики', on_delete=models.CASCADE)
+    category = models.ForeignKey("mainapp.Category", verbose_name='Категория', on_delete=models.CASCADE, blank=True, null=True)
+    feature_key = models.ForeignKey(CategoryFeature, verbose_name='Ключ характеристики', on_delete=models.CASCADE, blank=True, null=True)
     valid_feature_value = models.CharField(max_length=100, verbose_name='Валидное значение')
     
     
@@ -35,8 +35,8 @@ class FeatureValidator(models.Model):
 
 class ProductFeatures(models.Model):
 
-    product = models.ForeignKey("mainapp.Product", verbose_name='Товар', on_delete=models.CASCADE)
-    feature = models.ForeignKey(CategoryFeature, verbose_name='Характеристика', on_delete=models.CASCADE)
+    product = models.ForeignKey("mainapp.Product", verbose_name='Товар', on_delete=models.CASCADE, blank=True, null=True)
+    feature = models.ForeignKey(CategoryFeature, verbose_name='Характеристика', on_delete=models.CASCADE, blank=True, null=True)
     value = models.CharField(max_length=255, verbose_name='Значение')
 
 

@@ -96,14 +96,9 @@
 					</a>
 					<div class="nav__dropdown_content">
 						{% if not user.is_authenticated %}
-						<a href="{% url 'login' %}"
+						<a href="{% url 'authenticate' %}"
 							><span class="nav__link borderLeftRight magnifyText"
 								>Авторизироваться</span
-							></a
-						>
-						<a href="{% url 'registration' %}"
-							><span class="nav__link borderLeftRight magnifyText"
-								>Регистрация</span
 							></a
 						>
 						{% else %}

@@ -7,7 +7,7 @@ from django.shortcuts import get_object_or_404, redirect, render
 from django.template.loader import render_to_string
 from django.views.generic import DetailView, View, ListView, TemplateView
 from specs.models import ProductFeatures
-from .forms import PostSearchForm, ReviewForm, LoginForm, RegistrationForm
+from .forms import PostSearchForm, ReviewForm, Authentificate
 from .models import Category, Product, Customer
 
 from django.contrib.postgres.search import (
@@ -15,7 +15,7 @@ from django.contrib.postgres.search import (
     SearchVector,
     SearchRank,
     SearchHeadline,
-    TrigramSimilarity
+    TrigramSimilarity,
 )
 
 User = get_user_model()
@@ -60,28 +60,29 @@ class CategoryListView(View):
         form = PostSearchForm
 
         results = []
-    
+
         if slug:
             category = get_object_or_404(Category, slug=slug)
             products_of_category = products_of_category.filter(category=category)
 
-        if 'q' in request.GET:
+        if "q" in request.GET:
             form = PostSearchForm(request.GET)
 
             if form.is_valid():
-                q = form.cleaned_data['q']
-                results = Product.objects.annotate(search=SearchVector('title'),).filter(search=q)  
-
+                q = form.cleaned_data["q"]
+                results = Product.objects.annotate(
+                    search=SearchVector("title"),
+                ).filter(search=q)
 
         context = {
             "products_of_category": products_of_category,
             "category": category,
             "form": form,
-            'results':results, 
-            'q':q,
+            "results": results,
+            "q": q,
         }
         return render(request, "category_detail.html", context)
-        
+
 
 class CategoriesListView(ListView):
 
@@ -94,11 +95,11 @@ class CustomerDetailView(DetailView):
 
     model = Customer
     context_object_name = "customer"
+    slug_url_kwarg = "slug"
     template_name = "profile_detail.html"
 
 
 class SendToEmailOrderView(View):
-    
     def post(self, request, *args, **kwargs):
         subject, from_email, to = (
             "Venesia Flower Shop | Заказ №",
@@ -107,14 +108,14 @@ class SendToEmailOrderView(View):
         )
         text_content = ""
         data = {
-            "first_name": request.POST.get('first_name'),
-            "last_name": request.POST.get('last_name'),
-            "telephone": request.POST.get('telephone'),
-            "email": request.POST.get('email'),
-            "buying_type": request.POST.get('buying_type'),
-            "address": request.POST.get('address'),
-            "comment": request.POST.get('comment'),
-            "order": request.POST.get("product")
+            "first_name": request.POST.get("first_name"),
+            "last_name": request.POST.get("last_name"),
+            "telephone": request.POST.get("telephone"),
+            "email": request.POST.get("email"),
+            "buying_type": request.POST.get("buying_type"),
+            "address": request.POST.get("address"),
+            "comment": request.POST.get("comment"),
+            "order": request.POST.get("product"),
         }
         html_content = render_to_string("html_email.html", data)
         msg = EmailMultiAlternatives(subject, text_content, from_email, [to])
@@ -129,67 +130,34 @@ class SendToEmailOrderView(View):
         return HttpResponseRedirect("/")
 
 
-
-class LoginView(View):
-
+class AuthentificationView(View):
     def get(self, request, *args, **kwargs):
-        form = LoginForm(request.POST or None)
+        form = Authentificate(request.POST or None)
         context = {
-            'form': form,
+            "form": form,
         }
-        return render(request, 'login.html', context)
+        return render(request, "authentification.html", context)
 
     def post(self, request, *args, **kwargs):
-        form = LoginForm(request.POST or None)
+        form = Authentificate(request.POST or None)
         if form.is_valid():
-            username = form.cleaned_data['username']
-            password = form.cleaned_data['password']
-            user = authenticate(
-                username=username, password=password
-            )
-            if user:
+            if not Customer.objects.filter(phone_number=form.cleaned_data['phone_number']).exists():
+                new_user = form.save(commit=False)
+                new_user.phone_number = form.cleaned_data["phone_number"]
+                new_user.save()
+                Customer.objects.create(phone_number=form.cleaned_data["phone_number"])
+                user = authenticate(phone_number=new_user.phone_number)
                 login(request, user)
-                return HttpResponseRedirect('/')
+                return HttpResponseRedirect("/")
+            else:
+                phone_number = form.cleaned_data["phone_number"]
+                user = authenticate(phone_number=phone_number)
+                login(request, user)
+                return HttpResponseRedirect("/")
         context = {
-            'form': form,
+            "form": form,
         }
-        return render(request, 'login.html', context)
-
-
-class RegistrationView(View):
-
-    def get(self, request, *args, **kwargs):
-        form = RegistrationForm(request.POST or None)
-        context = {
-            'form': form,
-        }
-        return render(request, 'registration.html', context)
-
-    def post(self, request, *args, **kwargs):
-        form = RegistrationForm(request.POST or None)
-        if form.is_valid():
-            new_user = form.save(commit=False)
-            new_user.username = form.cleaned_data['username']
-            new_user.email = form.cleaned_data['email']
-            new_user.first_name = form.cleaned_data['first_name']
-            new_user.last_name = form.cleaned_data['last_name']
-            new_user.save()
-            new_user.set_password(form.cleaned_data['password'])
-            new_user.save()
-            Customer.objects.create(
-                user=new_user,
-                phone=form.cleaned_data['phone'],
-                address=form.cleaned_data['address']
-            )
-            user = authenticate(
-                username=new_user.username, password=form.cleaned_data['password']
-            )
-            login(request, user)
-            return HttpResponseRedirect('/')
-        context = {
-            'form': form,
-        }
-        return render(request, 'registration.html', context)
+        return render(request, "authentification.html", context)
 
 
 class AddReviewToProduct(View):

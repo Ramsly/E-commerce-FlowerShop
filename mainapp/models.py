@@ -9,8 +9,8 @@ User = get_user_model()
 
 class Customer(models.Model):
 
-    f_name = models.CharField(verbose_name="Имя", blank=True, null=True)
-    l_name = models.CharField(verbose_name="Фамилия", blank=True, null=True)
+    f_name = models.CharField(verbose_name="Имя", blank=True, null=True, max_length=100)
+    l_name = models.CharField(verbose_name="Фамилия", blank=True, null=True, max_length=100)
     image = models.ImageField(verbose_name="Изображение", blank=True, null=True)
     email = models.EmailField(verbose_name="Почта", blank=True, null=True)
     phone_regex = RegexValidator(regex=r'^\+?1?\d{9,15}$', message="Phone number must be entered in the format: '+999999999'. Up to 15 digits allowed.")
@@ -21,7 +21,7 @@ class Customer(models.Model):
     slug = models.SlugField(unique=True)
 
     def __str__(self):
-        return "Покупатель: {} {}".format(self.user.first_name, self.user.last_name)
+        return self.phone_number
 
     def get_absolute_url(self):
         return reverse("customer", kwargs={"slug": self.slug})
@@ -50,7 +50,7 @@ class Category(models.Model):
 
 class Product(models.Model):
     category = models.ForeignKey(
-        Category, verbose_name="Категория", on_delete=models.CASCADE
+        Category, verbose_name="Категория", on_delete=models.CASCADE, default=""
     )
     title = models.CharField(verbose_name="Наименование", max_length=255,  db_index=True)
     slug = models.SlugField(unique=True)
@@ -107,7 +107,7 @@ class Reviews(models.Model):
         blank=True,
         null=True,
     )
-    product = models.ForeignKey(Product, verbose_name="Цветы", on_delete=models.CASCADE, null=True)
+    product = models.ForeignKey(Product, verbose_name="Цветы", on_delete=models.CASCADE, null=True, default="")
 
     def __str__(self):
         return f"{self.name} - {self.product}"
@@ -133,8 +133,8 @@ class RatingStar(models.Model):
 class Rating(models.Model):
     """Рейтинг"""
     ip = models.CharField("IP адрес", max_length=15)
-    star = models.ForeignKey(RatingStar, on_delete=models.CASCADE, verbose_name="Звезда")
-    product = models.ForeignKey(Product, on_delete=models.CASCADE, verbose_name="Товар")
+    star = models.ForeignKey(RatingStar, on_delete=models.CASCADE, verbose_name="Звезда", default=0)
+    product = models.ForeignKey(Product, on_delete=models.CASCADE, verbose_name="Товар", default="")
 
     def __str__(self):
         return f"{self.star} - {self.product}"

@@ -1,18 +1,16 @@
 from django import forms
 from django.contrib.auth import get_user_model
-from django.forms import fields
 from .models import Reviews, RatingStar, Rating, Customer
 
 User = get_user_model()
 
-class Authenticate(forms.ModelForm):
+class Authentificate(forms.ModelForm):
 
     class Meta: 
-        models = Customer
-        fields = ["phone_number"]
+        model = Customer
+        fields = ("phone_number",)
 
-    phone_number = forms.RegexField(regex=r'^\+?1?\d{9,15}$', 
-                                error_message = ("Phone number must be entered in the format: '+999999999'. Up to 15 digits allowed."))
+    phone_number = forms.RegexField(regex=r'^\+?1?\d{9,15}$')
 
 
 class PostSearchForm(forms.Form):

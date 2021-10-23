@@ -1,4 +1,3 @@
-from django.contrib.sessions.models import Session
 from django.contrib import admin
 
 from .models import *
@@ -13,11 +12,10 @@ class CategoryAdmin(admin.ModelAdmin):
 class ProductAdmin(admin.ModelAdmin):
     prepopulated_fields = {"slug": ("title",)}
 
-@admin.register(Session)
-class SessionAdmin(admin.ModelAdmin):
-    def _session_data(self, obj):
-        return obj.get_decoded()
-    list_display = ['session_key', '_session_data', 'expire_date']
+
+@admin.register(Customer)
+class ProductAdmin(admin.ModelAdmin):
+    prepopulated_fields = {"slug": ("f_name",)}
 
 
 admin.site.register(Reviews)
