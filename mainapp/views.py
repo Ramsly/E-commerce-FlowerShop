@@ -7,7 +7,7 @@ from django.shortcuts import get_object_or_404, redirect, render
 from django.template.loader import render_to_string
 from django.views.generic import DetailView, View, ListView, TemplateView
 from specs.models import ProductFeatures
-from .forms import PostSearchForm, ReviewForm, Authentificate
+from .forms import PostSearchForm, ReviewForm, LoginForm, RegistrationForm
 from .models import Category, Product, Customer
 
 from django.contrib.postgres.search import (
@@ -130,34 +130,66 @@ class SendToEmailOrderView(View):
         return HttpResponseRedirect("/")
 
 
-class AuthentificationView(View):
+class LoginView(View):
+
     def get(self, request, *args, **kwargs):
-        form = Authentificate(request.POST or None)
+        form = LoginForm(request.POST or None)
         context = {
-            "form": form,
+            'form': form,
         }
-        return render(request, "authentification.html", context)
+        return render(request, 'login.html', context)
 
     def post(self, request, *args, **kwargs):
-        form = Authentificate(request.POST or None)
+        form = LoginForm(request.POST or None)
         if form.is_valid():
-            if not Customer.objects.filter(phone_number=form.cleaned_data['phone_number']).exists():
-                new_user = form.save(commit=False)
-                new_user.phone_number = form.cleaned_data["phone_number"]
-                new_user.save()
-                Customer.objects.create(phone_number=form.cleaned_data["phone_number"])
-                user = authenticate(phone_number=new_user.phone_number)
+            username = form.cleaned_data['username']
+            password = form.cleaned_data['password']
+            user = authenticate(
+                username=username, password=password
+            )
+            if user:
                 login(request, user)
-                return HttpResponseRedirect("/")
-            else:
-                phone_number = form.cleaned_data["phone_number"]
-                user = authenticate(phone_number=phone_number)
-                login(request, user)
-                return HttpResponseRedirect("/")
+                return HttpResponseRedirect('/')
         context = {
-            "form": form,
+            'form': form,
         }
-        return render(request, "authentification.html", context)
+        return render(request, 'login.html', context)
+
+
+class RegistrationView(View):
+
+    def get(self, request, *args, **kwargs):
+        form = RegistrationForm(request.POST or None)
+        context = {
+            'form': form,
+        }
+        return render(request, 'registration.html', context)
+
+    def post(self, request, *args, **kwargs):
+        form = RegistrationForm(request.POST or None)
+        if form.is_valid():
+            new_user = form.save(commit=False)
+            new_user.username = form.cleaned_data['username']
+            new_user.email = form.cleaned_data['email']
+            new_user.first_name = form.cleaned_data['first_name']
+            new_user.last_name = form.cleaned_data['last_name']
+            new_user.save()
+            new_user.set_password(form.cleaned_data['password'])
+            new_user.save()
+            Customer.objects.create(
+                user=new_user,
+                phone=form.cleaned_data['phone'],
+                address=form.cleaned_data['address']
+            )
+            user = authenticate(
+                username=new_user.username, password=form.cleaned_data['password']
+            )
+            login(request, user)
+            return HttpResponseRedirect('/')
+        context = {
+            'form': form,
+        }
+        return render(request, 'registration.html', context)
 
 
 class AddReviewToProduct(View):
@@ -173,7 +205,3 @@ class AddReviewToProduct(View):
             form.product = product
             form.save()
         return HttpResponseRedirect(product.get_absolute_url())
-
-
-# class AddStarRating(View):
-#     """Добавление рейтинга фильму"""

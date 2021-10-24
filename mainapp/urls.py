@@ -8,7 +8,8 @@ from .views import (
     CategoriesListView,
     CheckoutView,
     SendToEmailOrderView,
-    AuthentificationView,
+    LoginView,
+    RegistrationView,
     AddReviewToProduct,
     AboutUsView,
     ReviewPageView,
@@ -25,6 +26,7 @@ urlpatterns = [
     path("about/", AboutUsView.as_view(), name="about"),
     path("review/<str:slug>/", AddReviewToProduct.as_view(), name="add_review"),
     path("reviews/", ReviewPageView.as_view(), name="reviews"),
-    path("authentificate/", AuthentificationView.as_view(), name="authenticate"),
+    path("login/", LoginView.as_view(), name="login"),
+    path("registration/", RegistrationView.as_view(), name="registration"),
     path("logout/", LogoutView.as_view(next_page="/"), name="logout"),
 ]
