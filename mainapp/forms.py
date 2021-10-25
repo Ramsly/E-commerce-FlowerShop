@@ -1,6 +1,9 @@
 from django import forms
-from django.contrib.auth import get_user_model
-from .models import Reviews, RatingStar, Rating, Customer
+from .models import Account
+from .models import Reviews, RatingStar, Rating
+from django.contrib.auth.models import User
+from django.contrib.auth import authenticate
+from django.contrib.auth.forms import UserCreationForm
 
 
 class LoginForm(forms.ModelForm):
@@ -8,7 +11,7 @@ class LoginForm(forms.ModelForm):
     password = forms.CharField(widget=forms.PasswordInput)
 
     class Meta:
-        model = Customer
+        model = User
         fields = ["username", "password"]
 
     def __init__(self, *args, **kwargs):
@@ -19,11 +22,11 @@ class LoginForm(forms.ModelForm):
     def clean(self):
         username = self.cleaned_data["username"]
         password = self.cleaned_data["password"]
-        if not Customer.objects.filter(username=username).exists():
+        if not User.objects.filter(username=username).exists():
             raise forms.ValidationError(
                 f'Пользователь с логином "{username} не найден в системе'
             )
-        user = Customer.objects.filter(username=username).first()
+        user = User.objects.filter(username=username).first()
         if user:
             if not user.check_password(password):
                 raise forms.ValidationError("Неверный пароль")
@@ -40,7 +43,7 @@ class RegistrationForm(forms.ModelForm):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.fields["username"].label = "Логин"
+        self.fields["username"].label = "Никнейм"
         self.fields["password"].label = "Пароль"
         self.fields["confirm_password"].label = "Подтвердите пароль"
         self.fields["phone"].label = "Номер телефона"
@@ -51,7 +54,7 @@ class RegistrationForm(forms.ModelForm):
 
     def clean_email(self):
         email = self.cleaned_data["email"]
-        if Customer.objects.filter(email=email).exists():
+        if User.objects.filter(email=email).exists():
             raise forms.ValidationError(
                 f"Данный почтовый адрес уже зарегистрирован в системе"
             )
@@ -59,7 +62,7 @@ class RegistrationForm(forms.ModelForm):
 
     def clean_username(self):
         username = self.cleaned_data["username"]
-        if Customer.objects.filter(username=username).exists():
+        if User.objects.filter(username=username).exists():
             raise forms.ValidationError(f"Имя {username} занято")
         return username
 
@@ -71,7 +74,7 @@ class RegistrationForm(forms.ModelForm):
         return self.cleaned_data
 
     class Meta:
-        model = Customer
+        model = User
         fields = [
             "username",
             "email",

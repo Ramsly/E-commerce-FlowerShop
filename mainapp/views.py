@@ -6,7 +6,6 @@ from django.http.response import BadHeaderError, HttpResponse
 from django.shortcuts import get_object_or_404, redirect, render
 from django.template.loader import render_to_string
 from django.views.generic import DetailView, View, ListView, TemplateView
-from specs.models import ProductFeatures
 from .forms import PostSearchForm, ReviewForm, LoginForm, RegistrationForm
 from .models import Category, Product, Customer
 
@@ -171,13 +170,16 @@ class RegistrationView(View):
             new_user = form.save(commit=False)
             new_user.username = form.cleaned_data['username']
             new_user.email = form.cleaned_data['email']
-            new_user.first_name = form.cleaned_data['first_name']
-            new_user.last_name = form.cleaned_data['last_name']
+            new_user.f_name = form.cleaned_data['f_name']
+            new_user.l_name = form.cleaned_data['l_name']
             new_user.save()
             new_user.set_password(form.cleaned_data['password'])
             new_user.save()
             Customer.objects.create(
                 user=new_user,
+                email=form.cleaned_data["email"],
+                f_name=form.cleaned_data["f_name"],
+                l_name=form.cleaned_data["l_name"],
                 phone=form.cleaned_data['phone'],
                 address=form.cleaned_data['address']
             )
