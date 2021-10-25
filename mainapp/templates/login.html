@@ -2,28 +2,9 @@
 <section class="fields">
 	<h1 class="main__title">Авторизация</h1>
 	<div class="field__container">
-		<form action="" method="POST">
+		<form action="{% url 'login' %}" method="POST">
 			{% csrf_token %}
-			<p>
-				<label for="id_username">Логин:</label>
-				<input
-					type="text"
-					name="username"
-					maxlength="150"
-					required
-					id="id_username"
-				/>
-			</p>
-			<p>
-				<label for="id_password">Пароль:</label>
-				<input
-					type="password"
-					name="password"
-					maxlength="150"
-					required
-					id="id_password"
-				/>
-			</p>
+			{{form.as_p}}
 			<div class="field__button">
 				<input
 					type="submit"

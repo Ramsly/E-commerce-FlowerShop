@@ -5,8 +5,6 @@ from django.urls import reverse
 from django.contrib.auth.models import AbstractBaseUser, BaseUserManager
 from django.core.validators import RegexValidator
 
-User = get_user_model()
-
 
 # manager for our custom model
 class MyAccountManager(BaseUserManager):
@@ -47,10 +45,10 @@ class Account(AbstractBaseUser):
     Custom user class inheriting AbstractBaseUser class
     """
 
-    email = models.EmailField(verbose_name="email", max_length=60, unique=True)
+    email = models.EmailField(verbose_name="Email", max_length=60, unique=True)
     phone_regex = RegexValidator(regex=r'^\+?1?\d{9,15}$')
-    phone_number = models.CharField(verbose_name="Телефон", validators=[phone_regex], max_length=15, blank=True) # validators should be a list
-    username = models.CharField(max_length=30, unique=True)
+    phone_number = models.CharField(verbose_name="Телефон", validators=[phone_regex], max_length=15, blank=True) 
+    username = models.CharField(verbose_name="Логин", max_length=30, unique=True)
     date_joined = models.DateTimeField(verbose_name="date joined", auto_now_add=True)
     last_login = models.DateTimeField(verbose_name="last login", auto_now=True)
     is_admin = models.BooleanField(default=False)
@@ -63,45 +61,19 @@ class Account(AbstractBaseUser):
 
     objects = MyAccountManager()
 
+    
+    class Meta:
+        verbose_name = "Аккаунт"
+        verbose_name_plural = "Аккаунты"
+
     def __str__(self):
-        return self.email
+        return self.username
 
     def has_perm(self, perm, obj=None):
         return self.is_admin
 
     def has_module_perms(self, app_label):
         return True
-
-
-class Customer(models.Model):
-
-    user = models.ForeignKey(
-        User,
-        verbose_name="Пользователь",
-        on_delete=models.CASCADE,
-        blank=True,
-        null=True,
-    )
-    f_name = models.CharField(verbose_name="Имя", max_length=255, default="")
-    l_name = models.CharField(verbose_name="Фамилия", max_length=255, default="")
-    image = models.ImageField(verbose_name="Изображение", blank=True, null=True)
-    email = models.EmailField(verbose_name="Почта", blank=True, null=True)
-    phone = models.CharField(
-        max_length=20, verbose_name="Номер телефона", null=True, blank=True
-    )
-    address = models.CharField(
-        max_length=255, verbose_name="Адрес", null=True, blank=True
-    )
-    slug = models.SlugField(unique=False, default="", blank=True, null=True)
-
-    def __str__(self):
-        return f"{self.address}"
-
-    def get_absolute_url(self):
-        return reverse("customer", kwargs={"slug": self.slug})
-
-    class Meta:
-        verbose_name_plural = "Покупатели"
 
 
 class Category(models.Model):

@@ -1,4 +1,4 @@
-from .models import Category, Customer, Product
+from .models import Category, Product
 
 def products(request):
     return {'products': Product.objects.all()}
@@ -7,7 +7,4 @@ def products(request):
 def categories(request):
     return {"categories": Category.objects.all()}
 
-
-def customers(request):
-    return {"customers": Customer.objects.all()}
 
