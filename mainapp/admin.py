@@ -12,9 +12,7 @@ class CategoryAdmin(admin.ModelAdmin):
 class ProductAdmin(admin.ModelAdmin):
     prepopulated_fields = {"slug": ("title",)}
 
-admin.site.register(Account)
 
-    
-    
+admin.site.register(Account)
 admin.site.register(Reviews)
 admin.site.register(Rating)

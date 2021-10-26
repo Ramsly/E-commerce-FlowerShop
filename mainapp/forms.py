@@ -14,14 +14,14 @@ class RegistrationForm(UserCreationForm):
     email = forms.EmailField(
         max_length=60, help_text="Required. Add a valid email address"
     )
+    phone_number = forms.RegexField(regex=r'^\+?1?\d{9,12}$', label="Телефон", error_messages={'invalid': 'Введите правильно номер телефона!'})
 
     class Meta:
         model = Account
-        fields = ("username", "email", "password1", "password2")
+        fields = ("username", "email", "f_name", "l_name", "phone_number","password1", "password2")
 
     def __init__(self, *args, **kwargs):
         super(RegistrationForm, self).__init__(*args, **kwargs)
-
 
 
 class AccountAuthenticationForm(forms.ModelForm):
@@ -90,6 +90,11 @@ class AccountAuthenticationForm(forms.ModelForm):
 #             except Account.DoesNotExist:
 #                 return username
 #             raise forms.ValidationError("Username '%s' already in use." % username)
+
+
+# class OrderForm(forms.Form):
+
+
 
 
 class PostSearchForm(forms.Form):

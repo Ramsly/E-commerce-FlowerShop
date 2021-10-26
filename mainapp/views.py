@@ -1,6 +1,6 @@
 from django.contrib.auth import authenticate, get_user_model, login
 from django.contrib import messages
-from django.core.mail import EmailMultiAlternatives
+from django.core.mail import EmailMultiAlternatives, message
 from django.http import HttpResponseRedirect
 from django.http.response import BadHeaderError, HttpResponse
 from django.shortcuts import get_object_or_404, redirect, render
@@ -78,6 +78,7 @@ class CategoryListView(View):
                 results = Product.objects.annotate(
                     search=SearchVector("title"),
                 ).filter(search=q)
+                return q
 
         context = {
             "products_of_category": products_of_category,
@@ -137,6 +138,8 @@ class SendToEmailOrderView(View):
 
 class AccountAuthenticationView(View):
     def get(self, request, *args, **kwargs):
+        if request.user.is_authenticated:
+            return redirect("/")
         form = AccountAuthenticationForm(request.POST or None)
         context = {
             "form": form,
@@ -145,18 +148,16 @@ class AccountAuthenticationView(View):
 
     def post(self, request, *args, **kwargs):
         form = AccountAuthenticationForm(request.POST or None)
-        if request.user.is_authenticated():
-            return redirect()("/")
         if form.is_valid():
-            email = request.POST.get("email")
-            password = request.POST.get("password")
+            email = form.cleaned_data.get("email")
+            password = form.cleaned_data.get("password")
             user = authenticate(email=email, password=password)
             if user:
                 login(request, user)
-                messages.success(request, "Logged In")
+                messages.success(request, "Вы авторизированны!")
                 return redirect("/")
             else:
-                messages.error("please Correct Below Errors")
+                messages.error("Пожалуйста исправьте ошибки!")
         context = {
             "form": form,
         }
@@ -165,6 +166,8 @@ class AccountAuthenticationView(View):
 
 class RegistrationView(View):
     def get(self, request, *args, **kwargs):
+        if request.user.is_authenticated:
+            return redirect("/")
         form = RegistrationForm(request.POST or None)
         context = {
             "form": form,
@@ -173,10 +176,11 @@ class RegistrationView(View):
 
     def post(self, request, *args, **kwargs):
         form = RegistrationForm(request.POST or None)
-        if request.user.is_authenticated():
-            return redirect("/")
         if form.is_valid():
             form.save()
+            f_name = form.cleaned_data.get("f_name")
+            l_name = form.cleaned_data.get("l_name")
+            phone_number = form.cleaned_data.get("phone_number")
             email = form.cleaned_data.get("email")
             raw_pass = form.cleaned_data.get("password1")
             account = authenticate(email=email, password=raw_pass)
