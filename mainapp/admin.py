@@ -13,6 +13,10 @@ class ProductAdmin(admin.ModelAdmin):
     prepopulated_fields = {"slug": ("title",)}
 
 
-admin.site.register(Account)
+@admin.register(Account)
+class AccountAdmin(admin.ModelAdmin):
+    exclude = ('password',)
+
 admin.site.register(Reviews)
 admin.site.register(Rating)
+admin.site.register(UserSession)

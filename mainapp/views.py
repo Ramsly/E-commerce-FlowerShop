@@ -1,6 +1,6 @@
-from django.contrib.auth import authenticate, get_user_model, login
+from django.contrib.auth import authenticate, login
 from django.contrib import messages
-from django.core.mail import EmailMultiAlternatives, message
+from django.core.mail import EmailMultiAlternatives
 from django.http import HttpResponseRedirect
 from django.http.response import BadHeaderError, HttpResponse
 from django.shortcuts import get_object_or_404, redirect, render
@@ -12,8 +12,9 @@ from .forms import (
     ReviewForm,
     RegistrationForm,
     AccountAuthenticationForm,
+    OrderForm,
 )
-from .models import Category, Product
+from .models import Account, Category, Product
 
 from django.contrib.postgres.search import (
     SearchQuery,
@@ -23,17 +24,10 @@ from django.contrib.postgres.search import (
     TrigramSimilarity,
 )
 
-User = get_user_model()
-
 
 class AboutUsView(TemplateView):
 
     template_name = "about.html"
-
-
-class CheckoutView(TemplateView):
-
-    template_name = "checkout.html"
 
 
 class ReviewPageView(TemplateView):
@@ -106,34 +100,79 @@ class CategoriesListView(ListView):
 
 
 class SendToEmailOrderView(View):
+    def get(self, request, *args, **kwargs):
+        form = OrderForm(request.POST or None)
+        context = {"form": form}
+        return render(request, "order.html", context)
+
     def post(self, request, *args, **kwargs):
-        subject, from_email, to = (
-            "Venesia Flower Shop | Заказ №",
-            "theluckyfeed1@gmail.com",
-            f'{request.POST.get("email")}',
-        )
-        text_content = ""
-        data = {
-            "first_name": request.POST.get("first_name"),
-            "last_name": request.POST.get("last_name"),
-            "telephone": request.POST.get("telephone"),
-            "email": request.POST.get("email"),
-            "buying_type": request.POST.get("buying_type"),
-            "address": request.POST.get("address"),
-            "comment": request.POST.get("comment"),
-            "order": request.POST.get("product"),
-        }
-        html_content = render_to_string("html_email.html", data)
-        msg = EmailMultiAlternatives(subject, text_content, from_email, [to])
-        msg.attach_alternative(html_content, "text/html")
-        try:
-            msg.send()
-            del request.session["cart"]
-            request.session.modified = True
-        except BadHeaderError:
-            return HttpResponse("Плохое соединение")
-        messages.success(request, "Спасибо за заказ!")
-        return HttpResponseRedirect("/")
+        form = OrderForm(request.POST or None)
+        if form.is_valid():
+            f_name = form.cleaned_data.get("f_name")
+            l_name = form.cleaned_data.get("l_name")
+            email = form.cleaned_data.get("email")
+            phone_number = form.cleaned_data.get("phone_number")
+            buying_type = form.cleaned_data.get("buying_type")
+            address = form.cleaned_data.get("address")
+            comment = form.cleaned_data.get("comment")
+            subject, from_email, to = (
+                "Venesia Flower Shop | Заказ №",
+                "theluckyfeed1@gmail.com",
+                f"{email}",
+            )
+            text_content = ""
+            data = {
+                "f_name": f_name,
+                "l_name": l_name,
+                "email": email,
+                "phone_number": phone_number,
+                "buying_type": buying_type,
+                "address": address,
+                "comment": comment,
+                "products": request.POST.get("product"),
+            }
+            html_content = render_to_string("html_email.html", data)
+            msg = EmailMultiAlternatives(subject, text_content, from_email, [to])
+            msg.attach_alternative(html_content, "text/html")
+            try:
+                msg.send()
+                del request.session["cart"]
+                request.session.modified = True
+            except BadHeaderError:
+                return HttpResponse("Плохое соединение")
+            messages.success(request, "Спасибо за заказ!")
+            return redirect("/")
+        context = {"form": form}
+        return render(request, "order.html", context)
+
+    # def post(self, request, *args, **kwargs):
+    #     subject, from_email, to = (
+    #         "Venesia Flower Shop | Заказ №",
+    #         "theluckyfeed1@gmail.com",
+    #         f'{request.POST.get("email")}',
+    #     )
+    #     text_content = ""
+    #     data = {
+    #         "first_name": request.POST.get("first_name"),
+    #         "last_name": request.POST.get("last_name"),
+    #         "telephone": request.POST.get("telephone"),
+    #         "email": request.POST.get("email"),
+    #         "buying_type": request.POST.get("buying_type"),
+    #         "address": request.POST.get("address"),
+    #         "comment": request.POST.get("comment"),
+    #         "order": request.POST.get("product"),
+    #     }
+    #     html_content = render_to_string("html_email.html", data)
+    #     msg = EmailMultiAlternatives(subject, text_content, from_email, [to])
+    #     msg.attach_alternative(html_content, "text/html")
+    #     try:
+    #         msg.send()
+    #         del request.session["cart"]
+    #         request.session.modified = True
+    #     except BadHeaderError:
+    #         return HttpResponse("Плохое соединение")
+    #     messages.success(request, "Спасибо за заказ!")
+    #     return HttpResponseRedirect("/")
 
 
 class AccountAuthenticationView(View):

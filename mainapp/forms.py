@@ -1,7 +1,6 @@
 from django import forms
 from .models import Account
 from .models import Reviews, RatingStar, Rating
-from django.contrib.auth.models import User
 from django.contrib.auth import authenticate
 from django.contrib.auth.forms import UserCreationForm
 
@@ -10,11 +9,11 @@ class RegistrationForm(UserCreationForm):
     """
     Form for Registering new users
     """
-
-    email = forms.EmailField(
-        max_length=60, help_text="Required. Add a valid email address"
-    )
-    phone_number = forms.RegexField(regex=r'^\+?1?\d{9,12}$', label="Телефон", error_messages={'invalid': 'Введите правильно номер телефона!'})
+    username = forms.CharField(required=True, label="Логин")
+    email = forms.CharField(required=True)
+    f_name = forms.CharField(required=True, label="Имя")
+    l_name = forms.CharField(required=True, label="Фамилия")
+    phone_number = forms.RegexField(regex=r'^\+?1?\d{9,12}$', label="Телефон", error_messages={'invalid': 'Введите правильно номер телефона!'}, required=True)
 
     class Meta:
         model = Account
@@ -92,17 +91,32 @@ class AccountAuthenticationForm(forms.ModelForm):
 #             raise forms.ValidationError("Username '%s' already in use." % username)
 
 
-# class OrderForm(forms.Form):
+class OrderForm(forms.Form):
+    BUYING_TYPE_SELF = 'self'
+    BUYING_TYPE_DELIVERY = 'delivery'
 
+    BUYING_TYPE_CHOICES = (
+        (BUYING_TYPE_SELF, 'Самовывоз'),
+        (BUYING_TYPE_DELIVERY, 'Доставка')
+    )
 
-
-
-class PostSearchForm(forms.Form):
-    q = forms.CharField()
+    f_name = forms.CharField(max_length=255, required=True, label="Имя")
+    l_name = forms.CharField(max_length=255, required=True, label="Фамилия")
+    email = forms.EmailField(required=True, label="Email")
+    phone_number = forms.RegexField(regex=r'^\+?1?\d{9,12}$', label="Телефон", error_messages={'invalid': 'Введите правильно номер телефона!'}, required=True)
+    buying_type = forms.ChoiceField(choices=BUYING_TYPE_CHOICES, label="Тип покупки")
+    address = forms.CharField(max_length=255, required=True, label="Адрес")
+    comment = forms.CharField(max_length=5000, help_text='Кол-во символов до 5000', label="Комментарий к заказу")
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.fields["q"].label = "Поиск товара"
+
+
+class PostSearchForm(forms.Form):
+    q = forms.CharField(label="Поиск товара")
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
 
 
 class ReviewForm(forms.ModelForm):

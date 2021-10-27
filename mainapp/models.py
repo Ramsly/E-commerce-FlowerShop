@@ -1,9 +1,14 @@
 from datetime import datetime
+import re
 from django.db import models
-from django.contrib.auth import get_user_model
+from django.conf import settings
+from django.contrib.sessions.models import Session
+from django.db.models.deletion import SET_NULL
 from django.urls import reverse
 from django.contrib.auth.models import AbstractBaseUser, BaseUserManager
 from django.core.validators import RegexValidator
+from autoslug import AutoSlugField
+from django.contrib.auth.signals import user_logged_in
 
 
 # manager for our custom model
@@ -44,14 +49,27 @@ class Account(AbstractBaseUser):
     """
     Custom user class inheriting AbstractBaseUser class
     """
+
     f_name = models.CharField(verbose_name="Имя", max_length=255, default="")
     l_name = models.CharField(verbose_name="Фамилия", max_length=255, default="")
     email = models.EmailField(verbose_name="Email", max_length=60, unique=True)
-    phone_regex = RegexValidator(regex=r'^\+?1?\d{9,15}$')
-    phone_number = models.CharField(verbose_name="Телефон", validators=[phone_regex], max_length=15, blank=True, default="", unique=True) 
+    phone_regex = RegexValidator(regex=r"^\+?1?\d{9,15}$")
+    phone_number = models.CharField(
+        verbose_name="Телефон",
+        validators=[phone_regex],
+        max_length=15,
+        blank=True,
+        default="",
+        unique=True,
+    )
     username = models.CharField(verbose_name="Логин", max_length=30, unique=True)
-    date_joined = models.DateTimeField(verbose_name="Дата регистрации", auto_now_add=True)
-    last_login = models.DateTimeField(verbose_name="Последний раз был онлайн", auto_now=True)
+    slug = AutoSlugField(populate_from="username", default="", blank=True, null=True)
+    date_joined = models.DateTimeField(
+        verbose_name="Дата регистрации", auto_now_add=True
+    )
+    last_login = models.DateTimeField(
+        verbose_name="Последний раз был онлайн", auto_now=True
+    )
     is_admin = models.BooleanField(default=False)
     is_active = models.BooleanField(default=True)
     is_staff = models.BooleanField(default=False)
@@ -62,7 +80,6 @@ class Account(AbstractBaseUser):
 
     objects = MyAccountManager()
 
-    
     class Meta:
         verbose_name = "Аккаунт"
         verbose_name_plural = "Аккаунты"
@@ -75,6 +92,18 @@ class Account(AbstractBaseUser):
 
     def has_module_perms(self, app_label):
         return True
+
+
+class UserSession(models.Model):
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.SET_NULL, null=True)
+    session = models.ForeignKey(Session, on_delete=SET_NULL, null=True)
+
+def user_logged_in_handler(sender, request, user, **kwargs):
+    UserSession.objects.get_or_create(
+        user=user, session_id=request.session.session_key
+    )
+
+user_logged_in.connect(user_logged_in_handler)
 
 
 class Category(models.Model):
@@ -132,6 +161,7 @@ class Product(models.Model):
     class Meta:
         verbose_name = "Товары"
         verbose_name_plural = "Товары"
+        ordering = ["id"]
 
 
 class Reviews(models.Model):

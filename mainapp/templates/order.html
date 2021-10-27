@@ -14,12 +14,10 @@
                 <span class="signature ship">Бесплатная доставка</span>
                 {% else %}
                 <span class="signature ship"
-                    >Доставка <span>{{product.shipping_price}} ₽</span></span
-                >
+                    >Доставка <span>{{product.shipping_price}} ₽</span></span>
                 {% endif %} {% if product.sale_value > 0 %}
                 <span class="signature sale"
-                    >Скидка <span>{{product.sale_value|floatformat}} %</span></span
-                >
+                    >Скидка <span>{{product.sale_value|floatformat}} %</span></span>
                 {% endif %}
             </div>
             <div class="cart-wishlist__content">
@@ -67,20 +65,23 @@
 <section class="fields">
 	<h3 class="main__title">Форма заказа</h3>
 	<div class="field__container">
-		<form action="{% url "make_order" %}" method="POST">
+		<form action="{% url "make_order"%}" method="POST">
 			{% csrf_token %}
-            <p><label for="id_first_name">Имя:</label> <input type="text" name="first_name" required id="id_first_name"></p>
-            <p><label for="id_last_name">Фамилия:</label> <input type="text" name="last_name" required id="id_last_name"></p>
-            <p><label for="id_telephone">Номер телефона:</label> <input type="text" name="telephone" required id="id_telephone"></p>
-            <p><label for="id_email">Email:</label> <input type="email" name="email" required id="id_email"></p>
-            <p><label for="id_buying_type">Тип заказа:</label>
-                <select name="buying_type" id="id_buying_type">
-                  <option value="Самовывоз">Самовывоз</option>
-                  <option value="Доставка">Доставка</option>
-                </select>
-            </p>
-            <p><label for="id_address">Адрес:</label> <input type="text" name="address" required id="id_address"></p>
-            <p><label for="id_comment">Комментарий к заказу:</label> <input type="text" name="comment" id="id_comment"></p>
+            {% if user.is_authenticated %}
+                <p><label for="id_f_name">Имя:</label> <input type="text" name="f_name" maxlength="255" required="" id="id_f_name" value="{{account.f_name}}"></p>
+                <p><label for="id_l_name">Фамилия:</label> <input type="text" name="l_name" maxlength="255" required="" id="id_l_name" value="{{account.l_name}}"></p>
+                <p><label for="id_email">Email:</label> <input type="email" name="email" required="" id="id_email" value="{{account.email}}"></p>
+                <p><label for="id_phone_number">Телефон:</label> <input type="text" name="phone_number" required="" id="id_phone_number" value="{{account.phone_number}}"></p>
+                <p><label for="id_address">Адрес:</label> <input type="text" name="address" maxlength="255" required="" id="id_address"value="{{account.address}}"></p>
+            {% endif %}
+            <p><label for="id_buying_type">Тип покупки:</label> <select name="buying_type" id="id_buying_type">
+            <option value="self">Самовывоз</option>
+
+            <option value="delivery">Доставка</option>
+
+            </select></p>
+            <p><label for="id_comment">Комментарий к заказу:</label> <input type="text" name="comment" maxlength="5000" required="" id="id_comment"> <span class="helptext">Кол-во символов до 5000</span></p>
+                    
                 <input
 					type="hidden"
 					name="product"

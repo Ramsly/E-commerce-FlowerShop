@@ -8,3 +8,7 @@ def categories(request):
     return {"categories": Category.objects.all()}
 
 
+# def accounts(request, id):
+#     return {"accounts": Account.objects.get(id=id)}
+
+
