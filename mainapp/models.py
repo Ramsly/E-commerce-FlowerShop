@@ -70,6 +70,8 @@ class Account(AbstractBaseUser):
     last_login = models.DateTimeField(
         verbose_name="Последний раз был онлайн", auto_now=True
     )
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=SET_NULL, null=True)
+    session = models.ForeignKey(Session, on_delete=SET_NULL, null=True)
     is_admin = models.BooleanField(default=False)
     is_active = models.BooleanField(default=True)
     is_staff = models.BooleanField(default=False)
@@ -94,14 +96,11 @@ class Account(AbstractBaseUser):
         return True
 
 
-class UserSession(models.Model):
-    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.SET_NULL, null=True)
-    session = models.ForeignKey(Session, on_delete=SET_NULL, null=True)
-
 def user_logged_in_handler(sender, request, user, **kwargs):
-    UserSession.objects.get_or_create(
+    Account.objects.get_or_create(
         user=user, session_id=request.session.session_key
     )
+
 
 user_logged_in.connect(user_logged_in_handler)
 

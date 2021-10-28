@@ -9,8 +9,8 @@ def cart(request):
     return render(request, "cart.html", context)
 
 
-def cart_add(request, id):
-    if request.method == "POST":
+def cart_add(request, id): 
+    if request.method == "POST" and not request.user.is_authenticated:
         if not request.session.get("cart"):
             request.session["cart"] = list()
         else:

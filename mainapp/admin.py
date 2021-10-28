@@ -19,4 +19,3 @@ class AccountAdmin(admin.ModelAdmin):
 
 admin.site.register(Reviews)
 admin.site.register(Rating)
-admin.site.register(UserSession)
