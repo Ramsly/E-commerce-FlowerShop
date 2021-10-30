@@ -75,7 +75,11 @@
 		<ul class="nav__list">
 			<li class="nav__item">
 				<a class="nav__link purple-color" href="{% url 'cart:cart' %}">
+                {% if not request.user.is_authenticated %}
 					<span class="badge" id="badge">{{total_qty_cart}}</span>
+                {% else %}
+                    span.badge
+                {% endif %}
 					<i class="fas fa-shopping-cart"></i>
 				</a>
 			</li>
