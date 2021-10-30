@@ -1,3 +1,4 @@
+{% load wishlist_qty %}
 <header class="header">
 	<div class="burger">
 		<span></span>
@@ -78,7 +79,7 @@
                 {% if not request.user.is_authenticated %}
 					<span class="badge" id="badge">{{total_qty_cart}}</span>
                 {% else %}
-                    span.badge
+                    <span class="badge" id="badge">{{request.user|wishlist_qty}}</span>
                 {% endif %}
 					<i class="fas fa-shopping-cart"></i>
 				</a>

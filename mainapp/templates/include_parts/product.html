@@ -57,6 +57,7 @@
 			<form
 				action="{% url 'wishlist:wishlist-add' id=product.id %}"
 				method="POST"
+                id="wishlistAdd"
 			>
 				{% csrf_token %}
 				<input type="hidden" name="url_from" value="{{request.path}}" />
@@ -92,6 +93,7 @@
 				<form
 					method="POST"
 					action="{% url 'cart:cart-add' id=product.id %}"
+                    id="cartAdd"
 				>
 					{% csrf_token %}
 					<input type="hidden" name="url_from" value="{{request.path}}" />
@@ -145,3 +147,4 @@
 		</div>
 	</div>
 </article>
+

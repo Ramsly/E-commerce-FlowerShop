@@ -1,3 +1,6 @@
+from django.shortcuts import get_object_or_404
+
+
 def wishes_session(request):
     return {"wishes_session": request.session.get("wishlist")}
 

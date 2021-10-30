@@ -27,23 +27,49 @@
 		<main class="wrapper">
 			<section class="intro"></section>
 			<section class="main">
-				{% block content %}
-                {% include "include_parts/message.html" %}
+				{% block content %} {% include "include_parts/message.html" %}
 				<h1 class="main__title">
 					Наша витрина {{request.session.session_key}}
 				</h1>
 				<div class="main__container">
-					{% for product in products %}
-					    {% include "include_parts/product.html" %}
-					{% endfor %}
-					{% include "include_parts/pagination.html" %}
+					{% for product in products %} 
+                    {% include "include_parts/product.html" %}              
+                    {% endfor %} 
+                    {% include "include_parts/pagination.html" %}
 				</div>
 				{% endblock content %}
 			</section>
 			{% include "include_parts/footer.html" %}
 		</main>
-        {% block js %}
-        <script src="{% static 'js/el_on_page.js' %}"></script>
-        {% endblock js %}
+		{% block js %}
+		<script
+			src="https://code.jquery.com/jquery-3.6.0.min.js"
+			integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4="
+			crossorigin="anonymous"
+		></script>
+        {% comment %} <script>
+                        $(document).ready(function () {
+                            // catch the form's submit event
+                            $("#wishlistAdd").submit(function () {
+                                // create an AJAX call
+                                $.ajax({
+                                    data: $(this).serialize(), // get the form data
+                                    type: "POST", // GET or POST
+                                    url: "{% url 'wishlist:wishlist-add' {% for product in products %}id=product.id {% endfor %} %}",
+                                    // on success
+                                    success: function (response) {
+                                        alert("Thankyou for reaching us out ");
+                                    },
+                                    // on error
+                                    error: function (response) {
+                                        // alert the error if any error occured
+                                        console.log(response.responseJSON.errors);
+                                    },
+                                });
+                                return false;
+                            });
+                        });
+                    </script> {% endcomment %}
+		{% endblock js %}
 	</body>
 </html>

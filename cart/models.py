@@ -1,11 +1,11 @@
-from django.conf import settings
 from django.db import models
+from django.conf import settings
 
 
-class OrderItem(models.Model): # * Cart
-    user = models.ForeignKey(settings.AUTH_USER_MODEL, verbose_name="Пользователь", on_delete=models.CASCADE)
+class OrderItem(models.Model):
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, verbose_name="Пользователь", on_delete=models.CASCADE, related_name="user_for_cart")
     ordered = models.BooleanField(default=False)
-    product = models.ForeignKey('mainapp.Product', on_delete=models.CASCADE, verbose_name="Товар")
+    product = models.ForeignKey('mainapp.Product', on_delete=models.CASCADE, verbose_name="Товар", related_name="product_for_cart")
     quantity = models.IntegerField(default=1, verbose_name="Кол-во")
 
     class Meta:
@@ -13,6 +13,9 @@ class OrderItem(models.Model): # * Cart
 
     def __str__(self):
         return f"{self.quantity} {self.product.title} {self.user.username}"
+        
+    def get_quantity_of_cart(self):
+        return self.quantity
 
     def get_total_product_price(self):
         return self.quantity * self.product.price
@@ -27,10 +30,6 @@ class OrderItem(models.Model): # * Cart
 
 
 # TODO: Delete Cart page and custom Order
-# TODO: Make a cart with relationship Account
-# TODO: Make a wishlist with relationship Account
 # TODO: AJAX cart and wishlist
 # TODO: Repair postgres search
 # TODO: Add coupon system
-# TODO: FBV to CBV in cart and wishlist
-# TODO: Make form in forms.py to add products cart and wishlist (form.cleaned_data.get())
