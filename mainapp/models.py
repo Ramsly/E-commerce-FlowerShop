@@ -1,14 +1,11 @@
 from datetime import datetime
-import re
-from django.db import models
 from django.conf import settings
-from django.contrib.sessions.models import Session
-from django.db.models.deletion import SET_NULL
+from django.db import models
 from django.urls import reverse
 from django.contrib.auth.models import AbstractBaseUser, BaseUserManager
 from django.core.validators import RegexValidator
 from autoslug import AutoSlugField
-from django.contrib.auth.signals import user_logged_in
+
 
 
 # manager for our custom model
@@ -52,6 +49,7 @@ class Account(AbstractBaseUser):
 
     f_name = models.CharField(verbose_name="Имя", max_length=255, default="")
     l_name = models.CharField(verbose_name="Фамилия", max_length=255, default="")
+    shipping_address = models.CharField(verbose_name="Адрес доставки", max_length=255, default="")
     email = models.EmailField(verbose_name="Email", max_length=60, unique=True)
     phone_regex = RegexValidator(regex=r"^\+?1?\d{9,15}$")
     phone_number = models.CharField(
@@ -70,8 +68,6 @@ class Account(AbstractBaseUser):
     last_login = models.DateTimeField(
         verbose_name="Последний раз был онлайн", auto_now=True
     )
-    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=SET_NULL, null=True)
-    session = models.ForeignKey(Session, on_delete=SET_NULL, null=True)
     is_admin = models.BooleanField(default=False)
     is_active = models.BooleanField(default=True)
     is_staff = models.BooleanField(default=False)
@@ -94,15 +90,6 @@ class Account(AbstractBaseUser):
 
     def has_module_perms(self, app_label):
         return True
-
-
-def user_logged_in_handler(sender, request, user, **kwargs):
-    Account.objects.get_or_create(
-        user=user, session_id=request.session.session_key
-    )
-
-
-user_logged_in.connect(user_logged_in_handler)
 
 
 class Category(models.Model):
@@ -133,7 +120,7 @@ class Product(models.Model):
     description = models.TextField(verbose_name="Описание", null=True)
     price = models.FloatField(verbose_name="Цена", default=0)
     features = models.ManyToManyField(
-        "specs.ProductFeatures", blank=True, related_name="features_for_product"
+        "specs.ProductFeatures",verbose_name="Характеристика товара", blank=True, related_name="features_for_product"
     )
     shipping_price = models.IntegerField(verbose_name="Стоимость доставки", default=0)
     sale_value = models.FloatField(
@@ -148,8 +135,7 @@ class Product(models.Model):
 
     @property
     def get_total_sale(self):
-        total = self.price - (self.price / 100 * self.sale_value)
-        return total
+        return self.price - (self.price / 100 * self.sale_value)
 
     def get_absolute_url(self):
         return reverse("product_detail", kwargs={"slug": self.slug})
@@ -163,6 +149,26 @@ class Product(models.Model):
         ordering = ["id"]
 
 
+class Order(models.Model):
+    BUYING_TYPE_SELF = 'self'
+    BUYING_TYPE_DELIVERY = 'delivery'
+
+    BUYING_TYPE_CHOICES = (
+        (BUYING_TYPE_SELF, 'Самовывоз'),
+        (BUYING_TYPE_DELIVERY, 'Доставка')
+    )
+    
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.SET_NULL, null=True)
+    products = models.ManyToManyField('cart.OrderItem', verbose_name="Продукты")
+    buying_type = models.CharField(verbose_name="Вид покупки", choices=BUYING_TYPE_CHOICES, max_length=255, default=BUYING_TYPE_SELF) 
+    comment = models.TextField(verbose_name="Комментарий", blank=True, null=True)
+
+    class Meta:
+        verbose_name_plural = "Заказы"
+
+    def __str__(self):
+        return f"Заказ: {self.user.f_name} {self.user.l_name}"
+    
 class Reviews(models.Model):
     time = models.DateTimeField(
         verbose_name="Дата комментария",

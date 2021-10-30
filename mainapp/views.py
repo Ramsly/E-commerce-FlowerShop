@@ -145,35 +145,6 @@ class SendToEmailOrderView(View):
         context = {"form": form}
         return render(request, "order.html", context)
 
-    # def post(self, request, *args, **kwargs):
-    #     subject, from_email, to = (
-    #         "Venesia Flower Shop | Заказ №",
-    #         "theluckyfeed1@gmail.com",
-    #         f'{request.POST.get("email")}',
-    #     )
-    #     text_content = ""
-    #     data = {
-    #         "first_name": request.POST.get("first_name"),
-    #         "last_name": request.POST.get("last_name"),
-    #         "telephone": request.POST.get("telephone"),
-    #         "email": request.POST.get("email"),
-    #         "buying_type": request.POST.get("buying_type"),
-    #         "address": request.POST.get("address"),
-    #         "comment": request.POST.get("comment"),
-    #         "order": request.POST.get("product"),
-    #     }
-    #     html_content = render_to_string("html_email.html", data)
-    #     msg = EmailMultiAlternatives(subject, text_content, from_email, [to])
-    #     msg.attach_alternative(html_content, "text/html")
-    #     try:
-    #         msg.send()
-    #         del request.session["cart"]
-    #         request.session.modified = True
-    #     except BadHeaderError:
-    #         return HttpResponse("Плохое соединение")
-    #     messages.success(request, "Спасибо за заказ!")
-    #     return HttpResponseRedirect("/")
-
 
 class AccountAuthenticationView(View):
     def get(self, request, *args, **kwargs):
@@ -219,10 +190,11 @@ class RegistrationView(View):
             form.save()
             f_name = form.cleaned_data.get("f_name")
             l_name = form.cleaned_data.get("l_name")
+            shipping_address = form.cleaned_data("shipping_address")
             phone_number = form.cleaned_data.get("phone_number")
             email = form.cleaned_data.get("email")
-            raw_pass = form.cleaned_data.get("password1")
-            account = authenticate(email=email, password=raw_pass)
+            password = form.cleaned_data.get("password1")
+            account = authenticate(email=email, password=password)
             login(request, account)
             messages.success(request, "Регистрация прошла успешно!")
             return redirect("/")

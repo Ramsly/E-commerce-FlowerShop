@@ -18,4 +18,5 @@ class AccountAdmin(admin.ModelAdmin):
     exclude = ('password',)
 
 admin.site.register(Reviews)
+admin.site.register(Order)
 admin.site.register(Rating)
