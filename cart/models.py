@@ -30,5 +30,4 @@ class OrderItem(models.Model):
 
 # TODO: Сделать вывод товара из сессии и из БД 
 # TODO: Добавить систему купонов
-# TODO: Исправить поиск postgres
 # TODO: AJAX
