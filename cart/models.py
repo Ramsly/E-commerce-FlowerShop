@@ -4,7 +4,6 @@ from django.conf import settings
 
 class OrderItem(models.Model):
     user = models.ForeignKey(settings.AUTH_USER_MODEL, verbose_name="Пользователь", on_delete=models.CASCADE, related_name="user_for_cart")
-    ordered = models.BooleanField(default=False)
     product = models.ForeignKey('mainapp.Product', on_delete=models.CASCADE, verbose_name="Товар", related_name="product_for_cart")
     quantity = models.IntegerField(default=1, verbose_name="Кол-во")
 
@@ -28,8 +27,7 @@ class OrderItem(models.Model):
             return self.get_total_discount_product_price()
         return self.get_total_product_price()
 
-
-# TODO: Delete Cart page and custom Order
-# TODO: AJAX cart and wishlist
-# TODO: Repair postgres search
-# TODO: Add coupon system
+# TODO: Сделать вывод товара из сессии и из БД 
+# TODO: Добавить систему купонов
+# TODO: Исправить поиск postgres
+# TODO: AJAX

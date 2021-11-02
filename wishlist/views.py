@@ -48,19 +48,19 @@ class AddProductToWishesView(View):
             if order_qs.exists():
                 order = order_qs[0]
                 # check if the order item is in the order
-                if order.products.filter(product__id=product.id).exists():
+                if order.products_wishlist.filter(product__id=product.id).exists():
                     order_item.quantity += 1
                     order_item.save()
-                    messages.info(request, "This item quantity was updated.")
+                    # messages.info(request, "This item quantity was updated.")
                     return redirect("/")
                 else:
-                    order.products.add(order_item)
-                    messages.info(request, "This item was added to your cart.")
+                    order.products_wishlist.add(order_item)
+                    # messages.info(request, "This item was added to your cart.")
                     return redirect("/")
             else:
                 order = Order.objects.create(user=request.user)
-                order.products.add(order_item)
-                messages.info(request, "This item was added to your cart.")
+                order.products_wishlist.add(order_item)
+                # messages.info(request, "This item was added to your cart.")
                 return redirect("/")
         return redirect(request.POST.get("url_from"))
 
@@ -85,7 +85,7 @@ class DeleteProductFromWishesView(View):
             if order_qs.exists():
                 order = order_qs[0]
                 # check if the order item is in the order
-                if order.items.filter(product__id=product.id).exists():
+                if order.products_wishlist.filter(product__id=product.id).exists():
                     order_item = OrderItem.objects.filter(
                         product=product, user=request.user, ordered=False
                     )[0]
@@ -93,7 +93,7 @@ class DeleteProductFromWishesView(View):
                         order_item.quantity -= 1
                         order_item.save()
                     else:
-                        order.items.remove(order_item)
+                        order.products_wishlist.remove(order_item)
                     # messages.info(request, "This item quantity was updated.")
                     return redirect("/")
                 else:
@@ -112,11 +112,11 @@ class DeleteAllProductsFromWishesView(View):
             if order_qs.exists():
                 order = order_qs[0]
                 # check if the order item is in the order
-                if order.items.filter(product__id=product.id).exists():
+                if order.products_wishlist.filter(product__id=product.id).exists():
                     order_item = OrderItem.objects.filter(
                         product=product, user=request.user, ordered=False
                     )[0]
-                    order.items.remove(order_item)
+                    order.products_wishlist.remove(order_item)
                     order_item.delete()
                     # messages.info(request, "This item was removed from your cart.")
                     return redirect("/")

@@ -1,12 +1,12 @@
 from django import template
-from mainapp.models import Order
+from wishlist.models import OrderItem
 
 register = template.Library()
 
 @register.filter
 def wishlist_qty(user):
     if user.is_authenticated:
-        qs = Order.objects.filter(user=user)
+        qs = OrderItem.objects.filter(user__username=user)
         if qs.exists():
-            return qs[0].count()
+            return qs.count()
     return 0

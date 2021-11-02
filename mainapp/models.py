@@ -159,7 +159,8 @@ class Order(models.Model):
     )
     
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.SET_NULL, null=True)
-    products = models.ManyToManyField('cart.OrderItem', verbose_name="Продукты")
+    products_cart = models.ManyToManyField('cart.OrderItem', verbose_name="Продукты в корзине")
+    products_wishlist = models.ManyToManyField('wishlist.OrderItem', verbose_name="Продукты в желаниях", editable=False)
     buying_type = models.CharField(verbose_name="Вид покупки", choices=BUYING_TYPE_CHOICES, max_length=255, default=BUYING_TYPE_SELF) 
     comment = models.TextField(verbose_name="Комментарий", blank=True, null=True)
 

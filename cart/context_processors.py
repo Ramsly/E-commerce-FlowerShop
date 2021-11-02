@@ -1,4 +1,5 @@
 from decimal import Decimal
+from cart.models import OrderItem
 
 def cart_session(request):
     return {"cart_session": request.session.get("cart")}
@@ -16,3 +17,6 @@ def total_qty_cart(request):
     except TypeError:
         total_qty = 0
     return {"total_qty_cart": total_qty}
+
+def order_items_cart(request):
+    return {"order_items_cart": OrderItem.objects.filter(user__username=request.user)}

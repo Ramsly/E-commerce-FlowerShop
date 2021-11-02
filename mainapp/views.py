@@ -14,7 +14,9 @@ from .forms import (
     AccountAuthenticationForm,
     OrderForm,
 )
-from .models import Account, Category, Product
+
+from .models import Account, Category, Order, Product
+from cart.models import OrderItem
 
 from django.contrib.postgres.search import (
     SearchQuery,
@@ -99,11 +101,11 @@ class CategoriesListView(ListView):
 #     template_name = "profile_detail.html"
 
 
-class SendToEmailOrderView(View):
+class OrderView(View):
     def get(self, request, *args, **kwargs):
         form = OrderForm(request.POST or None)
         context = {"form": form}
-        return render(request, "order.html", context)
+        return render(request, "order_page.html", context)
 
     def post(self, request, *args, **kwargs):
         form = OrderForm(request.POST or None)
@@ -136,14 +138,25 @@ class SendToEmailOrderView(View):
             msg.attach_alternative(html_content, "text/html")
             try:
                 msg.send()
-                del request.session["cart"]
-                request.session.modified = True
+                if not request.user.is_authenticated:
+                    del request.session["cart"]
+                    request.session.modified = True
+                order_qs = Order.objects.filter(user=request.user)
+                if order_qs.exists():
+                    order = order_qs[0]
+                    # check if the order item is in the order
+                    if order.products_cart.filter(user=request.user).exists():
+                        order_item = OrderItem.objects.filter(
+                            user=request.user
+                        )
+                        order.delete()
+                        order_item.delete()
             except BadHeaderError:
                 return HttpResponse("Плохое соединение")
             messages.success(request, "Спасибо за заказ!")
             return redirect("/")
         context = {"form": form}
-        return render(request, "order.html", context)
+        return render(request, "order_page.html", context)
 
 
 class AccountAuthenticationView(View):

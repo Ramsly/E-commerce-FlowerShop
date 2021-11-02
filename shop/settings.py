@@ -84,6 +84,7 @@ TEMPLATES = [
                 "cart.context_processors.cart_session",
                 "cart.context_processors.total_price",
                 "cart.context_processors.total_qty_cart",
+                "cart.context_processors.order_items_cart",
             ],
         },
     },

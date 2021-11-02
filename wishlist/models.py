@@ -4,7 +4,6 @@ from django.conf import settings
 
 class OrderItem(models.Model): 
     user = models.ForeignKey(settings.AUTH_USER_MODEL, verbose_name="Пользователь", on_delete=models.CASCADE, related_name="user_for_wishlist")
-    ordered = models.BooleanField(default=False)
     product = models.ForeignKey('mainapp.Product', on_delete=models.CASCADE, verbose_name="Товар", related_name="product_for_wishlist")
     quantity = models.IntegerField(default=1, verbose_name="Кол-во")
 

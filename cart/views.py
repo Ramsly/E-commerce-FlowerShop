@@ -8,7 +8,7 @@ from django.views.generic import TemplateView, View
 
 class CartView(TemplateView):
 
-    template_name = "../mainapp/templates/order.html"
+    template_name = "order_page.html"
 
 
 class AddProductToCartView(View):
@@ -53,18 +53,18 @@ class AddProductToCartView(View):
             if order_qs.exists():
                 order = order_qs[0]
                 # check if the order item is in the order
-                if order.products.filter(product__id=product.id).exists():
+                if order.products_cart.filter(product__id=product.id).exists():
                     order_item.quantity += 1
                     order_item.save()
                     # messages.info(request, "This item quantity was updated.")
                     return redirect("/")
                 else:
-                    order.products.add(order_item)
+                    order.products_cart.add(order_item)
                     # messages.info(request, "This item was added to your cart.")
                     return redirect("/")
             else:
                 order = Order.objects.create(user=request.user)
-                order.products.add(order_item)
+                order.products_cart.add(order_item)
                 # messages.info(request, "This item was added to your cart.")
                 return redirect("/")
         return redirect(request.POST.get("url_from"))
@@ -90,7 +90,7 @@ class DeleteProductFromCartView(View):
             if order_qs.exists():
                 order = order_qs[0]
                 # check if the order item is in the order
-                if order.items.filter(product__id=product.id).exists():
+                if order.products_cart.filter(product__id=product.id).exists():
                     order_item = OrderItem.objects.filter(
                         product=product, user=request.user, ordered=False
                     )[0]
@@ -98,7 +98,7 @@ class DeleteProductFromCartView(View):
                         order_item.quantity -= 1
                         order_item.save()
                     else:
-                        order.items.remove(order_item)
+                        order.products_cart.remove(order_item)
                     # messages.info(request, "This item quantity was updated.")
                     return redirect("/")
                 else:
@@ -117,11 +117,11 @@ class DeleteAllProductsFromCartView(View):
             if order_qs.exists():
                 order = order_qs[0]
                 # check if the order item is in the order
-                if order.items.filter(product__id=product.id).exists():
+                if order.products_cart.filter(product__id=product.id).exists():
                     order_item = OrderItem.objects.filter(
                         product=product, user=request.user, ordered=False
                     )[0]
-                    order.items.remove(order_item)
+                    order.products_cart.remove(order_item)
                     order_item.delete()
                     # messages.info(request, "This item was removed from your cart.")
                     return redirect("/")
