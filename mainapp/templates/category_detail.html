@@ -25,7 +25,7 @@
 			</form>
 
 			<form method="GET" class="fields">
-				{% comment %} {% for product in products_of_category %}
+				{% for product in products_of_category %}
 				<label class="checkbox margin path">
 					<input
 						type="checkbox"
@@ -40,7 +40,7 @@
 						></path>
 					</svg>
 				</label>
-				{% endfor %} {% endcomment %}
+				{% endfor %} 
 				<div class="sidesearch__buttons">
 					<button class="overlayLeftBtn" type="submit">
 						<span>Поиск</span>

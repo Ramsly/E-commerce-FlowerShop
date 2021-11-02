@@ -65,11 +65,19 @@ class CategoryListView(View):
             products_of_category = products_of_category.filter(category=category)
 
         if q:
-            vector = SearchVector('title')
+            vector = SearchVector("title")
             query = SearchQuery(q)
-            # search_headline = SearchHeadline('description', query)
+            search_headline = SearchHeadline("description", query)
 
-            products = Product.objects.annotate(search=vector).filter(search=query)
+            products = (
+                Product.objects.annotate(rank=SearchRank(vector, query))
+                .annotate(headline=search_headline) 
+                .annotate(
+                    similarity=TrigramSimilarity("title", q),
+                )
+                .filter(similarity__gt=0.1)
+                .order_by("-rank")
+            )
         else:
             products = Product.objects.all()
 
@@ -141,9 +149,7 @@ class OrderView(View):
                     order = order_qs[0]
                     # check if the order item is in the order
                     if order.products_cart.filter(user=request.user).exists():
-                        order_item = OrderItem.objects.filter(
-                            user=request.user
-                        )
+                        order_item = OrderItem.objects.filter(user=request.user)
                         order.delete()
                         order_item.delete()
             except BadHeaderError:
