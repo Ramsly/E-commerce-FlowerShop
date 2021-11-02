@@ -15,11 +15,3 @@ def cart_qty(user):
             return qs.count()
     return 0
 
-@register.filter
-def get_product_id_in_cart(id):
-    product = get_object_or_404(Product, id=id)
-    if product.exists():
-        return product[0]
-    return None
-    
-

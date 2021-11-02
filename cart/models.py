@@ -13,6 +13,7 @@ class OrderItem(models.Model):
     def __str__(self):
         return f"{self.quantity} {self.product.title} {self.user.username}"
         
+    @property
     def get_quantity_of_cart(self):
         return self.quantity
 

@@ -17,9 +17,9 @@ class ProductAdmin(admin.ModelAdmin):
 class AccountAdmin(admin.ModelAdmin):
     exclude = ('password',)
 
-@admin.register(Order)
-class OrderAdmin(admin.ModelAdmin):
-    exclude = ('products_wishlist',)
+# @admin.register(Order)
+# class OrderAdmin(admin.ModelAdmin):
+#     exclude = ('products_wishlist',)
 
 
 admin.site.register(Reviews)

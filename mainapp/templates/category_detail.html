@@ -18,15 +18,14 @@
 	<div class="sidesearch">
 		<aside class="sidesearch__container">
 			<form class="fields" method="GET">
-				{% comment %} <input name="q" type="search" placeholder="Поиск товара" /> {% endcomment %}
-                {{form.as_p}}
+                <input type="search" name="q" id="">
 				<button class="snapLeftBtn search-btn" type="submit">
 					<span> <i class="fas fa-search"></i></span>
 				</button>
 			</form>
 
 			<form method="GET" class="fields">
-				{% for product in products_of_category %}
+				{% comment %} {% for product in products_of_category %}
 				<label class="checkbox margin path">
 					<input
 						type="checkbox"
@@ -41,7 +40,7 @@
 						></path>
 					</svg>
 				</label>
-				{% endfor %}
+				{% endfor %} {% endcomment %}
 				<div class="sidesearch__buttons">
 					<button class="overlayLeftBtn" type="submit">
 						<span>Поиск</span>
@@ -56,9 +55,11 @@
 	</div>
 
 	<div class="category__detail_container">
-        {% for product in result %}
-            {% include "include_parts/product.html" %}
-		{% endfor %} 
+        {% if products_search %}
+            {% for product in products_search %}
+                {% include "include_parts/product.html" %}
+            {% endfor %}
+        {% endif %}
 	</div>
 {% comment %} <script src="{% static 'js/category_detail.js' %}"></script> {% endcomment %}
 </section>

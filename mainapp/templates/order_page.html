@@ -119,13 +119,13 @@
                     <a href="{{order_item_cart.product.get_absolute_url}}">
                         <img src="{{order_item_cart.product.image.url}}" alt="" />
                     </a>
-                    {% if product.shipping_price == 0 %}
+                    {% if order_item_cart.product.shipping_price == 0 %}
                     <span class="signature ship">Бесплатная доставка</span>
                     {% else %}
                     <span class="signature ship"
                         >Доставка <span>{{order_item_cart.product.shipping_price}} ₽</span></span
                     >
-                    {% endif %} {% if product.sale_value > 0 %}
+                    {% endif %} {% if order_item_cart.product.sale_value > 0 %}
                     <span class="signature sale"
                         >Скидка <span>{{order_item_cart.product.sale_value|floatformat}} %</span></span
                     >
@@ -134,13 +134,13 @@
                 <div class="cart-wishlist__content">
                     <div class="cart-wishlist__product-first">
                         {% comment %} <form
-                            action="{% url 'cart:cart-remove' id=product.id %}"
+                            action="{% url 'cart:cart-remove' id=order_item_cart.product.id %}"
                             method="POST"
                         >
                             {% csrf_token %}
 
                             <input type="hidden" name="url_from" value="{{request.path}}" />
-                            <input type="hidden" id="id" name="id" value="{{ product.id }}" />
+                            <input type="hidden" id="id" name="id" value="{{ order_item_cart.product.id }}" />
                             <input
                                 type="hidden"
                                 id="price"
@@ -151,7 +151,7 @@
                                 type="hidden"
                                 id="title"
                                 name="title"
-                                value="{{ product.title }}"
+                                value="{{ order_item_cart.product.title }}"
                             />
                             <button class="cart-wishlist__product-delete">
                                 <span>&times;</span>
@@ -159,7 +159,7 @@
                         </form> {% endcomment %}
                         <div class="main__product_title margin">
                             <a
-                                href="{{ product.get_absolute_url }}"
+                                href="{{ order_item_cart.product.get_absolute_url }}"
                                 class="borderLeftRight magnifyText"
                                 >{{order_item_cart.product.title}}</a
                             >
@@ -200,6 +200,22 @@
                 </div>
             </article>
         {% endfor %}
+        <div class="cart-wishlist__product_block-total">
+            <div class="cart-wishlist__product-total">
+                Итого: <span class="cart-wishlist__product_block-total-price">₽</span> Кол-во: <span class="cart-wishlist__product_block-total-count">{{order_item_cart.get_quantity_of_cart}}</span>
+            </div>
+            <div class="cart-wishlist__form">
+			<form action="{% url 'cart:cart-delete-all'%}" method="POST">
+				{% csrf_token %}
+				<input type="hidden" name="url_from" value="{{request.path}}" />
+				<button class="overlayLeftBtn delete wishlist-del">
+					<span>
+						Удалить все
+						<i class="fas fa-trash-alt"></i>
+					</span>
+				</button>
+			</form>
+		</div>
     {% endif %}
     </div>
 </section>

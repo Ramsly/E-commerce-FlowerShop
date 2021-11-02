@@ -1,9 +1,12 @@
 from datetime import datetime
 from django.conf import settings
+from django.contrib.postgres import indexes
 from django.db import models
 from django.urls import reverse
 from django.contrib.auth.models import AbstractBaseUser, BaseUserManager
 from django.core.validators import RegexValidator
+from django.contrib.postgres.search import SearchVectorField
+from django.contrib.postgres.indexes import GinIndex
 from autoslug import AutoSlugField
 
 
@@ -129,11 +132,11 @@ class Product(models.Model):
         help_text="В процентах. Значок процента не ставить!",
     )
     available = models.BooleanField(verbose_name="Наличие товара", default=True)
+    search_vector = SearchVectorField(null=True)
 
     def __str__(self):
         return f"{self.title}"
 
-    @property
     def get_total_sale(self):
         return self.price - (self.price / 100 * self.sale_value)
 
@@ -147,28 +150,23 @@ class Product(models.Model):
         verbose_name = "Товары"
         verbose_name_plural = "Товары"
         ordering = ["id"]
+        indexes = [
+            GinIndex(fields=["search_vector"])
+        ]
 
 
 class Order(models.Model):
-    BUYING_TYPE_SELF = 'self'
-    BUYING_TYPE_DELIVERY = 'delivery'
-
-    BUYING_TYPE_CHOICES = (
-        (BUYING_TYPE_SELF, 'Самовывоз'),
-        (BUYING_TYPE_DELIVERY, 'Доставка')
-    )
     
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.SET_NULL, null=True)
     products_cart = models.ManyToManyField('cart.OrderItem', verbose_name="Продукты в корзине")
     products_wishlist = models.ManyToManyField('wishlist.OrderItem', verbose_name="Продукты в желаниях", editable=False)
-    buying_type = models.CharField(verbose_name="Вид покупки", choices=BUYING_TYPE_CHOICES, max_length=255, default=BUYING_TYPE_SELF) 
-    comment = models.TextField(verbose_name="Комментарий", blank=True, null=True)
 
     class Meta:
         verbose_name_plural = "Заказы"
 
     def __str__(self):
         return f"Заказ: {self.user.f_name} {self.user.l_name}"
+        
     
 class Reviews(models.Model):
     time = models.DateTimeField(

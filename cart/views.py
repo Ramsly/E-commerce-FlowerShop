@@ -47,7 +47,7 @@ class AddProductToCartView(View):
         else:
             product = get_object_or_404(Product, id=id)
             order_item, created = OrderItem.objects.get_or_create(
-                product=product, user=request.user, ordered=False
+                product=product, user=request.user
             )
             order_qs = Order.objects.filter(user=request.user)
             if order_qs.exists():
@@ -86,13 +86,13 @@ class DeleteProductFromCartView(View):
             request.session.modified = True
         else:
             product = get_object_or_404(Product, id=id)
-            order_qs = Order.objects.filter(user=request.user, ordered=False)
+            order_qs = Order.objects.filter(user=request.user)
             if order_qs.exists():
                 order = order_qs[0]
                 # check if the order item is in the order
                 if order.products_cart.filter(product__id=product.id).exists():
                     order_item = OrderItem.objects.filter(
-                        product=product, user=request.user, ordered=False
+                        product=product, user=request.user
                     )[0]
                     if order_item.quantity > 1:
                         order_item.quantity -= 1
@@ -113,13 +113,13 @@ class DeleteAllProductsFromCartView(View):
             del request.session["cart"]
         else:
             product = get_object_or_404(Product, id=id)
-            order_qs = Order.objects.filter(user=request.user, ordered=False)
+            order_qs = Order.objects.filter(user=request.user)
             if order_qs.exists():
                 order = order_qs[0]
                 # check if the order item is in the order
                 if order.products_cart.filter(product__id=product.id).exists():
                     order_item = OrderItem.objects.filter(
-                        product=product, user=request.user, ordered=False
+                        product=product, user=request.user
                     )[0]
                     order.products_cart.remove(order_item)
                     order_item.delete()

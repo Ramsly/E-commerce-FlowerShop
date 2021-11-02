@@ -58,30 +58,25 @@ class CategoryListView(View):
         products_of_category = Product.objects.all()
         category = None
         q = request.GET.get("q")
-        form = PostSearchForm
-
-        results = []
+        # form = PostSearchForm(request.GET or None)
 
         if slug:
             category = get_object_or_404(Category, slug=slug)
             products_of_category = products_of_category.filter(category=category)
 
-        if "q" in request.GET:
-            form = PostSearchForm(request.GET)
+        if q:
+            vector = SearchVector('title')
+            query = SearchQuery(q)
+            # search_headline = SearchHeadline('description', query)
 
-            if form.is_valid():
-                q = form.cleaned_data["q"]
-                results = Product.objects.annotate(
-                    search=SearchVector("title"),
-                ).filter(search=q)
-                return q
+            products = Product.objects.annotate(search=vector).filter(search=query)
+        else:
+            products = Product.objects.all()
 
         context = {
             "products_of_category": products_of_category,
             "category": category,
-            "form": form,
-            "results": results,
-            "q": q,
+            "products_search": products,
         }
         return render(request, "category_detail.html", context)
 
