@@ -111,14 +111,6 @@ class OrderForm(forms.Form):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
-
-class PostSearchForm(forms.Form):
-    q = forms.CharField(label="Поиск товара")
-
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-
-
 class ReviewForm(forms.ModelForm):
     """Форма отзывов"""
 

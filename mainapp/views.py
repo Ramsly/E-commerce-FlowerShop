@@ -8,7 +8,6 @@ from django.template.loader import render_to_string
 from django.views.generic import DetailView, View, ListView, TemplateView
 from django.contrib.auth.mixins import LoginRequiredMixin
 from .forms import (
-    PostSearchForm,
     ReviewForm,
     RegistrationForm,
     AccountAuthenticationForm,
@@ -53,23 +52,21 @@ class ProductDetailView(DetailView):
     slug_url_kwarg = "slug"
 
 
-class CategoryListView(View):
+class CategoryListView(ListView):
     def get(self, request, slug, *args, **kwargs):
-        products_of_category = Product.objects.all()
-        category = None
+        products = Product.objects.all()
         q = request.GET.get("q")
-        # form = PostSearchForm(request.GET or None)
 
         if slug:
             category = get_object_or_404(Category, slug=slug)
-            products_of_category = products_of_category.filter(category=category)
+            products_of_category = products.filter(category=category)
 
         if q:
             vector = SearchVector("title")
             query = SearchQuery(q)
             search_headline = SearchHeadline("description", query)
 
-            products = (
+            products_search = (
                 Product.objects.annotate(rank=SearchRank(vector, query))
                 .annotate(headline=search_headline) 
                 .annotate(
@@ -79,12 +76,13 @@ class CategoryListView(View):
                 .order_by("-rank")
             )
         else:
-            products = Product.objects.all()
+            products_search = products.filter(category=category)
+            messages.add_message(request, messages.ERROR, "Ничего не найдено!")
 
         context = {
             "products_of_category": products_of_category,
             "category": category,
-            "products_search": products,
+            "products_search": products_search,
         }
         return render(request, "category_detail.html", context)
 

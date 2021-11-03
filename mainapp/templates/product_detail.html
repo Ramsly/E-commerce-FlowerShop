@@ -136,13 +136,25 @@
 				{% csrf_token %}
 				<div class="comment__user">
 					<label for="commentName">Ваше имя *</label>
+                    {% if request.user.is_authenticated %}
 					<input
 						type="text"
 						name="name"
 						class="comment__name"
 						required=""
 						id="commentName"
+                        value="{{request.user.f_name}}"
 					/>
+                    {% else %}
+                    <input
+						type="text"
+						name="name"
+						class="comment__name"
+						required=""
+						id="commentName"
+                        value="Гость"
+					/>
+                    {% endif %}
 					<input type="hidden" name="parent" id="contactparent" value="" />
 					<label for="contactcomment"> Ваш комментарий * </label>
 					<textarea

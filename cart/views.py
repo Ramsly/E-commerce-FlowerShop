@@ -57,16 +57,16 @@ class AddProductToCartView(View):
                     order_item.quantity += 1
                     order_item.save()
                     # messages.info(request, "This item quantity was updated.")
-                    return redirect("/")
+                    return redirect(request.POST.get("url_from"))
                 else:
                     order.products_cart.add(order_item)
                     # messages.info(request, "This item was added to your cart.")
-                    return redirect("/")
+                    return redirect(request.POST.get("url_from"))
             else:
                 order = Order.objects.create(user=request.user)
                 order.products_cart.add(order_item)
                 # messages.info(request, "This item was added to your cart.")
-                return redirect("/")
+                return redirect(request.POST.get("url_from"))
         return redirect(request.POST.get("url_from"))
 
 

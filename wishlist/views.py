@@ -1,5 +1,6 @@
+from django.core.mail import message
 from django.shortcuts import redirect, render
-from django.core.checks import messages
+from django.contrib import messages
 from django.shortcuts import get_object_or_404, redirect, render
 from cart.utils import replace_to_dot
 from django.http import JsonResponse
@@ -94,10 +95,10 @@ class DeleteProductFromWishesView(View):
                         order_item.save()
                     else:
                         order.products_wishlist.remove(order_item)
-                    # messages.info(request, "This item quantity was updated.")
+                    messages.add_message(request, messages.INFO, "This item quantity was updated.")
                     return redirect("/")
                 else:
-                    # messages.info(request, "This item was not in your cart")
+                    messages.add_message(request, messages.ERROR, "This item was not in your cart")
                     return redirect("/", id=id)
         return redirect(request.POST.get("url_from"))
 

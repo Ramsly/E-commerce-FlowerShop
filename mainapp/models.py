@@ -132,7 +132,7 @@ class Product(models.Model):
         help_text="В процентах. Значок процента не ставить!",
     )
     available = models.BooleanField(verbose_name="Наличие товара", default=True)
-    search_vector = SearchVectorField(null=True)
+    search_vector = SearchVectorField(null=True, default=title, editable=False)
 
     def __str__(self):
         return f"{self.title}"
