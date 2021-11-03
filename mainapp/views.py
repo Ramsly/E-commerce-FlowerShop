@@ -72,7 +72,7 @@ class CategoryListView(ListView):
                 .annotate(
                     similarity=TrigramSimilarity("title", q),
                 )
-                .filter(similarity__gt=0.1)
+                .filter(similarity__gt=0.1, category=category)
                 .order_by("-rank")
             )
         else:

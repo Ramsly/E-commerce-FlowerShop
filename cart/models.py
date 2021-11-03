@@ -28,6 +28,7 @@ class OrderItem(models.Model):
             return self.get_total_discount_product_price()
         return self.get_total_product_price()
 
+
 # TODO: Сделать вывод товара из сессии и из БД 
 # TODO: Добавить систему купонов
 # TODO: AJAX
