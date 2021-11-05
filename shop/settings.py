@@ -81,6 +81,7 @@ TEMPLATES = [
                 "mainapp.context_processors.categories",
                 "wishlist.context_processors.wishes_session",
                 "wishlist.context_processors.total_qty_wishlist",
+                "wishlist.context_processors.wishlist_items",
                 "cart.context_processors.cart_session",
                 "cart.context_processors.total_price",
                 "cart.context_processors.total_qty_cart",

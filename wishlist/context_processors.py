@@ -1,4 +1,4 @@
-from django.shortcuts import get_object_or_404
+from wishlist.models import OrderItem
 
 
 def wishes_session(request):
@@ -10,3 +10,6 @@ def total_qty_wishlist(request):
     except TypeError:
         total_qty = 0
     return {"total_qty_wishlist": total_qty}
+
+def wishlist_items(request):
+    return {"wishlist_items": OrderItem.objects.filter(user__username=request.user)}

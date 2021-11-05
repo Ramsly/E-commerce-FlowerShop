@@ -67,8 +67,8 @@ class AddProductToWishesView(View):
 
 
 class DeleteProductFromWishesView(View):
-    def post(request, id, *args, **kwargs):
-        if request.user.is_authenticated:
+    def post(self, request, id, *args, **kwargs):
+        if not request.user.is_authenticated:
             for item in request.session["wishlist"]:
                 if str(item["id"]) == str(request.POST.get("id")):
                     item.clear()
