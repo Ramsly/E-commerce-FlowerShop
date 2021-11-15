@@ -56,9 +56,13 @@
 
 	<div class="category__detail_container">
         {% if products_search %}
-            {% for product in products_search %}
-                {% include "include_parts/product.html" %}
-            {% endfor %}
+                {% for product in products_search %}
+                    {% if user.is_authenticated %}
+                        {% include "include_parts/product_auth.html" %}
+                    {% else %}
+                        {% include "include_parts/product_not_auth.html" %}
+                    {% endif %}
+                {% endfor %}
         {% endif %}
 	</div>
 {% comment %} <script src="{% static 'js/category_detail.js' %}"></script> {% endcomment %}

@@ -2,312 +2,37 @@
 <h3 class="main__title">Избранные товары</h3>
 <div class="cart-wishlist__container">
     {% if not user.is_authenticated %}
-	{% for i in wishes_session %} {% for product in products %} {% if i.id == product.id|stringformat:"i" %} {% if wishes_session != None %}
-	<article class="cart-wishlist__product">
-		<div class="main__image">
-			<a href="{{product.get_absolute_url}}">
-				<img src="{{product.image.url}}" alt="" />
-			</a>
-			{% if not product.available %}
-			<span class="signature notAvailable">Распродано</span>
-			{% elif product.shipping_price == 0 %}
-			<span class="signature ship">Бесплатная доставка</span>
-			{% else %}
-			<span class="signature ship"
-				>Доставка <span>{{product.shipping_price}} ₽</span></span
-			>
-			{% endif %} {% if product.sale_value > 0 %}
-			<span class="signature sale"
-				>Скидка <span>{{product.sale_value|floatformat}} %</span></span
-			>
-			{% endif %}
-		</div>
-		<div class="cart-wishlist__content">
-			<div class="cart-wishlist__product-first">
-				<div class="main__product_title margin">
-					<a
-						href="{{ product.get_absolute_url }}"
-						class="borderLeftRight magnifyText"
-						>{{product.title}}</a
-					>
-				</div>
-
-				<div class="main__product_description">{{product.description}}</div>
-				<form
-					action="{% url 'wishlist:wishlist-remove' id=product.id %}"
-					method="POST"
-				>
-					{% csrf_token %}
-					<input type="hidden" name="url_from" value="{{request.path}}" />
-					<input
-						type="hidden"
-						id="id"
-						name="id"
-						value="{{ product.id }}"
-					/>
-					<input
-						type="hidden"
-						id="price"
-						name="price"
-						value="{{product.price}}"
-					/>
-					<input
-						type="hidden"
-						id="title"
-						name="title"
-						value="{{ product.title }}"
-					/>
-					<button class="cart-wishlist__product-delete">
-						<span>&times;</span>
-					</button>
-				</form>
-                
-			</div>
-
-			<div class="cart-wishlist__product-second">
-				<div class="main__rating margin">
-					<i class="far fa-thumbs-up"></i>
-					<span>0</span>
-					<i class="far fa-thumbs-down"></i>
-					<span>0</span>
-				</div>
-				<div class="main__price margin">
-					{% if product.sale_value > 0 %}
-					<span class="main__sale background"
-						>{{product.get_total_sale|floatformat:1}} ₽</span
-					>
-					<span class="main__del_price"
-						><del>{{product.price|floatformat:2}} ₽</del></span
-					>
-					{% else %}
-					<span class="background">{{product.price|floatformat}} ₽</span>
-					{% endif %}
-				</div>
-                {% if product.available %}
-				<form
-					method="POST"
-					action="{% url 'cart:cart-add' id=product.id %}"
-				>
-					{% csrf_token %}
-					<input type="hidden" name="url_from" value="{{request.path}}" />
-					<input
-						type="hidden"
-						id="id"
-						name="id"
-						value="{{ product.id }}"
-					/>
-					{% if product.sale_value > 0 %}
-                        <input
-                            type="hidden"
-                            id="price"
-                            name="price"
-                            value="{{product.get_total_sale|floatformat:1}}"
-                        />
-                    {% else %}
-                        <input
-                            type="hidden"
-                            id="price"
-                            name="price"
-                            value="{{product.price}}"
-                        />
-                    {% endif %}
-					<input
-						type="hidden"
-						id="title"
-						name="title"
-						value="{{ product.title }}"
-					/>
-					<button class="overlayLeftBtn" id="overlayLeftBtn">
-						<span>
-							Заказать
-							<i class="fas fa-shopping-cart"></i>
-						</span>
-					</button>
-				</form>
-				{% else %}
-				<a href="{{product.get_absolute_url}}">
-					<button
-						class="main__product_button button not__available_btn pointer"
-					>
-						<span>
-							Просмотр
-							<i class="far fa-eye"></i>
-						</span>
-					</button>
-				</a>
-				{% endif %}
-                
-			</div>
-
-		</div>
-	</article>
-        {% else %}
-        <h3 class="main__title">Нет избранных товаров</h3>
-        {% endif %}
-	{% endif %} {% endfor %} {% endfor %}
-    <div class="cart-wishlist__order">
-		<form action="{% url 'wishlist:wishlist-delete-all'%}" method="POST">
-			{% csrf_token %}
-			<input type="hidden" name="url_from" value="{{request.path}}" />
-			<button class="overlayLeftBtn delete wishlist-del">
-				<span>
-					Удалить все
-					<i class="fas fa-trash-alt"></i>
-				</span>
-			</button>
-		</form>
-	</div>
+        {% for i in wishes_session %} {% for product in products %} {% if i.id == product.id|stringformat:"i" %}
+            {% include "include_parts\wishlist_not_auth.html" %}
+        {% endif %} {% endfor %} {% endfor %}
+        <div class="cart-wishlist__order">
+            <form action="{% url 'wishlist:wishlist-delete-all-not-authenticated'%}" method="POST">
+                {% csrf_token %}
+                <input type="hidden" name="url_from" value="{{request.path}}" />
+                <button class="overlayLeftBtn delete wishlist-del">
+                    <span>
+                        Удалить все
+                        <i class="fas fa-trash-alt"></i>
+                    </span>
+                </button>
+            </form>
+        </div>
     {% else %}
         {% for wishlist_item in wishlist_items %}
-            <article class="cart-wishlist__product">
-            <div class="main__image">
-                <a href="{{wishlist_item.product.get_absolute_url}}">
-                    <img src="{{wishlist_item.product.image.url}}" alt="" />
-                </a>
-                {% if not product.available %}
-                <span class="signature notAvailable">Распродано</span>
-                {% elif product.shipping_price == 0 %}
-                <span class="signature ship">Бесплатная доставка</span>
-                {% else %}
-                <span class="signature ship"
-                    >Доставка <span>{{wishlist_item.product.shipping_price}} ₽</span></span
-                >
-                {% endif %} {% if product.sale_value > 0 %}
-                <span class="signature sale"
-                    >Скидка <span>{{wishlist_item.product.sale_value|floatformat}} %</span></span
-                >
-                {% endif %}
-            </div>
-            <div class="cart-wishlist__content">
-                <div class="cart-wishlist__product-first">
-                    <div class="main__product_title margin">
-                        <a
-                            href="{{ product.get_absolute_url }}"
-                            class="borderLeftRight magnifyText"
-                            >{{wishlist_item.product.title}}</a
-                        >
-                    </div>
-
-                    <div class="main__product_description">{{wishlist_item.product.description}}</div>
-                    {% comment %} <form
-                        action="{% url 'wishlist:wishlist-remove' id=product.id %}"
-                        method="POST"
-                    >
-                        {% csrf_token %}
-                        <input type="hidden" name="url_from" value="{{request.path}}" />
-                        <input
-                            type="hidden"
-                            id="id"
-                            name="id"
-                            value="{{ product.id }}"
-                        />
-                        <input
-                            type="hidden"
-                            id="price"
-                            name="price"
-                            value="{{wishlist_item.product.price}}"
-                        />
-                        <input
-                            type="hidden"
-                            id="title"
-                            name="title"
-                            value="{{ product.title }}"
-                        />
-                        <button class="cart-wishlist__product-delete">
-                            <span>&times;</span>
-                        </button>
-                    </form> {% endcomment %}
-                    
-                </div>
-
-                <div class="cart-wishlist__product-second">
-                    <div class="main__rating margin">
-                        <i class="far fa-thumbs-up"></i>
-                        <span>0</span>
-                        <i class="far fa-thumbs-down"></i>
-                        <span>0</span>
-                    </div>
-                    <div class="main__price margin">
-                        {% if product.sale_value > 0 %}
-                        <span class="main__sale background"
-                            >{{wishlist_item.product.get_total_sale|floatformat:1}} ₽</span
-                        >
-                        <span class="main__del_price"
-                            ><del>{{wishlist_item.product.price|floatformat:2}} ₽</del></span
-                        >
-                        {% else %}
-                        <span class="background">{{wishlist_item.product.price|floatformat}} ₽</span>
-                        {% endif %}
-                    </div>
-                    {% if wishlist_item.product.available %}
-                    <form
-                        method="POST"
-                        action="{% url 'cart:cart-add' id=product.id %}"
-                    >
-                        {% csrf_token %}
-                        <input type="hidden" name="url_from" value="{{request.path}}" />
-                        <input
-                            type="hidden"
-                            id="id"
-                            name="id"
-                            value="{{ product.id }}"
-                        />
-                        {% if product.sale_value > 0 %}
-                            <input
-                                type="hidden"
-                                id="price"
-                                name="price"
-                                value="{{wishlist_item.product.get_total_sale|floatformat:1}}"
-                            />
-                        {% else %}
-                            <input
-                                type="hidden"
-                                id="price"
-                                name="price"
-                                value="{{wishlist_item.product.price}}"
-                            />
-                        {% endif %}
-                        <input
-                            type="hidden"
-                            id="title"
-                            name="title"
-                            value="{{wishlist_item.product.title }}"
-                        />
-                        <button class="overlayLeftBtn" id="overlayLeftBtn">
-                            <span>
-                                Заказать
-                                <i class="fas fa-shopping-cart"></i>
-                            </span>
-                        </button>
-                    </form>
-                    {% else %}
-                    <a href="{{wishlist_item.product.get_absolute_url}}">
-                        <button
-                            class="main__product_button button not__available_btn pointer"
-                        >
-                            <span>
-                                Просмотр
-                                <i class="far fa-eye"></i>
-                            </span>
-                        </button>
-                    </a>
-                    {% endif %}
-                </div>
-            </div>
-        </article>
+            {% include "include_parts\wishlist_auth.html" %}
         {% endfor %}
         <div class="cart-wishlist__order">
-		<form action="{% url 'wishlist:wishlist-delete-all'%}" method="POST">
-			{% csrf_token %}
-			<input type="hidden" name="url_from" value="{{request.path}}" />
-			<button class="overlayLeftBtn delete wishlist-del">
-				<span>
-					Удалить все
-					<i class="fas fa-trash-alt"></i>
-				</span>
-			</button>
-		</form>
-	</div>
+            <form action="{% url 'wishlist:wishlist-delete-all-authenticated'%}" method="POST">
+                {% csrf_token %}
+                <input type="hidden" name="url_from" value="{{request.path}}" />
+                <button class="overlayLeftBtn delete wishlist-del">
+                    <span>
+                        Удалить все
+                        <i class="fas fa-trash-alt"></i>
+                    </span>
+                </button>
+            </form>
+        </div>
     {% endif %}
 </div>
 

@@ -106,7 +106,7 @@ class OrderView(View):
     def get(self, request, *args, **kwargs):
         form = OrderForm(request.POST or None)
         context = {"form": form}
-        return render(request, "order_page.html", context)
+        return render(request, "order.html", context)
 
     def post(self, request, *args, **kwargs):
         form = OrderForm(request.POST or None)
@@ -145,7 +145,6 @@ class OrderView(View):
                 order_qs = Order.objects.filter(user=request.user)
                 if order_qs.exists():
                     order = order_qs[0]
-                    # check if the order item is in the order
                     if order.products_cart.filter(user=request.user).exists():
                         order_item = OrderItem.objects.filter(user=request.user)
                         order.delete()
@@ -155,7 +154,7 @@ class OrderView(View):
             messages.success(request, "Спасибо за заказ!")
             return redirect("/")
         context = {"form": form}
-        return render(request, "order_page.html", context)
+        return render(request, "order.html", context)
 
 
 class AccountAuthenticationView(View):

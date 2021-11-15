@@ -8,10 +8,10 @@ from django.views.generic import TemplateView, View
 
 class CartView(TemplateView):
 
-    template_name = "order_page.html"
+    template_name = "order.html"
 
 
-class AddProductToCartView(View):
+class AddProductToCartNotAuthenticatedUserView(View):
     def post(self, request, id, *args, **kwargs):
         if not request.user.is_authenticated:
             if not request.session.get("cart"):
@@ -44,7 +44,12 @@ class AddProductToCartView(View):
                         if not request.session["wishlist"]:
                             del request.session["wishlist"]
                 request.session.modified = True
-        else:
+        return redirect(request.POST.get("url_from"))
+
+        
+class AddProductToCartAuthenticatedUserView(View):
+    def post(self, request, id, *args, **kwargs):
+        if request.user.is_authenticated:
             product = get_object_or_404(Product, id=id)
             order_item, created = OrderItem.objects.get_or_create(
                 product=product, user=request.user
@@ -70,7 +75,7 @@ class AddProductToCartView(View):
         return redirect(request.POST.get("url_from"))
 
 
-class DeleteProductFromCartView(View):
+class DeleteProductFromCartNotAuthenticatedUserView(View):
     def post(self, request, id, *args, **kwargs):
         if not request.user.is_authenticated:
             for item in request.session["cart"]:
@@ -84,7 +89,12 @@ class DeleteProductFromCartView(View):
                 del request.session["cart"]
 
             request.session.modified = True
-        else:
+        return redirect(request.POST.get("url_from"))
+
+
+class DeleteProductFromCartAuthenticatedUserView(View):
+    def post(self, request, id, *args, **kwargs):
+        if request.user.is_authenticated:
             product = get_object_or_404(Product, id=id)
             order_qs = Order.objects.filter(user=request.user)
             if order_qs.exists():
@@ -107,11 +117,16 @@ class DeleteProductFromCartView(View):
         return redirect(request.POST.get("url_from"))
 
 
-class DeleteAllProductsFromCartView(View):
+class DeleteAllProductsFromCartNotAuthenticatedUserView(View):
     def post(self, request, id, *args, **kwargs):
         if request.session.get("cart") and not request.user.is_authenticated:
             del request.session["cart"]
-        else:
+        return redirect(request.POST.get("url_from"))
+
+
+class DeleteAllProductsFromCartAuthenticatedUserView(View):
+    def post(self, request, id, *args, **kwargs):
+        if request.user.is_authenticated:
             product = get_object_or_404(Product, id=id)
             order_qs = Order.objects.filter(user=request.user)
             if order_qs.exists():

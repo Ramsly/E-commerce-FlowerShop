@@ -54,76 +54,27 @@
 			</div>
 		</div>
 		<div class="main__block_third">
-			 <form
-				action="{% url 'wishlist:wishlist-add' id=product.id %}"
+			<form
+				action="{% url 'wishlist:wishlist-add-authenticated' id=product.id %}"
 				method="POST"
                 id="wishlistAdd"
 			>
 				{% csrf_token %}
-				<input type="hidden" name="url_from" value="{{request.path}}" />
-				<input type="hidden" id="id" name="id" value="{{ product.id }}" />
-				{% if product.sale_value > 0 %}
-                        <input
-                            type="hidden"
-                            id="price"
-                            name="price"
-                            value="{{product.get_total_sale|floatformat:1}}"
-                        />
-                    {% else %}
-                        <input
-                            type="hidden"
-                            id="price"
-                            name="price"
-                            value="{{product.price}}"
-                        />
-                {% endif %}
-				<input
-					type="hidden"
-					id="title"
-					name="title"
-					value="{{ product.title }}"
-				/>
+                <input type="hidden" name="url_from" value="{{request.path}}" />
 				<button type="submit" class="main__third_heart_button wish_added">
 					<i class="fas fa-heart"></i>
-				</button>
+				</button> 
 			</form>
 			<div class="main__product_button margin">
 				{% if product.available %}
                 
 				<form
 					method="POST"
-					action="{% url 'cart:cart-add' id=product.id %}"
+					action="{% url 'cart:cart-add-authenticated' id=product.id %}"
                     id="cartAdd"
 				>
 					{% csrf_token %}
 					<input type="hidden" name="url_from" value="{{request.path}}" />
-					<input
-						type="hidden"
-						id="id"
-						name="id"
-						value="{{ product.id }}"
-					/>
-                    {% if product.sale_value > 0 %}
-                        <input
-                            type="hidden"
-                            id="price"
-                            name="price"
-                            value="{{product.get_total_sale|floatformat:1}}"
-                        />
-                    {% else %}
-                        <input
-                            type="hidden"
-                            id="price"
-                            name="price"
-                            value="{{product.price}}"
-                        />
-                    {% endif %}
-					<input
-						type="hidden"
-						id="title"
-						name="title"
-						value="{{ product.title }}"
-					/>
 					<button class="overlayLeftBtn" id="overlayLeftBtn">
 						<span>
 							Заказать
