@@ -27,7 +27,7 @@
 				<div class="main__product_button margin">
 					{% if product.available %}
 					<form
-						action="{% url 'cart:cart-add' id=product.id %}"
+						action="{% url 'cart:cart-add-authenticated' id=product.id %}"
 						method="POST"
 						class="product__detail"
 					>
@@ -62,7 +62,7 @@
 				</div>
 
 				<form
-					action="{% url 'wishlist:wishlist-add' id=product.id %}"
+					action="{% url 'wishlist:wishlist-add-authenticated' id=product.id %}"
 					method="POST"
 				>
 					{% csrf_token %}

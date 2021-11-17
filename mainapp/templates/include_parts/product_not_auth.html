@@ -54,7 +54,7 @@
 			</div>
 		</div>
 		<div class="main__block_third">
-			 {% comment %} <form
+			<form
 				action="{% url 'wishlist:wishlist-add-not-authenticated' id=product.id %}"
 				method="POST"
                 id="wishlistAdd"
@@ -86,7 +86,7 @@
 				<button type="submit" class="main__third_heart_button wish_added">
 					<i class="fas fa-heart"></i>
 				</button>
-			</form> {% endcomment %}
+			</form>
 			<div class="main__product_button margin">
 				{% if product.available %}
                 

@@ -26,13 +26,13 @@ urlpatterns = [
         name="cart-remove-not-authenticated",
     ),
     path(
-        "delete-authenticatedkd/",
+        "delete-authenticated/",
         DeleteAllProductsFromCartAuthenticatedUserView.as_view(),
         name="cart-delete-all-authenticated",
     ),
     path(
         "delete-not-authenticated/",
-        DeleteAllProductsFromCartAuthenticatedUserView.as_view(),
+        DeleteAllProductsFromCartNotAuthenticatedUserView.as_view(),
         name="cart-delete-all-not-authenticated",
     ),
 ]

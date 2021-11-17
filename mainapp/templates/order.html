@@ -1,4 +1,4 @@
-{% extends 'base.html' %} {% load static %} {% load cart %} {% block title %} Оформление заказа {% endblock title %} {% block content %} {{cart_session}} 
+{% extends 'base.html' %} {% load static %} {% load cart %}{% block title %} Оформление заказа {% endblock title %} {% block content %} {{cart_session}} 
 <h3 class="main__title">Оформление заказа</h3>
 <section class="checkout">
     <div class="cart-wishlist__container">
@@ -11,7 +11,6 @@
                     {% else %}
                         <h3 class="main__title">Тут пусто. <a href="{% url 'base' %}">За покупками</a></h3>
                     {% endif %}{% endif %} {% endfor %} {% endfor %}
-
         <div class="cart-wishlist__product_block-total">
             <div class="cart-wishlist__product-total">
                 Итого: <span class="cart-wishlist__product_block-total-price">{{ total_price|floatformat:2 }} ₽</span> Кол-во: <span class="cart-wishlist__product_block-total-count">{{total_qty_cart}}</span>
@@ -31,13 +30,13 @@
     {% else %}
         {% for order_item_cart in order_items_cart %}
             {% include "include_parts/order_auth.html" %}
-        
+        {% endfor %}
         <div class="cart-wishlist__product_block-total">
             <div class="cart-wishlist__product-total">
-                Итого: <span class="cart-wishlist__product_block-total-price">₽</span> Кол-во: <span class="cart-wishlist__product_block-total-count">{{order_item_cart.get_quantity_of_cart}}</span>
+                Итого: <span class="cart-wishlist__product_block-total-price">{{get_cart_total_auth}}</span> Кол-во: <span class="cart-wishlist__product_block-total-count">{{get_cart_qty_auth}}</span>
             </div>
         <div class="cart-wishlist__form">
-			<form action="{% url 'cart:cart-delete-all-authenticated' id=order_item_cart.product.id %}" method="POST">
+			<form action="{% url 'cart:cart-delete-all-authenticated' %}" method="POST">
 				{% csrf_token %}
 				<input type="hidden" name="url_from" value="{{request.path}}" />
 				<button class="overlayLeftBtn delete wishlist-del">
@@ -48,7 +47,6 @@
 				</button>
 			</form>
 		</div>
-        {% endfor %}
     {% endif %}
     </div>
 </section>

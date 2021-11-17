@@ -19,25 +19,25 @@
 	</div>
 	<div class="cart-wishlist__content">
 		<div class="cart-wishlist__product-first">
-			<form
-				action="{% url 'cart:cart-remove-authenticated' id=order_item_cart.product.id %}"
+			{% comment %} <form
+				action="{% url 'cart:cart-delete-all-not-authenticated' id=order_item_cart.product.id %}"
 				method="POST"
 			>
 				{% csrf_token %}
 
 				<input type="hidden" name="url_from" value="{{request.path}}" />
-			
+
 				<button class="cart-wishlist__product-delete">
 					<span>&times;</span>
 				</button>
-			</form>
+			</form> {% endcomment %}
 			<div class="main__product_title margin">
 				<a
 					href="{{ order_item_cart.product.get_absolute_url }}"
 					class="borderLeftRight magnifyText"
 					>{{order_item_cart.product.title}}</a
 				>
-			</div>
+			</div> 
 
 			<div class="main__product_description">
 				{{order_item_cart.product.description}}
@@ -52,16 +52,30 @@
 				<span>0</span>
 			</div>
 			<div class="cart__product-qty">
-				<button class="overlayLeftBtn delete-qty qty-properties-btns">
-					<span>-</span>
-				</button>
-				<span name="product_qty">{{i.qty}}</span>
-				<button class="overlayLeftBtn add-qty qty-properties-btns">
-					<span>+</span>
-				</button>
+				<form
+					method="POST"
+					action="{% url 'cart:cart-remove-authenticated' id=order_item_cart.product.id %}"
+				>
+					{% csrf_token %}
+					<input type="hidden" name="url_from" value="{{request.path}}" />
+					<button class="overlayLeftBtn delete-qty qty-properties-btns">
+						<span>-</span>
+					</button>
+				</form>
+				<span name="product_qty">{{order_item_cart.quantity}}</span>
+				<form
+					method="POST"
+					action="{% url 'cart:cart-add-authenticated' id=order_item_cart.product.id %}"
+				>
+					{% csrf_token %}
+					<input type="hidden" name="url_from" value="{{request.path}}" />
+					<button class="overlayLeftBtn add-qty qty-properties-btns">
+						<span>+</span>
+					</button>
+				</form>
 			</div>
 			<div class="main__price margin">
-				{% if product.sale_value > 0 %}
+				{% if order_item_cart.product.sale_value > 0 %}
 				<span class="main__del_price"
 					><del
 						>{{order_item_cart.product.price|floatformat:2}} ₽</del
@@ -72,7 +86,7 @@
 				>
 				{% else %}
 				<span class="background"
-					>{{order_item_cart.product.price|floatformat}} ₽</span
+					>{{order_item_cart.get_total_product_price|floatformat}} ₽</span
 				>
 				{% endif %}
 			</div>

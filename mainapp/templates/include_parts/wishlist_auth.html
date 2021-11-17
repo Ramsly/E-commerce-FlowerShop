@@ -32,7 +32,7 @@
 				{{wishlist_item.product.description}}
 			</div>
 			<form
-				action="{% url 'wishlist:wishlist-remove-authenticated' id=product.id %}"
+				action="{% url 'wishlist:wishlist-remove-authenticated' id=wishlist_item.product.id %}"
 				method="POST"
 			>
 				{% csrf_token %}
@@ -67,7 +67,7 @@
 			{% if wishlist_item.product.available %}
 			<form
 				method="POST"
-				action="{% url 'cart:cart-add-authenticated' id=product.id %}"
+				action="{% url 'cart:cart-add-authenticated' id=wishlist_item.product.id %}"
 			>
 				{% csrf_token %}
 				<input type="hidden" name="url_from" value="{{request.path}}" />

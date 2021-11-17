@@ -1,3 +1,4 @@
+from django.db.models.aggregates import Sum
 from wishlist.models import OrderItem
 
 
@@ -13,3 +14,9 @@ def total_qty_wishlist(request):
 
 def wishlist_items(request):
     return {"wishlist_items": OrderItem.objects.filter(user__username=request.user)}
+
+def get_wishlist_qty_auth(request):
+    get_wishlist_qty_auth = OrderItem.objects.filter(user__username=request.user).aggregate(get_wishlist_qty_auth=Sum("quantity")).get("get_wishlist_qty_auth")
+    if get_wishlist_qty_auth is None:
+        return {"get_wishlist_qty_auth": 0}
+    return {"get_wishlist_qty_auth": get_wishlist_qty_auth}

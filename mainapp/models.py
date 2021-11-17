@@ -121,15 +121,16 @@ class Product(models.Model):
     slug = models.SlugField(unique=True)
     image = models.ImageField(verbose_name="Изображение", upload_to="flowers/")
     description = models.TextField(verbose_name="Описание", null=True)
-    price = models.FloatField(verbose_name="Цена", default=0)
+    price = models.DecimalField(verbose_name="Цена", default=0, max_digits=5, decimal_places=2)
     features = models.ManyToManyField(
         "specs.ProductFeatures",verbose_name="Характеристика товара", blank=True, related_name="features_for_product"
     )
     shipping_price = models.IntegerField(verbose_name="Стоимость доставки", default=0)
-    sale_value = models.FloatField(
+    sale_value = models.DecimalField(
         verbose_name="Величина скидки",
         default=0,
         help_text="В процентах. Значок процента не ставить!",
+        max_digits=5, decimal_places=2
     )
     available = models.BooleanField(verbose_name="Наличие товара", default=True)
     search_vector = SearchVectorField(null=True, default=title, editable=False)

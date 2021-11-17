@@ -1,5 +1,5 @@
 from django.core.checks import messages
-from django.shortcuts import get_object_or_404, redirect, render
+from django.shortcuts import get_object_or_404, redirect
 from .utils import replace_to_dot
 from mainapp.models import Order, Product
 from .models import OrderItem
@@ -44,6 +44,8 @@ class AddProductToCartNotAuthenticatedUserView(View):
                         if not request.session["wishlist"]:
                             del request.session["wishlist"]
                 request.session.modified = True
+            # * else:
+            # * Добавляем кол-во и обновляем "total_price_cart"
         return redirect(request.POST.get("url_from"))
 
         
@@ -109,16 +111,17 @@ class DeleteProductFromCartAuthenticatedUserView(View):
                         order_item.save()
                     else:
                         order.products_cart.remove(order_item)
+                        order_item.delete()
                     # messages.info(request, "This item quantity was updated.")
-                    return redirect("/")
+                    return redirect(request.POST.get("url_from"))
                 else:
                     # messages.info(request, "This item was not in your cart")
-                    return redirect("/", id=id)
+                    return redirect(request.POST.get("url_from"), id=id)
         return redirect(request.POST.get("url_from"))
 
 
 class DeleteAllProductsFromCartNotAuthenticatedUserView(View):
-    def post(self, request, id, *args, **kwargs):
+    def post(self, request, *args, **kwargs):
         if request.session.get("cart") and not request.user.is_authenticated:
             del request.session["cart"]
         return redirect(request.POST.get("url_from"))

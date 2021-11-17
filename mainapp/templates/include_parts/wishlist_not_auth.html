@@ -29,7 +29,7 @@
 
 				<div class="main__product_description">{{product.description}}</div>
 				<form
-					action="{% url 'wishlist:wishlist-remove' id=product.id %}"
+					action="{% url 'wishlist:wishlist-remove-not-authenticated' id=product.id %}"
 					method="POST"
 				>
 					{% csrf_token %}
@@ -80,7 +80,7 @@
                 {% if product.available %}
 				<form
 					method="POST"
-					action="{% url 'cart:cart-add' id=product.id %}"
+					action="{% url 'cart:cart-add-not-authenticated' id=product.id %}"
 				>
 					{% csrf_token %}
 					<input type="hidden" name="url_from" value="{{request.path}}" />
@@ -135,6 +135,4 @@
 
 		</div>
 	</article>
-        {% else %}
-        <h3 class="main__title">Нет избранных товаров</h3>
-        {% endif %}
+    

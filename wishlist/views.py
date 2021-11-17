@@ -45,28 +45,26 @@ class AddProductToWishesNotAuthenticatedUserView(View):
 
 class AddProductToWishesAuthenticatedUserView(View):
     def post(self, request, id, *args, **kwargs):
-        product = get_object_or_404(Product, id=id)
-        order_item, created = OrderItem.objects.get_or_create(
-            product=product, user=request.user
-        )
-        order_qs = Order.objects.filter(user=request.user)
-        if order_qs.exists():
-            order = order_qs[0]
-            # check if the order item is in the order
-            if order.products_wishlist.filter(product__id=product.id).exists():
-                order_item.quantity += 1
-                order_item.save()
-                # messages.info(request, "This item quantity was updated.")
-                return redirect("/")
+        if request.user.is_authenticated:
+            product = get_object_or_404(Product, id=id)
+            order_item, created = OrderItem.objects.get_or_create(
+                product=product, user=request.user
+            )
+            order_qs = Order.objects.filter(user=request.user)
+            if order_qs.exists():
+                order = order_qs[0]
+                # check if the order item is in the order
+                if not order.products_wishlist.filter(product__id=product.id).exists():
+                    order.products_wishlist.add(order_item)
+                    # messages.info(request, "This item was added to your cart.")
+                    return redirect(request.POST.get("url_from"))
+                else:
+                    messages.add_message(request, messages.INFO, "Уже есть в желаниях")
             else:
+                order = Order.objects.create(user=request.user)
                 order.products_wishlist.add(order_item)
                 # messages.info(request, "This item was added to your cart.")
-                return redirect("/")
-        else:
-            order = Order.objects.create(user=request.user)
-            order.products_wishlist.add(order_item)
-            # messages.info(request, "This item was added to your cart.")
-            return redirect("/")
+                return redirect(request.POST.get("url_from"))
         return redirect(request.POST.get("url_from"))
 
 

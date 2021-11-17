@@ -12,23 +12,7 @@ class OrderItem(models.Model):
 
     def __str__(self):
         return f"{self.quantity} {self.product.title} {self.user.username}"
-        
-    @property
-    def get_quantity_of_cart(self):
-        return self.quantity
-
-    def get_total_product_price(self):
-        return self.quantity * self.product.price
-
-    def get_total_discount_product_price(self):
-        return (self.product.price - (self.product.price / 100 * self.product.sale_value)) * self.quantity
-
-    def get_final_price(self):
-        if self.product.sale_value:
-            return self.get_total_discount_product_price()
-        return self.get_total_product_price()
 
 
-# TODO: Сделать вывод товара из сессии и из БД 
 # TODO: Добавить систему купонов
 # TODO: AJAX
