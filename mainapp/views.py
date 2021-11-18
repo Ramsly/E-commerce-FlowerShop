@@ -174,6 +174,9 @@ class AccountAuthenticationView(View):
             password = form.cleaned_data.get("password")
             user = authenticate(email=email, password=password)
             if user:
+                if request.session.get("cart"):
+                    del request.session["cart"]
+                    request.session.modified = True
                 login(request, user)
                 messages.success(request, "Вы авторизированны!")
                 return redirect("/")
@@ -205,6 +208,9 @@ class RegistrationView(View):
             phone_number = form.cleaned_data.get("phone_number")
             email = form.cleaned_data.get("email")
             password = form.cleaned_data.get("password1")
+            if request.session.get("cart"):
+                del request.session["cart"]
+                request.session.modified = True
             account = authenticate(email=email, password=password)
             login(request, account)
             messages.success(request, "Регистрация прошла успешно!")

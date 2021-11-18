@@ -31,7 +31,7 @@ class AddProductToCartNotAuthenticatedUserView(View):
                 "title": request.POST.get("title"),
                 "qty": 1,
                 "price": float(replace_to_dot(request.POST.get("price"))),
-                "total_price_cart": float(replace_to_dot(request.POST.get("price"))) * 1,
+                "total_price_cart": float(replace_to_dot(request.POST.get("price"))),
             }
             if not item_exist:
                 request.session["cart"].append(data)
@@ -44,8 +44,6 @@ class AddProductToCartNotAuthenticatedUserView(View):
                         if not request.session["wishlist"]:
                             del request.session["wishlist"]
                 request.session.modified = True
-            # * else:
-            # * Добавляем кол-во и обновляем "total_price_cart"
         return redirect(request.POST.get("url_from"))
 
         
@@ -124,6 +122,7 @@ class DeleteAllProductsFromCartNotAuthenticatedUserView(View):
     def post(self, request, *args, **kwargs):
         if request.session.get("cart") and not request.user.is_authenticated:
             del request.session["cart"]
+            request.session.modified = True
         return redirect(request.POST.get("url_from"))
 
 
