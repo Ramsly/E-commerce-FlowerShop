@@ -1,4 +1,5 @@
 from django.core.checks import messages
+from django.http.response import HttpResponse
 from django.shortcuts import get_object_or_404, redirect
 from .utils import replace_to_dot
 from mainapp.models import Order, Product
@@ -43,6 +44,12 @@ class AddProductToCartNotAuthenticatedUserView(View):
                             request.session["wishlist"].remove({})
                         if not request.session["wishlist"]:
                             del request.session["wishlist"]
+                request.session.modified = True
+            else:
+                # * enumerate function for get dict id
+    
+                request.session["cart"][1]['qty'] += 1  
+                request.session["cart"][1]['total_price_cart'] += request.session["cart"][0]['price']  
                 request.session.modified = True
         return redirect(request.POST.get("url_from"))
 
