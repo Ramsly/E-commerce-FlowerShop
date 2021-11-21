@@ -46,11 +46,11 @@ class AddProductToCartNotAuthenticatedUserView(View):
                             del request.session["wishlist"]
                 request.session.modified = True
             else:
-                # * enumerate function for get dict id
-    
-                request.session["cart"][1]['qty'] += 1  
-                request.session["cart"][1]['total_price_cart'] += request.session["cart"][0]['price']  
-                request.session.modified = True
+                for item in request.session["cart"]:
+                        if item["id"] == request.POST.get("id"):
+                            item['qty'] += 1  
+                            item['total_price_cart'] += item['price']
+                            request.session.modified = True
         return redirect(request.POST.get("url_from"))
 
         
