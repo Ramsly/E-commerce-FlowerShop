@@ -56,6 +56,7 @@ class AddProductToWishesAuthenticatedUserView(View):
                 # check if the order item is in the order
                 if not order.products_wishlist.filter(product__id=product.id).exists():
                     order.products_wishlist.add(order_item)
+                    order_item.quantity = 1
                     # messages.info(request, "This item was added to your cart.")
                     return redirect(request.POST.get("url_from"))
                 else:
@@ -97,11 +98,8 @@ class DeleteProductFromWishesAuthenticatedUserView(View):
                     order_item = OrderItem.objects.filter(
                         product=product, user=request.user
                     )[0]
-                    if order_item.quantity > 1:
-                        order_item.quantity -= 1
-                        order_item.save()
-                    else:
-                        order.products_wishlist.remove(order_item)
+                    order.products_wishlist.remove(order_item)
+                    order_item.delete()
                     messages.add_message(request, messages.INFO, "This item quantity was updated.")
                     return redirect("/")
                 else:
@@ -119,23 +117,24 @@ class DeleteAllProductsFromWishesNotAuthenticatedUserView(View):
 
 class DeleteAllProductsFromWishesAuthenticatedUserView(View):
     def post(self, request, id, *args, **kwargs):
-        product = get_object_or_404(Product, id=id)
-        order_qs = Order.objects.filter(user=request.user)
-        if order_qs.exists():
-            order = order_qs[0]
-            # check if the order item is in the order
-            if order.products_wishlist.filter(product__id=product.id).exists():
-                order_item = OrderItem.objects.filter(
-                    product=product, user=request.user
-                )[0]
-                order.products_wishlist.remove(order_item)
-                order_item.delete()
-                # messages.info(request, "This item was removed from your cart.")
-                return redirect("/")
+        if request.user.is_authenticated:
+            product = get_object_or_404(Product, id=id)
+            order_qs = Order.objects.filter(user=request.user)
+            if order_qs.exists():
+                order = order_qs[0]
+                # check if the order item is in the order
+                if order.products_wishlist.filter(product__id=product.id).exists():
+                    order_item = OrderItem.objects.filter(
+                        product=product, user=request.user
+                    )[0]
+                    order.products_wishlist.remove(order_item)
+                    order_item.delete()
+                    # messages.info(request, "This item was removed from your cart.")
+                    return redirect("/")
+                else:
+                    # messages.info(request, "This item was not in your cart")
+                    return redirect("/", id=id)
             else:
-                # messages.info(request, "This item was not in your cart")
+                # messages.info(request, "You do not have an active order")
                 return redirect("/", id=id)
-        else:
-            # messages.info(request, "You do not have an active order")
-            return redirect("/", id=id)
         return redirect(request.POST.get("url_from"))

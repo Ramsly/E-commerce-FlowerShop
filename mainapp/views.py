@@ -14,7 +14,7 @@ from .forms import (
     OrderForm,
 )
 
-from .models import Account, Category, Order, Product
+from .models import Account, Category, Like, Order, Product
 from cart.models import OrderItem
 
 from django.contrib.postgres.search import (
@@ -226,7 +226,7 @@ class RegistrationView(View):
 class AddReviewToProduct(View):
     """Отзывы"""
 
-    def post(self, request, slug):
+    def post(self, request, slug, *args, **kwargs):
         form = ReviewForm(request.POST)
         product = Product.objects.get(slug=slug)
         if form.is_valid():
@@ -236,3 +236,11 @@ class AddReviewToProduct(View):
             form.product = product
             form.save()
         return HttpResponseRedirect(product.get_absolute_url())
+
+
+# class AddLikeView(View, LoginRequiredMixin):
+
+#     def get(self, request, id, *args, **kwargs):
+        
+
+

@@ -2,9 +2,10 @@ from datetime import datetime
 from django.conf import settings
 from django.contrib.postgres import indexes
 from django.db import models
+from django.db.models.aggregates import Min
 from django.urls import reverse
 from django.contrib.auth.models import AbstractBaseUser, BaseUserManager
-from django.core.validators import RegexValidator
+from django.core.validators import RegexValidator, MinValueValidator, MaxValueValidator
 from django.contrib.postgres.search import SearchVectorField
 from django.contrib.postgres.indexes import GinIndex
 from autoslug import AutoSlugField
@@ -156,6 +157,29 @@ class Product(models.Model):
         ]
 
 
+class Like(models.Model):
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, verbose_name="Пользователи", null=True, blank=True, default=1)
+    products = models.ForeignKey(Product, on_delete=models.CASCADE, verbose_name="Продукт")
+
+    class Meta: 
+        verbose_name_plural = "Лайки"
+
+    def __str__(self):
+        return f"{self.products}"
+
+
+class Dislike(models.Model):
+    user = models.ManyToManyField(settings.AUTH_USER_MODEL, verbose_name="Пользователи")
+    products = models.ForeignKey(Product, on_delete=models.CASCADE, verbose_name="Продукт")
+
+
+    class Meta: 
+        verbose_name_plural = "Дизлайки"
+
+    def __str__(self):
+        return f"{self.products}"
+
+
 class Order(models.Model):
     
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.SET_NULL, null=True)
@@ -196,36 +220,3 @@ class Reviews(models.Model):
     class Meta:
         verbose_name_plural = "Отзывы"
         ordering = ["-time"]
-
-
-class RatingStar(models.Model):
-    """Звезда рейтинга"""
-
-    value = models.SmallIntegerField("Значение", default=0)
-
-    def __str__(self):
-        return f"{self.value}"
-
-    class Meta:
-        verbose_name = "Звезда рейтинга"
-        verbose_name_plural = "Звезды рейтинга"
-        ordering = ["-value"]
-
-
-class Rating(models.Model):
-    """Рейтинг"""
-
-    ip = models.CharField("IP адрес", max_length=15)
-    star = models.ForeignKey(
-        RatingStar, on_delete=models.CASCADE, verbose_name="Звезда", default=0
-    )
-    product = models.ForeignKey(
-        Product, on_delete=models.CASCADE, verbose_name="Товар", default=""
-    )
-
-    def __str__(self):
-        return f"{self.star} - {self.product}"
-
-    class Meta:
-        verbose_name = "Рейтинг"
-        verbose_name_plural = "Рейтинги"

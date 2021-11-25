@@ -1,6 +1,5 @@
 from django import forms
-from .models import Account
-from .models import Reviews, RatingStar, Rating
+from .models import Account,Reviews, Like, Dislike
 from django.contrib.auth import authenticate
 from django.contrib.auth.forms import UserCreationForm
 
@@ -111,21 +110,10 @@ class OrderForm(forms.Form):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
+
 class ReviewForm(forms.ModelForm):
     """Форма отзывов"""
 
     class Meta:
         model = Reviews
         fields = ("comment", "name")
-
-
-class RatingForm(forms.ModelForm):
-    """Форма добавления рейтинга"""
-
-    star = forms.ModelChoiceField(
-        queryset=RatingStar.objects.all(), widget=forms.RadioSelect(), empty_label=None
-    )
-
-    class Meta:
-        model = Rating
-        fields = ("star",)

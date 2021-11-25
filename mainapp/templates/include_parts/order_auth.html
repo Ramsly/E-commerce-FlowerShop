@@ -19,25 +19,23 @@
 	</div>
 	<div class="cart-wishlist__content">
 		<div class="cart-wishlist__product-first">
-			{% comment %} <form
-				action="{% url 'cart:cart-delete-all-not-authenticated' id=order_item_cart.product.id %}"
+			<form
+				action="{% url 'cart:cart-delete-all-authenticated' id=order_item_cart.product.id %}"
 				method="POST"
 			>
 				{% csrf_token %}
-
 				<input type="hidden" name="url_from" value="{{request.path}}" />
-
 				<button class="cart-wishlist__product-delete">
 					<span>&times;</span>
 				</button>
-			</form> {% endcomment %}
+			</form>
 			<div class="main__product_title margin">
 				<a
 					href="{{ order_item_cart.product.get_absolute_url }}"
 					class="borderLeftRight magnifyText"
 					>{{order_item_cart.product.title}}</a
 				>
-			</div> 
+			</div>
 
 			<div class="main__product_description">
 				{{order_item_cart.product.description}}
@@ -86,7 +84,7 @@
 				>
 				{% else %}
 				<span class="background"
-					>{{order_item_cart.get_total_product_price|floatformat}} ₽</span
+					>{{order_item_cart.product.price|floatformat}} ₽</span
 				>
 				{% endif %}
 			</div>

@@ -99,6 +99,25 @@ class DeleteProductFromCartNotAuthenticatedUserView(View):
         return redirect(request.POST.get("url_from"))
 
 
+class DeleteOneProductFromCartNotAuthenticatedUserView(View):
+    def post(self, request, id, *args, **kwargs):
+        if not request.user.is_authenticated:
+            for item in request.session["cart"]:
+                if item["id"] == request.POST.get("id") and item["qty"] > 1:
+                    item["qty"] -= 1
+                elif item["id"] == request.POST.get("id") and item["qty"] == 1:
+                    item.clear()
+
+            while {} in request.session["cart"]:
+                request.session["cart"].remove({})
+
+            if not request.session["cart"]:
+                del request.session["cart"]
+
+            request.session.modified = True
+        return redirect(request.POST.get("url_from"))
+
+
 class DeleteProductFromCartAuthenticatedUserView(View):
     def post(self, request, id, *args, **kwargs):
         if request.user.is_authenticated:
@@ -147,7 +166,7 @@ class DeleteAllProductsFromCartAuthenticatedUserView(View):
                     )[0]
                     order.products_cart.remove(order_item)
                     order_item.delete()
-                    # messages.info(request, "This item was removed from your cart.")
+                    messages.add_message(request, messages.INFO, "This item quantity was updated.")
                     return redirect("/")
                 else:
                     # messages.info(request, "This item was not in your cart")
