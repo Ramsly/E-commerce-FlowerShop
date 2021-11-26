@@ -19,7 +19,7 @@
 	</div>
 	<div class="cart-wishlist__content">
 		<div class="cart-wishlist__product-first">
-			<form
+			{% comment %} <form
 				action="{% url 'cart:cart-delete-all-authenticated' id=order_item_cart.product.id %}"
 				method="POST"
 			>
@@ -28,7 +28,7 @@
 				<button class="cart-wishlist__product-delete">
 					<span>&times;</span>
 				</button>
-			</form>
+			</form> {% endcomment %}
 			<div class="main__product_title margin">
 				<a
 					href="{{ order_item_cart.product.get_absolute_url }}"

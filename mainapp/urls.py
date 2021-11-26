@@ -12,6 +12,8 @@ from .views import (
     AddReviewToProduct,
     AboutUsView,
     ReviewPageView,
+    LikeView,
+    DislikeView
 )
 
 
@@ -27,4 +29,6 @@ urlpatterns = [
     path("login/", AccountAuthenticationView.as_view(), name="login"),
     path("registration/", RegistrationView.as_view(), name="registration"),
     path("logout/", LogoutView.as_view(next_page="/"), name="logout"),
+    path("like/<int:id>", LikeView.as_view(), name="like"),
+    path("dislike/<int:id>", DislikeView.as_view(), name="dislike"),
 ]

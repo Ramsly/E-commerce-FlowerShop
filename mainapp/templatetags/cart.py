@@ -1,21 +1,29 @@
 from django import template
+from django.shortcuts import get_object_or_404
+from mainapp.models import Like, Dislike, Product
 from cart.models import OrderItem
-from mainapp.models import Product
-from django.db.models import Sum, Count
+from django.db.models.aggregates import Sum
+from django.db.models import Count
 
 register = template.Library()
 
 
 @register.filter
-def cart_qty(user):
-    if user.is_authenticated:
-        qs = OrderItem.objects.filter(user__username=user).aggregate(total_qty=Count("quantity")).get("total_qty")
-        return qs
-    return 0
+def count_likes(id):
+    product = get_object_or_404(Product, id=id)
+    count_likes = (
+        Like.objects.filter(products=product)
+        .aggregate(count_likes=Count("products"))
+        .get("count_likes")
+    )
+    return count_likes
 
-# @register.filter
-# def cart_total_price(user):
-#     if user.is_authenticated:
-#         qs = OrderItem.objects.filter(user__username=user).aggregate(total_sum=Sum("product__price")).get('total_sum')
-#         return qs
-#     return 0
+@register.filter
+def count_dislikes(id):
+    product = get_object_or_404(Product, id=id)
+    count_dislikes = (
+        Dislike.objects.filter(products=product)
+        .aggregate(count_dislikes=Count("products"))
+        .get("count_dislikes")
+    )
+    return count_dislikes

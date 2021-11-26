@@ -14,9 +14,6 @@ class OrderItem(models.Model):
         return f"{self.quantity} {self.product.title} {self.user.username}"
 
 
-# TODO: Добавить систему купонов
-# TODO: Добавить лайки
 # TODO: Иправить цены со скидками в бд
-# TODO: Исправить удаление товаров в сессии и бд. Сделать убавление товара по одному в сессии и также полное удаление товара в бд
 # TODO: AJAX
 

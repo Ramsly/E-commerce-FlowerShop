@@ -1,8 +1,9 @@
 from decimal import Decimal
 
-from django.db.models.aggregates import Sum
 from cart.models import OrderItem
-from mainapp.models import Order
+from mainapp.models import Product
+from django.db.models.aggregates import Sum
+
 
 
 def cart_session(request):

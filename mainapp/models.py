@@ -165,11 +165,11 @@ class Like(models.Model):
         verbose_name_plural = "Лайки"
 
     def __str__(self):
-        return f"{self.products}"
+        return f"{self.products} - {self.user.username}"
 
 
 class Dislike(models.Model):
-    user = models.ManyToManyField(settings.AUTH_USER_MODEL, verbose_name="Пользователи")
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, verbose_name="Пользователи", on_delete=models.CASCADE, null=True, blank=True, default=1)
     products = models.ForeignKey(Product, on_delete=models.CASCADE, verbose_name="Продукт")
 
 
@@ -177,7 +177,7 @@ class Dislike(models.Model):
         verbose_name_plural = "Дизлайки"
 
     def __str__(self):
-        return f"{self.products}"
+        return f"{self.products} - {self.user.username}"
 
 
 class Order(models.Model):

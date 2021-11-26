@@ -1,4 +1,4 @@
-{% extends 'base.html' %} {% load static %} {% block title %} {{product.title}}
+{% extends 'base.html' %} {% load static %} {% load cart %} {% block title %} {{product.title}}
 {% endblock title %} {% block content %}
 
 <nav class="breadcrumb">
@@ -112,10 +112,22 @@
 				>
 			</p>
 			<p class="main__rating padding">
-				<i class="far fa-thumbs-up"></i>
-				<span>0</span>
-				<i class="far fa-thumbs-down"></i>
-				<span>0</span>
+				<form action="{% url 'like' id=product.id %}" method="POST">
+				   {% csrf_token %}
+                    <button type="submit">
+                        <i class="far fa-thumbs-up"></i>
+                    </button>
+                    <input type="hidden" name="url_from" value="{{request.path}}">
+                </form>
+				<span>{{product.id|count_likes}}</span>
+				<form action="{% url 'dislike' id=product.id %}" method="POST">
+				   {% csrf_token %}
+                    <button type="submit">
+                        <i class="far fa-thumbs-down"></i>
+                    </button>
+                    <input type="hidden" name="url_from" value="{{request.path}}">
+                </form>
+				<span>{{product.id|count_dislikes}}</span>
 			</p>
 		</div>
 	</div>

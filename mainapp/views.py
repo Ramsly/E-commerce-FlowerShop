@@ -14,7 +14,7 @@ from .forms import (
     OrderForm,
 )
 
-from .models import Account, Category, Like, Order, Product
+from .models import Category, Dislike, Like, Order, Product
 from cart.models import OrderItem
 
 from django.contrib.postgres.search import (
@@ -68,7 +68,7 @@ class CategoryListView(ListView):
 
             products_search = (
                 Product.objects.annotate(rank=SearchRank(vector, query))
-                .annotate(headline=search_headline) 
+                .annotate(headline=search_headline)
                 .annotate(
                     similarity=TrigramSimilarity("title", q),
                 )
@@ -238,9 +238,43 @@ class AddReviewToProduct(View):
         return HttpResponseRedirect(product.get_absolute_url())
 
 
-# class AddLikeView(View, LoginRequiredMixin):
+class LikeView(LoginRequiredMixin, View):
+    login_url = '/login/'
 
-#     def get(self, request, id, *args, **kwargs):
-        
+    def post(self, request, id, *args, **kwargs):
+        product = get_object_or_404(Product, id=id)
+        like = Like.objects.filter(user=request.user, products=product)
+        dislike = Dislike.objects.filter(user=request.user, products=product)
+        if not like.exists():
+            if not dislike.exists():
+                like = Like.objects.create(user=request.user, products=product)
+                return redirect(request.POST.get("url_from"))
+            else:
+                dislike = Dislike.objects.get(user=request.user, products=product)
+                dislike.delete()
+                like = Like.objects.create(user=request.user, products=product)
+        else:
+            like = Like.objects.get(user=request.user, products=product)
+            like.delete()
+        return redirect(request.POST.get("url_from"))
 
 
+class DislikeView(LoginRequiredMixin, View):
+    login_url = '/login/'
+
+    def post(self, request, id, *args, **kwargs):
+        product = get_object_or_404(Product, id=id)
+        like = Like.objects.filter(user=request.user, products=product)
+        dislike = Dislike.objects.filter(user=request.user, products=product)
+        if not dislike.exists():
+            if not like.exists():
+                dislike = Dislike.objects.create(user=request.user, products=product)
+                return redirect(request.POST.get("url_from"))
+            else:
+                like = Like.objects.get(user=request.user, products=product)
+                like.delete()
+                dislike = Dislike.objects.create(user=request.user, products=product)
+        else:
+            dislike = Dislike.objects.get(user=request.user, products=product)
+            dislike.delete()
+        return redirect(request.POST.get("url_from"))
