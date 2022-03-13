@@ -11,7 +11,6 @@ from django.contrib.postgres.indexes import GinIndex
 from autoslug import AutoSlugField
 
 
-
 # manager for our custom model
 class MyAccountManager(BaseUserManager):
     """
@@ -46,7 +45,6 @@ class MyAccountManager(BaseUserManager):
 
 
 class Account(AbstractBaseUser):
-
     """
     Custom user class inheriting AbstractBaseUser class
     """
@@ -97,7 +95,6 @@ class Account(AbstractBaseUser):
 
 
 class Category(models.Model):
-
     name = models.CharField(max_length=255, verbose_name="Имя категории")
     image = models.ImageField(
         verbose_name="Изображение категории", blank=True, null=True
@@ -124,7 +121,7 @@ class Product(models.Model):
     description = models.TextField(verbose_name="Описание", null=True)
     price = models.DecimalField(verbose_name="Цена", default=0, max_digits=5, decimal_places=2)
     features = models.ManyToManyField(
-        "specs.ProductFeatures",verbose_name="Характеристика товара", blank=True, related_name="features_for_product"
+        "specs.ProductFeatures", verbose_name="Характеристика товара", blank=True, related_name="features_for_product"
     )
     shipping_price = models.IntegerField(verbose_name="Стоимость доставки", default=0)
     sale_value = models.DecimalField(
@@ -158,10 +155,11 @@ class Product(models.Model):
 
 
 class Like(models.Model):
-    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, verbose_name="Пользователи", null=True, blank=True, default=1)
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, verbose_name="Пользователи", null=True,
+                             blank=True, default=1)
     products = models.ForeignKey(Product, on_delete=models.CASCADE, verbose_name="Продукт")
 
-    class Meta: 
+    class Meta:
         verbose_name_plural = "Лайки"
 
     def __str__(self):
@@ -169,11 +167,11 @@ class Like(models.Model):
 
 
 class Dislike(models.Model):
-    user = models.ForeignKey(settings.AUTH_USER_MODEL, verbose_name="Пользователи", on_delete=models.CASCADE, null=True, blank=True, default=1)
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, verbose_name="Пользователи", on_delete=models.CASCADE, null=True,
+                             blank=True, default=1)
     products = models.ForeignKey(Product, on_delete=models.CASCADE, verbose_name="Продукт")
 
-
-    class Meta: 
+    class Meta:
         verbose_name_plural = "Дизлайки"
 
     def __str__(self):
@@ -181,7 +179,6 @@ class Dislike(models.Model):
 
 
 class Order(models.Model):
-    
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.SET_NULL, null=True)
     products_cart = models.ManyToManyField('cart.OrderItem', verbose_name="Продукты в корзине")
     products_wishlist = models.ManyToManyField('wishlist.OrderItem', verbose_name="Продукты в желаниях", editable=False)
@@ -191,8 +188,8 @@ class Order(models.Model):
 
     def __str__(self):
         return f"Заказ: {self.user.f_name} {self.user.l_name}"
-        
-    
+
+
 class Reviews(models.Model):
     time = models.DateTimeField(
         verbose_name="Дата комментария",

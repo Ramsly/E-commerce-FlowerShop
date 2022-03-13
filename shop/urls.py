@@ -22,7 +22,8 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('', include('mainapp.urls')),
     path('wishlist/', include('wishlist.urls', namespace="wishlist")),
-    path('order/', include('cart.urls', namespace="cart"))
+    path('order/', include('cart.urls', namespace="cart")),
+    path('__debug__/', include('debug_toolbar.urls')),
 ]
 
 if settings.DEBUG:

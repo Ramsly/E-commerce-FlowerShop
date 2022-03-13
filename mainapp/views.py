@@ -52,7 +52,7 @@ class ProductDetailView(DetailView):
     slug_url_kwarg = "slug"
 
 
-class CategoryListView(ListView):
+class CategoryListView(View):
     def get(self, request, slug, *args, **kwargs):
         products = Product.objects.all()
         q = request.GET.get("q")
@@ -181,7 +181,7 @@ class AccountAuthenticationView(View):
                 messages.success(request, "Вы авторизированны!")
                 return redirect("/")
             else:
-                messages.error("Пожалуйста исправьте ошибки!")
+                messages.error(request, "Пожалуйста исправьте ошибки!")
         context = {
             "form": form,
         }
@@ -204,7 +204,7 @@ class RegistrationView(View):
             form.save()
             f_name = form.cleaned_data.get("f_name")
             l_name = form.cleaned_data.get("l_name")
-            shipping_address = form.cleaned_data("shipping_address")
+            shipping_address = form.cleaned_data.get("shipping_address")
             phone_number = form.cleaned_data.get("phone_number")
             email = form.cleaned_data.get("email")
             password = form.cleaned_data.get("password1")
