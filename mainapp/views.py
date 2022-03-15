@@ -1,10 +1,9 @@
 from django.contrib.auth import authenticate, login
 from django.contrib import messages
-from django.core.mail import EmailMultiAlternatives
 from django.http import HttpResponseRedirect
 from django.http.response import BadHeaderError, HttpResponse
 from django.shortcuts import get_object_or_404, redirect, render
-from django.template.loader import render_to_string
+
 from django.views.generic import DetailView, View, ListView, TemplateView
 from django.contrib.auth.mixins import LoginRequiredMixin
 from .forms import (
@@ -14,16 +13,9 @@ from .forms import (
     OrderForm,
 )
 
+from .services import send_message_order, searched_products
 from .models import Category, Dislike, Like, Order, Product
 from cart.models import OrderItem
-
-from django.contrib.postgres.search import (
-    SearchQuery,
-    SearchVector,
-    SearchRank,
-    SearchHeadline,
-    TrigramSimilarity,
-)
 
 
 class AboutUsView(TemplateView):
@@ -52,39 +44,22 @@ class ProductDetailView(DetailView):
     slug_url_kwarg = "slug"
 
 
-class CategoryListView(View):
-    def get(self, request, slug, *args, **kwargs):
-        products = Product.objects.all()
-        q = request.GET.get("q")
+class CategoryListView(ListView):
+    model = Product
+    template_name = 'category_detail.html'
 
-        if slug:
-            category = get_object_or_404(Category, slug=slug)
-            products_of_category = products.filter(category=category)
+    def get_context_data(self, *args, **kwargs):
+        context = super(CategoryListView, self).get_context_data(**kwargs)
+        category = get_object_or_404(Category, slug=self.kwargs['slug'])
+        context['products_of_category'] = Product.objects.filter(category=category)
+        context['category'] = category
+        context['products_search'] = searched_products(self.request.GET.get('q'), category)
+        return context
 
-        if q:
-            vector = SearchVector("title")
-            query = SearchQuery(q)
-            search_headline = SearchHeadline("description", query)
-
-            products_search = (
-                Product.objects.annotate(rank=SearchRank(vector, query))
-                .annotate(headline=search_headline)
-                .annotate(
-                    similarity=TrigramSimilarity("title", q),
-                )
-                .filter(similarity__gt=0.1, category=category)
-                .order_by("-rank")
-            )
-        else:
-            products_search = products.filter(category=category)
-            messages.add_message(request, messages.ERROR, "Ничего не найдено!")
-
-        context = {
-            "products_of_category": products_of_category,
-            "category": category,
-            "products_search": products_search,
-        }
-        return render(request, "category_detail.html", context)
+    def get_queryset(self):
+        q = self.request.GET.get("q")
+        category = get_object_or_404(Category, slug=self.kwargs['slug'])
+        return searched_products(q, category)
 
 
 class CategoriesListView(ListView):
@@ -92,14 +67,6 @@ class CategoriesListView(ListView):
     model = Category
     context_object_name = "categories"
     template_name = "categories_detail.html"
-
-
-# class CustomerDetailView(DetailView, LoginRequiredMixin):
-
-#     model = Customer
-#     context_object_name = "customer"
-#     slug_url_kwarg = "slug"
-#     template_name = "profile_detail.html"
 
 
 class OrderView(View):
@@ -118,27 +85,8 @@ class OrderView(View):
             buying_type = form.cleaned_data.get("buying_type")
             address = form.cleaned_data.get("address")
             comment = form.cleaned_data.get("comment")
-            subject, from_email, to = (
-                "Venesia Flower Shop | Заказ №",
-                "theluckyfeed1@gmail.com",
-                f"{email}",
-            )
-            text_content = ""
-            data = {
-                "f_name": f_name,
-                "l_name": l_name,
-                "email": email,
-                "phone_number": phone_number,
-                "buying_type": buying_type,
-                "address": address,
-                "comment": comment,
-                "products": request.POST.get("product"),
-            }
-            html_content = render_to_string("html_email.html", data)
-            msg = EmailMultiAlternatives(subject, text_content, from_email, [to])
-            msg.attach_alternative(html_content, "text/html")
             try:
-                msg.send()
+                send_message_order(request, f_name, l_name, email, phone_number, buying_type, address, comment)
                 if not request.user.is_authenticated:
                     del request.session["cart"]
                     request.session.modified = True
@@ -202,10 +150,6 @@ class RegistrationView(View):
         form = RegistrationForm(request.POST or None)
         if form.is_valid():
             form.save()
-            f_name = form.cleaned_data.get("f_name")
-            l_name = form.cleaned_data.get("l_name")
-            shipping_address = form.cleaned_data.get("shipping_address")
-            phone_number = form.cleaned_data.get("phone_number")
             email = form.cleaned_data.get("email")
             password = form.cleaned_data.get("password1")
             if request.session.get("cart"):

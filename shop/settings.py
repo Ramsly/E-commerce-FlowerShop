@@ -62,7 +62,6 @@ MIDDLEWARE = [
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
-    "debug_toolbar.middleware.DebugToolbarMiddleware",
 ]
 
 ROOT_URLCONF = "shop.urls"
@@ -154,12 +153,11 @@ STATIC_ROOT = os.path.join(BASE_DIR, "static")
 MEDIA_URL = "/media/"
 MEDIA_ROOT = os.path.join(BASE_DIR, "media")
 
-STATICFILES_DIRS = (os.path.join(BASE_DIR, "static_dev"),)
-
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
-EMAIL_HOST = 'smtp.gmail.com'
-EMAIL_USE_TLS = True
-EMAIL_PORT = 587
+EMAIL_HOST = 'smtp.yandex.ru'
+EMAIL_USE_TLS = False
+EMAIL_USE_SSL = True
+EMAIL_PORT = 465
 EMAIL_HOST_USER = env("EMAIL_HOST_USER")
 DEFAULT_FROM_EMAIL = 'Venesia Flower Shop'
 EMAIL_HOST_PASSWORD = env("EMAIL_HOST_PASSWORD")

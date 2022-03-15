@@ -1,14 +1,12 @@
 from datetime import datetime
-from django.conf import settings
-from django.contrib.postgres import indexes
-from django.db import models
-from django.db.models.aggregates import Min
-from django.urls import reverse
-from django.contrib.auth.models import AbstractBaseUser, BaseUserManager
-from django.core.validators import RegexValidator, MinValueValidator, MaxValueValidator
-from django.contrib.postgres.search import SearchVectorField
-from django.contrib.postgres.indexes import GinIndex
 from autoslug import AutoSlugField
+from django.conf import settings
+from django.contrib.auth.models import AbstractBaseUser, BaseUserManager
+from django.contrib.postgres.indexes import GinIndex
+from django.contrib.postgres.search import SearchVectorField
+from django.core.validators import RegexValidator
+from django.db import models
+from django.urls import reverse
 
 
 # manager for our custom model
@@ -115,7 +113,7 @@ class Product(models.Model):
     category = models.ForeignKey(
         Category, verbose_name="Категория", on_delete=models.CASCADE, default=""
     )
-    title = models.CharField(verbose_name="Наименование", max_length=255, db_index=True)
+    title = models.CharField(verbose_name="Наименование", max_length=255)
     slug = models.SlugField(unique=True)
     image = models.ImageField(verbose_name="Изображение", upload_to="flowers/")
     description = models.TextField(verbose_name="Описание", null=True)
@@ -131,7 +129,7 @@ class Product(models.Model):
         max_digits=5, decimal_places=2
     )
     available = models.BooleanField(verbose_name="Наличие товара", default=True)
-    search_vector = SearchVectorField(null=True, default=title, editable=False)
+    search_vector = SearchVectorField(null=True, blank=True)
 
     def __str__(self):
         return f"{self.title}"
