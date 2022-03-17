@@ -17,29 +17,20 @@ class WishesView(TemplateView):
 class AddProductToWishesNotAuthenticatedUserView(View):
     def post(self, request, id, *args, **kwargs):
         if not request.user.is_authenticated:
-            if not request.session.get("wishlist"):
-                request.session["wishlist"] = list()
-            else:
-                request.session["wishlist"] = list(request.session["wishlist"])
-            item_exist = next(
-                (
-                    item
-                    for item in request.session["wishlist"]
-                    if item["id"] == request.POST.get("id")
-                ),
-                False,
-            )
             data = {
                 "id": request.POST.get("id"),
                 "title": request.POST.get("title"),
                 "qty": 1,
                 "price": float(replace_to_dot(request.POST.get("price"))),
-                "total_price_cart": float(replace_to_dot(request.POST.get("price")))
-                * 1,
+                "total_price_cart": float(replace_to_dot(request.POST.get("price"))) * 1,
             }
-            if not item_exist:
-                request.session["wishlist"].append(data)
-                request.session.modified = True
+            if not request.session.get("wishlist"):
+                request.session["wishlist"] = list()
+                if data not in request.session['wishlist']:
+                    request.session['wishlist'].append(data)
+                    request.session.modified = True
+            else:
+                request.session["wishlist"] = list(request.session["wishlist"])
         return redirect(request.POST.get("url_from"))
 
 

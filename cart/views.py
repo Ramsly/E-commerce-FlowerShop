@@ -1,5 +1,4 @@
 from django.core.checks import messages
-from django.http.response import HttpResponse
 from django.shortcuts import get_object_or_404, redirect
 from .utils import replace_to_dot
 from mainapp.models import Order, Product
@@ -15,18 +14,6 @@ class CartView(TemplateView):
 class AddProductToCartNotAuthenticatedUserView(View):
     def post(self, request, id, *args, **kwargs):
         if not request.user.is_authenticated:
-            if not request.session.get("cart"):
-                request.session["cart"] = list()
-            else:
-                request.session["cart"] = list(request.session["cart"])
-            item_exist = next(
-                (
-                    item
-                    for item in request.session["cart"]
-                    if item["id"] == request.POST.get("id")
-                ),
-                False,
-            )
             data = {
                 "id": request.POST.get("id"),
                 "title": request.POST.get("title"),
@@ -34,23 +21,19 @@ class AddProductToCartNotAuthenticatedUserView(View):
                 "price": float(replace_to_dot(request.POST.get("price"))),
                 "total_price_cart": float(replace_to_dot(request.POST.get("price"))),
             }
-            if not item_exist:
-                request.session["cart"].append(data)
-                if request.session.get("wishlist"):
-                    for item in request.session["wishlist"]:
+            if not request.session.get("cart"):
+                request.session["cart"] = list()
+                if data not in request.session['cart']:
+                    request.session['cart'].append(data)
+                    request.session.modified = True
+                else:
+                    for item in request.session.get('cart'):
                         if item["id"] == request.POST.get("id"):
-                            item.clear()
-                        while {} in request.session["wishlist"]:
-                            request.session["wishlist"].remove({})
-                        if not request.session["wishlist"]:
-                            del request.session["wishlist"]
-                request.session.modified = True
-            else:
-                for item in request.session["cart"]:
-                        if item["id"] == request.POST.get("id"):
-                            item['qty'] += 1  
+                            item['qty'] += 1
                             item['total_price_cart'] += item['price']
                             request.session.modified = True
+            else:
+                request.session["cart"] = list(request.session["cart"])
         return redirect(request.POST.get("url_from"))
 
         
