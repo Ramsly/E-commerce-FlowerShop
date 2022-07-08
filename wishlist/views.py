@@ -48,14 +48,12 @@ class AddProductToWishesAuthenticatedUserView(View):
                 if not order.products_wishlist.filter(product__id=product.id).exists():
                     order.products_wishlist.add(order_item)
                     order_item.quantity = 1
-                    # messages.info(request, "This item was added to your cart.")
                     return redirect(request.POST.get("url_from"))
                 else:
                     messages.add_message(request, messages.INFO, "Уже есть в желаниях")
             else:
                 order = Order.objects.create(user=request.user)
                 order.products_wishlist.add(order_item)
-                # messages.info(request, "This item was added to your cart.")
                 return redirect(request.POST.get("url_from"))
         return redirect(request.POST.get("url_from"))
 
@@ -120,12 +118,9 @@ class DeleteAllProductsFromWishesAuthenticatedUserView(View):
                     )[0]
                     order.products_wishlist.remove(order_item)
                     order_item.delete()
-                    # messages.info(request, "This item was removed from your cart.")
                     return redirect("/")
                 else:
-                    # messages.info(request, "This item was not in your cart")
                     return redirect("/", id=id)
             else:
-                # messages.info(request, "You do not have an active order")
                 return redirect("/", id=id)
         return redirect(request.POST.get("url_from"))

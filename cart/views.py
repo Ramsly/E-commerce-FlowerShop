@@ -51,17 +51,14 @@ class AddProductToCartAuthenticatedUserView(View):
                 # check if the order item is in the order
                 if order.products_cart.filter(product__id=product.id).exists():
                     order_item.quantity += 1
-                    order_item.save()
-                    # messages.info(request, "This item quantity was updated.")
+                    order_item.save
                     return redirect(request.POST.get("url_from"))
                 else:
                     order.products_cart.add(order_item)
-                    # messages.info(request, "This item was added to your cart.")
                     return redirect(request.POST.get("url_from"))
             else:
                 order = Order.objects.create(user=request.user)
                 order.products_cart.add(order_item)
-                # messages.info(request, "This item was added to your cart.")
                 return redirect(request.POST.get("url_from"))
         return redirect(request.POST.get("url_from"))
 
@@ -120,10 +117,8 @@ class DeleteProductFromCartAuthenticatedUserView(View):
                     else:
                         order.products_cart.remove(order_item)
                         order_item.delete()
-                    # messages.info(request, "This item quantity was updated.")
                     return redirect(request.POST.get("url_from"))
                 else:
-                    # messages.info(request, "This item was not in your cart")
                     return redirect(request.POST.get("url_from"), id=id)
         return redirect(request.POST.get("url_from"))
 
@@ -153,9 +148,7 @@ class DeleteAllProductsFromCartAuthenticatedUserView(View):
                     messages.add_message(request, messages.INFO, "This item quantity was updated.")
                     return redirect("/")
                 else:
-                    # messages.info(request, "This item was not in your cart")
                     return redirect("/", id=id)
             else:
-                # messages.info(request, "You do not have an active order")
                 return redirect("/", id=id)
         return redirect(request.POST.get("url_from"))

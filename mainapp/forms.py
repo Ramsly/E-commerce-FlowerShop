@@ -48,48 +48,6 @@ class AccountAuthenticationForm(forms.ModelForm):
                 raise forms.ValidationError("Email или пароль введены неверно!")
 
 
-# class AccountUpdateform(forms.ModelForm):
-#     """
-#     Updating User Info
-#     """
-
-#     class Meta:
-#         model = Account
-#         fields = ("email", "username")
-#         widgets = {
-#             "email": forms.TextInput(attrs={"class": "form-control"}),
-#             "password": forms.TextInput(attrs={"class": "form-control"}),
-#         }
-
-#     def __init__(self, *args, **kwargs):
-#         """
-#         specifying styles to fields
-#         """
-#         super(AccountUpdateform, self).__init__(*args, **kwargs)
-#         for field in (self.fields["email"], self.fields["username"]):
-#             field.widget.attrs.update({"class": "form-control "})
-
-#     def clean_email(self):
-#         if self.is_valid():
-#             email = self.cleaned_data["email"]
-#             try:
-#                 account = Account.objects.exclude(pk=self.instance.pk).get(email=email)
-#             except Account.DoesNotExist:
-#                 return email
-#             raise forms.ValidationError("Email '%s' already in use." % email)
-
-#     def clean_username(self):
-#         if self.is_valid():
-#             username = self.cleaned_data["username"]
-#             try:
-#                 account = Account.objects.exclude(pk=self.instance.pk).get(
-#                     username=username
-#                 )
-#             except Account.DoesNotExist:
-#                 return username
-#             raise forms.ValidationError("Username '%s' already in use." % username)
-
-
 class OrderForm(forms.Form):
     BUYING_TYPE_SELF = 'self'
     BUYING_TYPE_DELIVERY = 'delivery'
