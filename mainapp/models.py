@@ -1,45 +1,14 @@
-from datetime import datetime
-from autoslug import AutoSlugField
 from django.conf import settings
-from django.contrib.auth.models import AbstractBaseUser, BaseUserManager
+from django.contrib.auth.models import AbstractBaseUser
 from django.contrib.postgres.indexes import GinIndex
 from django.contrib.postgres.search import SearchVectorField
 from django.core.validators import RegexValidator
 from django.db import models
 from django.urls import reverse
 
-
-# manager for our custom model
-class MyAccountManager(BaseUserManager):
-    """
-    This is a manager for Account class
-    """
-
-    def create_user(self, email, username, password=None):
-        if not email:
-            raise ValueError("Users must have an Emaill address")
-        if not username:
-            raise ValueError("Users must have an Username")
-        user = self.model(
-            email=self.normalize_email(email),
-            username=username,
-        )
-
-        user.set_password(password)
-        user.save(using=self._db)
-        return user
-
-    def create_superuser(self, email, username, password):
-        user = self.create_user(
-            email=self.normalize_email(email),
-            password=password,
-            username=username,
-        )
-        user.is_admin = True
-        user.is_staff = True
-        user.is_superuser = True
-        user.save(using=self._db)
-        return user
+from datetime import datetime
+from autoslug import AutoSlugField
+from .managers import MyAccountManager
 
 
 class Account(AbstractBaseUser):
