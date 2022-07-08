@@ -1,6 +1,6 @@
+from typing import Any
 from django.core.mail import EmailMultiAlternatives
 from django.template.loader import render_to_string
-
 from django.contrib.postgres.search import (
     SearchQuery,
     SearchVector,
@@ -8,11 +8,12 @@ from django.contrib.postgres.search import (
     SearchHeadline,
     TrigramSimilarity,
 )
+from django.db.models import QuerySet
 
 from .models import Product
 
 
-def send_message_order(request, f_name, l_name, email, phone_number, buying_type, address, comment):
+def send_message_order(request, f_name: str, l_name: str, email: str, phone_number: int, buying_type: str, address: str, comment: str) -> Any:
     subject, from_email, to = (
         "Venesia Flower Shop | Заказ №",
         "acperow.ram@yandex.ru",
@@ -35,7 +36,7 @@ def send_message_order(request, f_name, l_name, email, phone_number, buying_type
     return msg.send()
 
 
-def searched_products(q, category):
+def searched_products(q: str, category: Any) -> QuerySet:
     vector = SearchVector("title")
     query = SearchQuery(q)
     search_headline = SearchHeadline("description", query)

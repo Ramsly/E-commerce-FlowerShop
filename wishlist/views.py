@@ -1,13 +1,11 @@
-from django.core.mail import message
-from django.shortcuts import redirect, render
+from django.shortcuts import redirect
 from django.contrib import messages
-from django.shortcuts import get_object_or_404, redirect, render
-from cart.utils import replace_to_dot
-from django.http import JsonResponse
-from mainapp.models import Product, Order
-from .models import OrderItem
+from django.shortcuts import get_object_or_404, redirect
 from django.views.generic import TemplateView, View
 
+from cart.services import replace_to_dot
+from mainapp.models import Product, Order
+from .models import OrderItem
 
 class WishesView(TemplateView):
 
