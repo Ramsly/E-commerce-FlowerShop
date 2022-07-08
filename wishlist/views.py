@@ -7,6 +7,7 @@ from cart.services import replace_to_dot
 from mainapp.models import Product, Order
 from .models import OrderItem
 
+
 class WishesView(TemplateView):
 
     template_name = "wishlist.html"
