@@ -1,9 +1,9 @@
 from django.contrib.auth import authenticate, login
+from django.db.models import QuerySet
 from django.contrib import messages
 from django.http import HttpResponseRedirect
 from django.http.response import BadHeaderError, HttpResponse
 from django.shortcuts import get_object_or_404, redirect, render
-
 from django.views.generic import DetailView, View, ListView, TemplateView
 from django.contrib.auth.mixins import LoginRequiredMixin
 from .forms import (
@@ -56,7 +56,7 @@ class CategoryListView(ListView):
         context['products_search'] = searched_products(self.request.GET.get('q'), category)
         return context
 
-    def get_queryset(self):
+    def get_queryset(self) -> QuerySet:
         q = self.request.GET.get("q")
         category = get_object_or_404(Category, slug=self.kwargs['slug'])
         return searched_products(q, category)

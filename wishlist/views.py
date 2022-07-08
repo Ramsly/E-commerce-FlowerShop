@@ -3,7 +3,7 @@ from django.contrib import messages
 from django.shortcuts import get_object_or_404, redirect
 from django.views.generic import TemplateView, View
 
-from cart.services import replace_to_dot
+from mainapp.services import replace_to_dot
 from mainapp.models import Product, Order
 from .models import OrderItem
 

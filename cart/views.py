@@ -4,7 +4,7 @@ from django.views.generic import TemplateView, View
 
 from mainapp.models import Order, Product
 from .models import OrderItem
-from .services import replace_to_dot
+from mainapp.services import replace_to_dot
 
 
 class CartView(TemplateView):

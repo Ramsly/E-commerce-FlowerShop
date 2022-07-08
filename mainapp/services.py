@@ -50,3 +50,9 @@ def searched_products(q: str, category: Any) -> QuerySet:
         products_search = Product.objects.filter(category=category)
 
     return products_search
+
+
+def replace_to_dot(price: float) -> float:
+    for i in price.replace(',', '.').split():
+        price = i
+    return price
