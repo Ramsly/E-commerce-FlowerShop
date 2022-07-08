@@ -1,9 +1,10 @@
 from django.core.checks import messages
 from django.shortcuts import get_object_or_404, redirect
-from .utils import replace_to_dot
+from django.views.generic import TemplateView, View
+
 from mainapp.models import Order, Product
 from .models import OrderItem
-from django.views.generic import TemplateView, View
+from .utils import replace_to_dot
 
 
 class CartView(TemplateView):

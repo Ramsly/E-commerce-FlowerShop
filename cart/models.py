@@ -12,8 +12,3 @@ class OrderItem(models.Model):
 
     def __str__(self):
         return f"{self.quantity} {self.product.title} {self.user.username}"
-
-
-# TODO: Иправить цены со скидками в бд
-# TODO: AJAX
-

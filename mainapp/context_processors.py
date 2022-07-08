@@ -1,5 +1,4 @@
-from django.db.models.aggregates import Sum
-from .models import Category, Product, Like, Dislike
+from .models import Category, Product
 
 
 def products(request):
