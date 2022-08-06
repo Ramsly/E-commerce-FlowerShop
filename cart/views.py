@@ -15,12 +15,13 @@ class CartView(TemplateView):
 class AddProductToCartNotAuthenticatedUserView(View):
     def post(self, request, *args, **kwargs):
         if not request.user.is_authenticated:
+            price = float(replace_to_dot(request.POST.get("price")))
             data = {
-                "id": request.POST.get("id"),
+                "id": int(request.POST.get("id")),
                 "title": request.POST.get("title"),
                 "qty": 1,
-                "price": float(replace_to_dot(request.POST.get("price"))),
-                "total_price_cart": float(replace_to_dot(request.POST.get("price"))),
+                "price": price,
+                "total_price_cart": price,
             }
             if not request.session.get("cart"):
                 request.session["cart"] = list()
@@ -28,7 +29,7 @@ class AddProductToCartNotAuthenticatedUserView(View):
                     request.session['cart'].append(data)
                     request.session.modified = True
                 else:
-                    for item in request.session.get('cart'):
+                    for item in request.session.get("cart"):
                         if item["id"] == request.POST.get("id"):
                             item['qty'] += 1
                             item['total_price_cart'] += item['price']
@@ -51,7 +52,7 @@ class AddProductToCartAuthenticatedUserView(View):
                 # check if the order item is in the order
                 if order.products_cart.filter(product__id=product.id).exists():
                     order_item.quantity += 1
-                    order_item.save
+                    order_item.save()
                     return redirect(request.POST.get("url_from"))
                 else:
                     order.products_cart.add(order_item)

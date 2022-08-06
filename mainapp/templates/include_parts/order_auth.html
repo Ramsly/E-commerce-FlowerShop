@@ -19,16 +19,6 @@
 	</div>
 	<div class="cart-wishlist__content">
 		<div class="cart-wishlist__product-first">
-			{% comment %} <form
-				action="{% url 'cart:cart-delete-all-authenticated' id=order_item_cart.product.id %}"
-				method="POST"
-			>
-				{% csrf_token %}
-				<input type="hidden" name="url_from" value="{{request.path}}" />
-				<button class="cart-wishlist__product-delete">
-					<span>&times;</span>
-				</button>
-			</form> {% endcomment %}
 			<div class="main__product_title margin">
 				<a
 					href="{{ order_item_cart.product.get_absolute_url }}"

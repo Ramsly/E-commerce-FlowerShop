@@ -6,16 +6,16 @@ from django.http.response import BadHeaderError, HttpResponse
 from django.shortcuts import get_object_or_404, redirect, render
 from django.views.generic import DetailView, View, ListView, TemplateView
 from django.contrib.auth.mixins import LoginRequiredMixin
+
+from .services import send_message_order, searched_products
+from .models import Category, Dislike, Like, Order, Product
+from cart.models import OrderItem
 from .forms import (
     ReviewForm,
     RegistrationForm,
     AccountAuthenticationForm,
     OrderForm,
 )
-
-from .services import send_message_order, searched_products
-from .models import Category, Dislike, Like, Order, Product
-from cart.models import OrderItem
 
 
 class AboutUsView(TemplateView):
@@ -56,7 +56,7 @@ class CategoryListView(ListView):
         context['products_search'] = searched_products(self.request.GET.get('q'), category)
         return context
 
-    def get_queryset(self) -> QuerySet:
+    def get_queryset(self) -> QuerySet[Product]:
         q = self.request.GET.get("q")
         category = get_object_or_404(Category, slug=self.kwargs['slug'])
         return searched_products(q, category)
@@ -191,15 +191,13 @@ class LikeView(LoginRequiredMixin, View):
         dislike = Dislike.objects.filter(user=request.user, products=product)
         if not like.exists():
             if not dislike.exists():
-                like = Like.objects.create(user=request.user, products=product)
+                Like.objects.create(user=request.user, products=product)
                 return redirect(request.POST.get("url_from"))
             else:
-                dislike = Dislike.objects.get(user=request.user, products=product)
-                dislike.delete()
-                like = Like.objects.create(user=request.user, products=product)
+                Dislike.objects.get(user=request.user, products=product).delete()
+                Like.objects.create(user=request.user, products=product)
         else:
-            like = Like.objects.get(user=request.user, products=product)
-            like.delete()
+            Like.objects.get(user=request.user, products=product).delete()
         return redirect(request.POST.get("url_from"))
 
 
@@ -212,13 +210,11 @@ class DislikeView(LoginRequiredMixin, View):
         dislike = Dislike.objects.filter(user=request.user, products=product)
         if not dislike.exists():
             if not like.exists():
-                dislike = Dislike.objects.create(user=request.user, products=product)
+                Dislike.objects.create(user=request.user, products=product)
                 return redirect(request.POST.get("url_from"))
             else:
-                like = Like.objects.get(user=request.user, products=product)
-                like.delete()
-                dislike = Dislike.objects.create(user=request.user, products=product)
+                Like.objects.get(user=request.user, products=product).delete()
+                Dislike.objects.create(user=request.user, products=product)
         else:
-            dislike = Dislike.objects.get(user=request.user, products=product)
-            dislike.delete()
+            Dislike.objects.get(user=request.user, products=product).delete()
         return redirect(request.POST.get("url_from"))

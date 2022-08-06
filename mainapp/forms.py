@@ -13,11 +13,13 @@ class RegistrationForm(UserCreationForm):
     email = forms.CharField(required=True)
     f_name = forms.CharField(required=True, label="Имя")
     l_name = forms.CharField(required=True, label="Фамилия")
-    phone_number = forms.RegexField(regex=r'^\+?1?\d{9,12}$', label="Телефон", error_messages={'invalid': 'Введите правильно номер телефона!'}, required=True)
+    phone_number = forms.RegexField(regex=r'^\+?1?\d{9,12}$', label="Телефон", error_messages={
+        'invalid': 'Введите правильно номер телефона!'
+    }, required=True)
 
     class Meta:
         model = Account
-        fields = ("username", "email", "f_name", "l_name", "phone_number","password1", "password2")
+        fields = ("username", "email", "f_name", "l_name", "phone_number", "password1", "password2")
 
     def __init__(self, *args, **kwargs):
         super(RegistrationForm, self).__init__(*args, **kwargs)

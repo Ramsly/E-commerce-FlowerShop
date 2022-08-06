@@ -15,12 +15,13 @@ class WishesView(TemplateView):
 class AddProductToWishesNotAuthenticatedUserView(View):
     def post(self, request, *args, **kwargs):
         if not request.user.is_authenticated:
+            price = float(replace_to_dot(request.POST.get("price")))
             data = {
                 "id": request.POST.get("id"),
                 "title": request.POST.get("title"),
                 "qty": 1,
-                "price": float(replace_to_dot(request.POST.get("price"))),
-                "total_price_cart": float(replace_to_dot(request.POST.get("price"))) * 1,
+                "price": price,
+                "total_price_cart": price,
             }
             if not request.session.get("wishlist"):
                 request.session["wishlist"] = list()

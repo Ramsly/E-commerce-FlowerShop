@@ -38,6 +38,19 @@ source ./venv/bin/activate
 pip install -r requirements.txt
 ```
 
+**Создайте .env файл и укажите свои значения таким переменным как:**
+
+- SECRET_KEY
+- DEBUG
+- POSTGRES_DB
+- POSTGRES_USER
+- POSTGRES_PASSWORD
+- POSTGRES_HOST
+- POSTGRES_PORT
+- EMAIL_HOST_USER
+- EMAIL_HOST_PASSWORD
+
+
 Запустите Docker
 
 ```bash
@@ -48,4 +61,15 @@ docker-compose up --build
 
 ```bash
 docker-compose exec web python3 manage.py createsuperuser
+```
+
+Установите расширение pg_trgm
+```
+docker-compose exec db bash
+```
+```
+psql -U <postgres_user>
+```
+```
+CREATE EXTENSION pg_trgm;
 ```

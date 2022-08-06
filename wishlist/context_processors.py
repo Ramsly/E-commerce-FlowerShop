@@ -20,7 +20,7 @@ def wishlist_items(request):
 
 def get_wishlist_qty_auth(request):
     get_wishlist_qty = OrderItem.objects.filter(user__username=request.user).aggregate(
-        get_wishlist_qty_auth=Sum("quantity")).get("get_wishlist_qty")
+        get_wishlist_qty_auth=Sum("quantity")).get("get_wishlist_qty_auth")
     if get_wishlist_qty is None:
         return {"get_wishlist_qty": 0}
     return {"get_wishlist_qty": get_wishlist_qty}

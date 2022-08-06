@@ -1,4 +1,4 @@
-{% extends 'base.html' %} {% load static %} {% block title %}Желания{% endblock title %} {% block content %} {{wishes_session}} 
+{% extends 'base.html' %} {% load static %} {% block title %}Желания{% endblock title %} {% block content %}
 <h3 class="main__title">Избранные товары</h3>
 <div class="cart-wishlist__container">
     {% if not user.is_authenticated %}

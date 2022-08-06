@@ -34,7 +34,7 @@ def get_cart_qty_auth(request):
     get_cart_qty = (
         OrderItem.objects.filter(user__username=request.user)
         .aggregate(get_cart_qty_auth=Sum("quantity"))
-        .get("get_cart_qty")
+        .get("get_cart_qty_auth")
     )
     if get_cart_qty is None:
         return {"get_cart_qty": 0}
@@ -45,7 +45,7 @@ def get_cart_total_auth(request):
     get_cart_total = (
         OrderItem.objects.filter(user__username=request.user)
         .aggregate(get_cart_total_auth=Sum("product__price") * Sum("quantity"))
-        .get("get_cart_total")
+        .get("get_cart_total_auth")
     )
     if get_cart_total is None:
         return {"get_cart_total": 0}
