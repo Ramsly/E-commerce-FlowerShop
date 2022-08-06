@@ -13,7 +13,7 @@ class CartView(TemplateView):
 
 
 class AddProductToCartNotAuthenticatedUserView(View):
-    def post(self, request, id, *args, **kwargs):
+    def post(self, request, *args, **kwargs):
         if not request.user.is_authenticated:
             data = {
                 "id": request.POST.get("id"),
@@ -64,7 +64,7 @@ class AddProductToCartAuthenticatedUserView(View):
 
 
 class DeleteProductFromCartNotAuthenticatedUserView(View):
-    def post(self, request, id, *args, **kwargs):
+    def post(self, request, *args, **kwargs):
         if not request.user.is_authenticated:
             for item in request.session["cart"]:
                 if item["id"] == request.POST.get("id"):
@@ -81,7 +81,7 @@ class DeleteProductFromCartNotAuthenticatedUserView(View):
 
 
 class DeleteOneProductFromCartNotAuthenticatedUserView(View):
-    def post(self, request, id, *args, **kwargs):
+    def post(self, request, *args, **kwargs):
         if not request.user.is_authenticated:
             for item in request.session["cart"]:
                 if item["id"] == request.POST.get("id") and item["qty"] > 1:

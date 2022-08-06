@@ -1,10 +1,9 @@
-from django.shortcuts import redirect
 from django.contrib import messages
 from django.shortcuts import get_object_or_404, redirect
 from django.views.generic import TemplateView, View
 
-from mainapp.services import replace_to_dot
 from mainapp.models import Product, Order
+from mainapp.services import replace_to_dot
 from .models import OrderItem
 
 
@@ -14,7 +13,7 @@ class WishesView(TemplateView):
 
 
 class AddProductToWishesNotAuthenticatedUserView(View):
-    def post(self, request, id, *args, **kwargs):
+    def post(self, request, *args, **kwargs):
         if not request.user.is_authenticated:
             data = {
                 "id": request.POST.get("id"),
@@ -58,7 +57,7 @@ class AddProductToWishesAuthenticatedUserView(View):
 
 
 class DeleteProductFromWishesNotAuthenticatedUserView(View):
-    def post(self, request, id, *args, **kwargs):
+    def post(self, request, *args, **kwargs):
         if not request.user.is_authenticated:
             for item in request.session["wishlist"]:
                 if str(item["id"]) == str(request.POST.get("id")):

@@ -1,5 +1,13 @@
 from django.urls import path
-from .views import *
+from .views import (
+    CartView, AddProductToCartAuthenticatedUserView,
+    AddProductToCartNotAuthenticatedUserView,
+    DeleteProductFromCartAuthenticatedUserView,
+    DeleteProductFromCartNotAuthenticatedUserView,
+    DeleteOneProductFromCartNotAuthenticatedUserView,
+    DeleteAllProductsFromCartAuthenticatedUserView,
+    DeleteAllProductsFromCartNotAuthenticatedUserView
+)
 
 app_name = "cart"
 

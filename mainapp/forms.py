@@ -1,7 +1,8 @@
 from django import forms
-from .models import Account,Reviews, Like, Dislike
 from django.contrib.auth import authenticate
 from django.contrib.auth.forms import UserCreationForm
+
+from .models import Account, Reviews
 
 
 class RegistrationForm(UserCreationForm):

@@ -22,4 +22,4 @@ class FeatureValidatorForm(forms.ModelForm):
 
     class Meta:
         model = FeatureValidator
-        fields = ['category']
+        fields = ('category',)

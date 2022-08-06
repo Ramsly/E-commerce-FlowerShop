@@ -54,12 +54,6 @@ class Account(AbstractBaseUser):
     def __str__(self):
         return self.username
 
-    def has_perm(self, perm, obj=None):
-        return self.is_admin
-
-    def has_module_perms(self, app_label):
-        return True
-
 
 class Category(models.Model):
     name = models.CharField(max_length=255, verbose_name="Имя категории")
@@ -68,14 +62,14 @@ class Category(models.Model):
     )
     slug = models.SlugField(unique=True)
 
+    class Meta:
+        verbose_name_plural = "Категории"
+
     def __str__(self):
         return self.name
 
     def get_absolute_url(self):
         return reverse("category_detail", kwargs={"slug": self.slug})
-
-    class Meta:
-        verbose_name_plural = "Категории"
 
 
 class Product(models.Model):
@@ -100,6 +94,14 @@ class Product(models.Model):
     available = models.BooleanField(verbose_name="Наличие товара", default=True)
     search_vector = SearchVectorField(null=True, blank=True)
 
+    class Meta:
+        verbose_name = "Товары"
+        verbose_name_plural = "Товары"
+        ordering = ["id"]
+        indexes = [
+            GinIndex(fields=["search_vector"])
+        ]
+
     def __str__(self):
         return f"{self.title}"
 
@@ -111,14 +113,6 @@ class Product(models.Model):
 
     def get_review(self):
         return self.reviews_set.filter(parent__isnull=True)
-
-    class Meta:
-        verbose_name = "Товары"
-        verbose_name_plural = "Товары"
-        ordering = ["id"]
-        indexes = [
-            GinIndex(fields=["search_vector"])
-        ]
 
 
 class Like(models.Model):
@@ -178,9 +172,9 @@ class Reviews(models.Model):
         Product, verbose_name="Цветы", on_delete=models.CASCADE, null=True, default=""
     )
 
-    def __str__(self):
-        return f"{self.name} - {self.product}"
-
     class Meta:
         verbose_name_plural = "Отзывы"
         ordering = ["-time"]
+
+    def __str__(self):
+        return f"{self.name} - {self.product}"
