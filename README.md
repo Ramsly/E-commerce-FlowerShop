@@ -9,6 +9,10 @@
 - Скидочная система
 - Характеристики товара
 - Настройка личного кабинета
+- Отзывы о товаре
+- Рейтинг товара
+- Отправка информации о заказе по email
+- Поиск товара
 
 ## Настройка
 
@@ -23,6 +27,11 @@ https://github.com/Ramil2003/E-commerce-FlowerShop.git
 python3 -m venv venv
 ```
 
+Активируйте его:
+```
+source ./venv/bin/activate
+```
+
 Установите зависимости
 
 ```bash
@@ -32,14 +41,11 @@ pip install -r requirements.txt
 Запустите Docker
 
 ```bash
-docker-compose build
-```
-```bash
-docker-compose up
+docker-compose up --build
 ```
 
-Сделайте миграции
+Создайте супер юзера
 
 ```bash
-docker-compose exec web python manage.py migrate
+docker-compose exec web python3 manage.py createsuperuser
 ```
