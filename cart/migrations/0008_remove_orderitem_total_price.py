@@ -12,6 +12,6 @@ class Migration(migrations.Migration):
     operations = [
         migrations.RemoveField(
             model_name='orderitem',
-            name='total_price',
+            name='get_cart_price_not_auth',
         ),
     ]

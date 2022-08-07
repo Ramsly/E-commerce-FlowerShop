@@ -12,7 +12,7 @@ class Migration(migrations.Migration):
     operations = [
         migrations.AddField(
             model_name='orderitem',
-            name='total_price',
+            name='get_cart_price_not_auth',
             field=models.DecimalField(decimal_places=2, default=0, max_digits=5, verbose_name='Сумма'),
         ),
     ]

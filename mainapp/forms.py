@@ -6,9 +6,6 @@ from .models import Account, Reviews
 
 
 class RegistrationForm(UserCreationForm):
-    """
-    Form for Registering new users
-    """
     username = forms.CharField(required=True, label="Логин")
     email = forms.CharField(required=True)
     f_name = forms.CharField(required=True, label="Имя")
@@ -26,10 +23,6 @@ class RegistrationForm(UserCreationForm):
 
 
 class AccountAuthenticationForm(forms.ModelForm):
-    """
-    Form for Logging in  users
-    """
-
     email = forms.EmailField(label="Email")
     password = forms.CharField(label="Пароль", widget=forms.PasswordInput)
 
@@ -38,9 +31,6 @@ class AccountAuthenticationForm(forms.ModelForm):
         fields = ("email", "password")
 
     def __init__(self, *args, **kwargs):
-        """
-        specifying styles to fields
-        """
         super(AccountAuthenticationForm, self).__init__(*args, **kwargs)
 
     def clean(self):
@@ -63,7 +53,9 @@ class OrderForm(forms.Form):
     f_name = forms.CharField(max_length=255, required=True, label="Имя")
     l_name = forms.CharField(max_length=255, required=True, label="Фамилия")
     email = forms.EmailField(required=True, label="Email")
-    phone_number = forms.RegexField(regex=r'^\+?1?\d{9,12}$', label="Телефон", error_messages={'invalid': 'Введите правильно номер телефона!'}, required=True)
+    phone_number = forms.RegexField(regex=r'^\+?1?\d{9,12}$', label="Телефон",
+                                    error_messages={'invalid': 'Введите правильно номер телефона!'},
+                                    required=True)
     buying_type = forms.ChoiceField(choices=BUYING_TYPE_CHOICES, label="Тип покупки")
     address = forms.CharField(max_length=255, required=True, label="Адрес")
     comment = forms.CharField(max_length=5000, help_text='Кол-во символов до 5000', label="Комментарий к заказу")
@@ -73,8 +65,6 @@ class OrderForm(forms.Form):
 
 
 class ReviewForm(forms.ModelForm):
-    """Форма отзывов"""
-
     class Meta:
         model = Reviews
         fields = ("comment", "name")

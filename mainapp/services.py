@@ -1,6 +1,7 @@
 from typing import Any
 from django.core.mail import EmailMultiAlternatives
 from django.template.loader import render_to_string
+from django.db.models import QuerySet
 from django.contrib.postgres.search import (
     SearchQuery,
     SearchVector,
@@ -8,7 +9,6 @@ from django.contrib.postgres.search import (
     SearchHeadline,
     TrigramSimilarity,
 )
-from django.db.models import QuerySet
 
 from .models import Product, Category
 
@@ -86,6 +86,12 @@ def searched_products(q: str, category: Category) -> QuerySet[Product]:
 
 
 def replace_to_dot(price: str) -> float:
+    """
+    Get price in str with comma from request.POST.get('price') and convert to float with dot.
+
+    :param str price: Price from request.POST.get('price')
+    :rtype: float
+    """
     for i in price.replace(',', '.').split():
         price = i
     return float(price)

@@ -1,4 +1,4 @@
-from django.core.checks import messages
+from django.contrib import messages
 from django.shortcuts import get_object_or_404, redirect
 from django.views.generic import TemplateView, View
 
@@ -40,7 +40,7 @@ class AddProductToCartNotAuthenticatedUserView(View):
 
         
 class AddProductToCartAuthenticatedUserView(View):
-    def post(self, request, id, *args, **kwargs):
+    def post(self, request, *args, **kwargs):
         if request.user.is_authenticated:
             product = get_object_or_404(Product, id=id)
             order_item, created = OrderItem.objects.get_or_create(
